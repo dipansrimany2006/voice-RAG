@@ -28,7 +28,7 @@ def load_settings() -> Settings:
     return Settings(
         elevenlabs_api_key=_require("ELEVENLABS_API_KEY"),
         groq_api_key=_require("GROQ_API_KEY"),
-        groq_model=os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile"),
+        groq_model=os.environ.get("GROQ_MODEL", "openai/gpt-oss-120b"),
         elevenlabs_stt_model=os.environ.get("ELEVENLABS_STT_MODEL", "scribe_v1"),
         embedding_model=os.environ.get("EMBEDDING_MODEL", "intfloat/multilingual-e5-base"),
         index_dir=os.environ.get("INDEX_DIR", "data/index"),
