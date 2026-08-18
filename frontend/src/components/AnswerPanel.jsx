@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { speak } from '../api'
 
 const STRATEGY_LABELS = {
   fixed_overlap: 'Fixed-size + overlap',
@@ -12,17 +13,42 @@ function strategyLabel(key) {
 
 export default function AnswerPanel({ status, result, error, onRetry }) {
   const audioRef = useRef(null)
-  const [autoplayBlocked, setAutoplayBlocked] = useState(false)
+  const [listenState, setListenState] = useState('idle') // idle | loading | ready | error
+  const [audioSrc, setAudioSrc] = useState(null)
+  const [listenError, setListenError] = useState(null)
+
+  // A new answer arrived — forget any previously synthesized audio so the
+  // Listen button re-fetches for the current answer instead of replaying
+  // the last one.
+  useEffect(() => {
+    setListenState('idle')
+    setAudioSrc(null)
+    setListenError(null)
+  }, [result?.answer_text])
 
   useEffect(() => {
-    if (!result?.audio_base64 || !audioRef.current) return
-    setAutoplayBlocked(false)
-    audioRef.current.play().catch(() => {
-      // Browsers can block programmatic autoplay depending on user-gesture
-      // timing — the visible player below still lets the user hit play.
-      setAutoplayBlocked(true)
-    })
-  }, [result?.audio_base64])
+    if (audioSrc && audioRef.current) {
+      audioRef.current.play().catch(() => {
+        // Autoplay should work here since this only runs right after a
+        // direct click (the Listen button), a genuine user gesture — but
+        // fall back silently to the visible player if a browser still blocks it.
+      })
+    }
+  }, [audioSrc])
+
+  async function handleListen() {
+    if (!result?.answer_text) return
+    setListenState('loading')
+    setListenError(null)
+    try {
+      const data = await speak({ text: result.answer_text })
+      setAudioSrc(`data:audio/mpeg;base64,${data.audio_base64}`)
+      setListenState('ready')
+    } catch (err) {
+      setListenError(err.message)
+      setListenState('error')
+    }
+  }
 
   if (status === 'idle') {
     return <p className="empty-state">Ask a question to see the transcript and answer here.</p>
@@ -103,19 +129,25 @@ export default function AnswerPanel({ status, result, error, onRetry }) {
         </div>
       )}
 
-      {result.audio_base64 && (
+      {result.answer_text && (
         <div className="answer-audio-block">
-          <audio
-            ref={audioRef}
-            controls
-            src={`data:audio/mpeg;base64,${result.audio_base64}`}
-            className="answer-audio"
-          >
-            Your browser does not support audio playback.
-          </audio>
-          {autoplayBlocked && (
-            <p className="answer-reason" role="status">
-              Tap play to hear the answer — your browser blocked autoplay.
+          {audioSrc ? (
+            <audio ref={audioRef} controls src={audioSrc} className="answer-audio">
+              Your browser does not support audio playback.
+            </audio>
+          ) : (
+            <button
+              type="button"
+              className="secondary-button listen-button"
+              onClick={handleListen}
+              disabled={listenState === 'loading'}
+            >
+              {listenState === 'loading' ? 'Synthesizing…' : '🔊 Listen'}
+            </button>
+          )}
+          {listenState === 'error' && (
+            <p className="answer-reason" role="alert">
+              Couldn't synthesize speech: {listenError}
             </p>
           )}
         </div>

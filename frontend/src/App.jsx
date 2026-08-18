@@ -43,13 +43,13 @@ export default function App() {
     e.preventDefault()
     if (!textInput.trim()) return
     const text = textInput.trim()
-    runQuery(() => queryText({ text, speak: true }))
+    runQuery(() => queryText({ text }))
   }
 
   async function handleMicClick() {
     if (recorder.state === 'recording') {
       const blob = await recorder.stop()
-      if (blob) runQuery(() => queryAudio({ blob, speak: true }))
+      if (blob) runQuery(() => queryAudio({ blob }))
       return
     }
     await recorder.start()

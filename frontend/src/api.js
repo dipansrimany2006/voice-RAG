@@ -19,19 +19,27 @@ export async function fetchStrategies() {
   return handle(res)
 }
 
-export async function queryText({ text, speak }) {
+export async function queryText({ text }) {
   const res = await fetch(`${BASE}/query/text`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text, speak }),
+    body: JSON.stringify({ text }),
   })
   return handle(res)
 }
 
-export async function queryAudio({ blob, speak }) {
+export async function queryAudio({ blob }) {
   const form = new FormData()
   form.append('file', blob, 'question.webm')
-  form.append('speak', String(speak))
   const res = await fetch(`${BASE}/query/audio`, { method: 'POST', body: form })
+  return handle(res)
+}
+
+export async function speak({ text }) {
+  const res = await fetch(`${BASE}/speak`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text }),
+  })
   return handle(res)
 }

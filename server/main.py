@@ -75,7 +75,11 @@ def _serialize(result: PipelineOutput) -> dict:
 
 class TextQuery(BaseModel):
     text: str
-    speak: bool = True
+    speak: bool = False
+
+
+class SpeakRequest(BaseModel):
+    text: str
 
 
 @app.get("/api/strategies")
@@ -92,11 +96,25 @@ def query_text(body: TextQuery):
 
 
 @app.post("/api/query/audio")
-async def query_audio(file: UploadFile = File(...), speak: bool = Form(True)):
+async def query_audio(file: UploadFile = File(...), speak: bool = Form(False)):
     pipeline = get_pipeline()
     audio_bytes = await file.read()
     result = pipeline.run_audio(audio_bytes, speak_response=speak)
     return _serialize(result)
+
+
+@app.post("/api/speak")
+def speak(body: SpeakRequest):
+    """On-demand TTS for the Listen button — decoupled from /api/query/* so
+    answer latency doesn't include synthesis time unless the user actually
+    wants to hear it."""
+    pipeline = get_pipeline()
+    try:
+        audio = pipeline.voice.synthesize(body.text)
+    except Exception as exc:  # noqa: BLE001
+        logging.getLogger(__name__).exception("On-demand TTS failed")
+        raise HTTPException(502, f"speech synthesis failed: {exc}") from exc
+    return {"audio_base64": base64.b64encode(audio).decode()}
 
 
 @app.get("/api/health")
