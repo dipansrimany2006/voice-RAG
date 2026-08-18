@@ -8,6 +8,7 @@ sentence-transformers==3.*
 faiss-cpu>=1.9
 elevenlabs==1.*
 edge-tts>=7.0
+httpx
 datasets==3.*
 pydantic==2.*
 python-dotenv==1.*
