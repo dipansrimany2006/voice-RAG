@@ -1,44 +1,110 @@
+/* ===================== Design tokens ===================== */
+/* Dark neon cosmic palette is the primary/default identity — bare :root
+   carries it so there's no flash of the old palette before React's
+   data-theme attribute lands. A lighter neon-accented alternate survives
+   as :root[data-theme='light'], still reachable via the toggle. */
 :root {
-  --bg: #f7f7f9;
+  /* deep-space black with electric blue / violet / cyan / magenta accents
+     — a cosmic neon identity, not a beach scene */
+  --bg: #060216;
+  --bg-soft: #0b0a24;
+  --surface: rgba(14, 10, 36, 0.68);
+  --surface-2: rgba(19, 12, 46, 0.72);
+  --surface-warm: #140f30;
+  --border: rgba(139, 92, 246, 0.16);
+  --border-strong: rgba(139, 92, 246, 0.28);
+  --text: #f5f2ff;
+  --text-muted: #b3a8d9;
+  --text-faint: #746a94;
+
+  --primary: #7c3aed;
+  --primary-dark: #1a0c3d;
+  --primary-contrast: #f5f2ff;
+  --bright-green: #22d3ee;
+  --gold: #f83ecb;
+  --gold-dark: #c026a3;
+
+  --sand: #4b3a8f;
+  --sea-muted: #221450;
+
+  --ok: #22d3ee;
+  --ok-bg: rgba(34, 211, 238, 0.14);
+  --warn: #f0a63e;
+  --warn-bg: rgba(240, 166, 62, 0.14);
+  --danger: #ff5f8f;
+  --danger-bg: rgba(255, 95, 143, 0.14);
+  --info: #22d3ee;
+  --info-bg: rgba(34, 211, 238, 0.14);
+
+  --radius-sm: 10px;
+  --radius: 16px;
+  --radius-lg: 28px;
+  --focus-ring: #a78bfa;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.5);
+  --glow-green: 0 0 0 1px rgba(124, 58, 237, 0.28), 0 8px 28px rgba(124, 58, 237, 0.35);
+  --glow-gold: 0 0 24px rgba(248, 62, 203, 0.4);
+
+  --font-display: 'Manrope', 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* fixed dark ending — the footer stays deep cosmic black regardless of
+     the light/dark theme toggle, so it's tokenized separately from --bg/--text */
+  --footer-bg: #050113;
+  --footer-bg-2: #0b0a24;
+  --footer-text: #f5f2ff;
+  --footer-text-muted: #b3a8d9;
+  --footer-border: rgba(139, 92, 246, 0.18);
+
+  color-scheme: dark;
+}
+
+:root[data-theme='light'] {
+  /* same electric violet / cyan / magenta accent family, tuned for
+     contrast on a soft lavender-white base instead of near-black */
+  --bg: #faf9ff;
+  --bg-soft: #f0ecfd;
   --surface: #ffffff;
-  --border: #dcdce2;
-  --text: #17171c;
-  --text-muted: #55555f;
-  --accent: #5b3df5;
-  --accent-contrast: #ffffff;
-  --ok: #147d4c;
-  --ok-bg: #e2f6ea;
-  --warn: #9a4b00;
-  --warn-bg: #fdecd6;
-  --danger: #b3261e;
-  --danger-bg: #fbeae9;
-  --info: #1d5fae;
-  --info-bg: #e7f0fc;
-  --radius: 10px;
-  --focus-ring: #5b3df5;
+  --surface-2: #f7f4ff;
+  --surface-warm: #fdfcff;
+  --border: rgba(124, 58, 237, 0.14);
+  --border-strong: rgba(124, 58, 237, 0.24);
+  --text: #150e2e;
+  --text-muted: #5c5478;
+  --text-faint: #8a82a3;
+
+  --primary: #7c3aed;
+  --primary-dark: #2a1660;
+  --primary-contrast: #ffffff;
+  --bright-green: #0c8599;
+  --gold: #b0179a;
+  --gold-dark: #7c3aed;
+
+  --sand: #ded4f7;
+  --sea-muted: #b9a8ea;
+
+  --ok: #0c8599;
+  --ok-bg: #e3f6f8;
+  --warn: #9a5b00;
+  --warn-bg: #fdecd1;
+  --danger: #c0175a;
+  --danger-bg: #fbe6f0;
+  --info: #7c3aed;
+  --info-bg: #f0ecfd;
+
+  --shadow-sm: 0 1px 2px rgba(17, 24, 39, 0.06);
+  --shadow: 0 8px 24px rgba(17, 24, 39, 0.08);
+  --shadow-lg: 0 24px 60px rgba(17, 24, 39, 0.12);
+  --glow-green: 0 0 0 1px rgba(124, 58, 237, 0.16), 0 8px 24px rgba(124, 58, 237, 0.14);
+  --glow-gold: 0 0 20px rgba(176, 23, 154, 0.3);
+
+  --focus-ring: #7c3aed;
+  color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #131318;
-    --surface: #1c1c24;
-    --border: #33333e;
-    --text: #f1f1f5;
-    --text-muted: #a8a8b3;
-    --accent: #8c7bff;
-    --accent-contrast: #131318;
-    --ok: #4ade9b;
-    --ok-bg: #123626;
-    --warn: #f5b25a;
-    --warn-bg: #3a2a10;
-    --danger: #ff6b62;
-    --danger-bg: #3a1917;
-    --info: #7db3f5;
-    --info-bg: #132840;
-    --focus-ring: #8c7bff;
-  }
-}
-
+/* ===================== Reset & base ===================== */
 * {
   box-sizing: border-box;
 }
@@ -46,15 +112,24 @@
 html,
 body,
 #root {
-  height: 100%;
+  min-height: 100%;
 }
 
 body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  line-height: 1.5;
+  font-family: var(--font-body);
+  line-height: 1.55;
+  transition: background 0.3s ease, color 0.3s ease;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text);
 }
 
 button,
@@ -62,96 +137,2870 @@ input,
 select {
   font-family: inherit;
   font-size: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
 }
 
 :focus-visible {
   outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+::selection {
+  background: var(--gold);
+  color: var(--primary-dark);
 }
 
 .page {
+  position: relative;
+  min-height: 100%;
+  isolation: isolate;
+}
+
+.shell {
   max-width: 1080px;
   margin: 0 auto;
-  padding: 2rem 1.25rem 4rem;
+  padding: 0 1.5rem;
 }
 
-.header {
-  margin-bottom: 2rem;
+/* ===================== Background decor (sitewide grain only) ===================== */
+.bg-decor {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
 }
 
-.header h1 {
-  font-size: 1.75rem;
-  margin: 0 0 0.35rem;
+.bg-decor__grain {
+  position: absolute;
+  inset: -10%;
+  opacity: 0.35;
+  mix-blend-mode: screen;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
 }
 
-.subtitle {
-  color: var(--text-muted);
-  margin: 0;
-  max-width: 60ch;
+:root[data-theme='light'] .bg-decor__grain {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
 }
 
-.layout {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.25rem;
+/* shared atmosphere keyframes — reused per-section below so each area gets
+   its own composition instead of the same dot/glow pattern repeating. */
+@keyframes atmo-grid-drift {
+  0%, 100% { background-position: 0 0; }
+  50% { background-position: 3px 4px; }
 }
 
-@media (min-width: 900px) {
-  .layout {
-    grid-template-columns: minmax(280px, 1fr) 1.3fr 1fr;
-    align-items: start;
+@keyframes atmo-drift-a {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.4; }
+  50% { transform: translate(-36px, 28px) scale(1.08); opacity: 0.55; }
+}
+
+@keyframes atmo-drift-b {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.4; }
+  50% { transform: translate(32px, -24px) scale(1.05); opacity: 0.5; }
+}
+
+@keyframes atmo-particle-float {
+  0% { transform: translate(0, 0); opacity: 0; }
+  15% { opacity: 0.65; }
+  50% { transform: translate(var(--dx, 12px), -46px); opacity: 0.85; }
+  85% { opacity: 0.3; }
+  100% { transform: translate(calc(var(--dx, 12px) * 1.6), -90px); opacity: 0; }
+}
+
+/* ===================== Header ===================== */
+/* a floating glass pill, not a full-bleed bar — margin on every side
+   plus a large radius so the black background shows around it, and
+   `top` (not just the initial `margin-top`) keeps that same gap once it
+   sticks, rather than snapping flush to the viewport edge on scroll */
+.site-header {
+  position: sticky;
+  top: 14px;
+  z-index: 40;
+  width: calc(100% - 28px);
+  max-width: 1300px;
+  margin: 14px auto 0;
+  border-radius: 999px;
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  backdrop-filter: blur(20px) saturate(1.3);
+  background: color-mix(in srgb, var(--surface) 78%, transparent);
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.site-header.is-scrolled {
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.site-header__inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0.6rem 1.35rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+  color: var(--text);
+  margin-right: auto;
+}
+
+.brand__mark {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(140deg, var(--bright-green), var(--primary) 55%, var(--gold));
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px -2px color-mix(in srgb, var(--primary) 65%, transparent);
+}
+
+.brand__text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.brand__name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: -0.01em;
+}
+
+.site-nav {
+  display: none;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+@media (min-width: 860px) {
+  .site-nav {
+    display: flex;
   }
 }
 
-.panel {
+.site-nav__link {
+  position: relative;
+  padding: 0.5rem 0.85rem;
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.site-nav__link:hover {
+  color: var(--text);
+  background: var(--bg-soft);
+}
+
+.site-nav__link.is-active {
+  color: var(--primary);
+}
+
+.site-nav__link.is-active::after {
+  content: '';
+  position: absolute;
+  left: 0.85rem;
+  right: 0.85rem;
+  bottom: 0.1rem;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--bright-green);
+}
+
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* the language trigger's text label is the widest thing in this row —
+   on narrow screens (four action buttons now that sound joined theme
+   and the menu toggle) it's the first thing to give, not the controls
+   themselves */
+@media (max-width: 420px) {
+  .site-header__actions {
+    gap: 0.35rem;
+  }
+
+  .lang-select__trigger span {
+    display: none;
+  }
+
+  .lang-select__trigger {
+    padding: 0.5rem 0.6rem;
+  }
+}
+
+.lang-select {
+  position: relative;
+}
+
+.lang-select__trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text);
+  transition: border-color 0.2s ease, transform 0.15s ease;
+}
+
+.lang-select__trigger:hover {
+  border-color: var(--primary);
+}
+
+.lang-select__menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  list-style: none;
+  margin: 0;
+  padding: 0.4rem;
+  width: 190px;
+  max-height: 280px;
+  overflow-y: auto;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.25rem;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  z-index: 50;
 }
 
-.panel-title {
-  font-size: 1rem;
-  margin: 0 0 1rem;
+.lang-select__option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.45rem 0.6rem;
+  border-radius: 8px;
+  background: none;
+  border: none;
+  font-size: 0.85rem;
+  color: var(--text);
 }
 
-.field {
+.lang-select__option:hover {
+  background: var(--bg-soft);
+}
+
+.lang-select__option.is-selected {
+  color: var(--primary);
+  font-weight: 700;
+  background: var(--bg-soft);
+}
+
+.theme-toggle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.theme-toggle:hover {
+  border-color: var(--primary);
+  transform: rotate(-12deg);
+}
+
+.nav-menu-toggle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+}
+
+@media (min-width: 860px) {
+  .nav-menu-toggle {
+    display: none;
+  }
+}
+
+.nav-menu-panel {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--border);
+  padding: 0.5rem 1.5rem 1rem;
+}
+
+@media (min-width: 860px) {
+  .nav-menu-panel {
+    display: none;
+  }
+}
+
+.nav-menu-panel__link {
+  padding: 0.75rem 0.25rem;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-menu-panel__link:last-child {
+  border-bottom: none;
+}
+
+.nav-menu-panel__link.is-active {
+  color: var(--primary);
+}
+
+/* ===================== Buttons & badges ===================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.8rem 1.4rem;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.92rem;
+  border: 1px solid transparent;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn--primary {
+  background: var(--primary);
+  color: var(--primary-contrast);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn--primary:hover:not(:disabled) {
+  background: var(--primary-dark);
+  box-shadow: var(--shadow);
+  transform: translateY(-1px);
+}
+
+.btn--primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn--ghost {
+  background: transparent;
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+
+.btn--ghost:hover:not(:disabled) {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--bg-soft);
+}
+
+.btn--sm {
+  padding: 0.55rem 1rem;
+  font-size: 0.82rem;
+}
+
+.btn--icon {
+  padding: 0.8rem 1.2rem;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.badge--pill {
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+}
+
+.badge__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--bright-green);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--bright-green) 25%, transparent);
+}
+
+.badge--live {
+  background: var(--primary);
+  color: var(--primary-contrast);
+}
+
+.badge--live .badge__dot {
+  background: var(--gold);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold) 35%, transparent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .badge--live .badge__dot {
+    animation: live-pulse 1.6s ease-in-out infinite;
+  }
+}
+
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(1.3); }
+}
+
+.badge--ok {
+  background: var(--ok-bg);
+  color: var(--ok);
+}
+
+.badge--warn {
+  background: var(--warn-bg);
+  color: var(--warn);
+}
+
+.badge--info {
+  background: var(--info-bg);
+  color: var(--info);
+  border: 1px solid color-mix(in srgb, var(--info) 30%, transparent);
+}
+
+/* ===================== Voice Wave (signature visual) =====================
+   Voice RAG's signature identity: a concentric target built outward from
+   the product itself — mic at the center, thin sound rings around it,
+   particles in the outer field. Everything nests around one focal point
+   instead of sitting in empty space next to the headline. The literal
+   backdrop the real mic button sits inside on the voice interaction
+   page. */
+.voice-wave {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  isolation: isolate;
+  transition: transform 0.4s ease;
+}
+
+.voice-wave:hover {
+  transform: scale(1.03);
+}
+
+.voice-wave:hover .voice-wave__blob {
+  opacity: 1;
+}
+
+.voice-wave:hover .voice-wave__glow {
+  opacity: 1;
+  transform: scale(1.06);
+}
+
+.voice-wave--stage {
+  width: clamp(230px, 22vw, 320px);
+  height: clamp(230px, 22vw, 320px);
+}
+
+.voice-wave--compact {
+  width: 128px;
+  height: 128px;
+}
+
+.voice-wave__glow {
+  position: absolute;
+  inset: -14%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--bright-green) 16%, transparent) 0%,
+    color-mix(in srgb, var(--gold) 8%, transparent) 48%,
+    transparent 72%
+  );
+  filter: blur(8px);
+}
+
+/* orbits independently of the ring/waveform field below, at a different
+   speed, so the particle field reads as its own depth layer drifting
+   around the center rather than being glued to the rings' rotation */
+.voice-wave__motes {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 50%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .voice-wave__motes {
+    animation: wave-motes-orbit 140s linear infinite;
+  }
+}
+
+@keyframes wave-motes-orbit {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+/* the "system waking up" click moment — particles briefly sweep faster
+   before the route change */
+[data-wave-state='answered'] .voice-wave__motes,
+[data-wave-state='listening'] .voice-wave__motes {
+  animation-duration: 4s;
+}
+
+.voice-wave__mote {
+  position: absolute;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--gold) 60%, var(--bright-green) 40%);
+  transform: translate(-50%, -50%);
+  opacity: var(--peak-opacity, 0.7);
+  filter: blur(var(--blur, 0px));
+}
+
+.voice-wave__field {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  fill: none;
+  transform-origin: 50% 50%;
+}
+
+/* a slow, faint sweep of light around the whole field — the "occasional
+   reflection" a curved glass surface would catch, not a spinner. Purely
+   ambient (like the motes below) — unrelated to the flow ring itself,
+   which is the one element here that never carries its own animation. */
+.voice-wave::after {
+  content: '';
+  position: absolute;
+  inset: 4%;
+  z-index: 1;
+  border-radius: 50%;
+  pointer-events: none;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0%,
+    transparent 88%,
+    color-mix(in srgb, var(--bright-green) 40%, #f3eeff 60%) 93%,
+    transparent 98%
+  );
+  opacity: 0.3;
+  mix-blend-mode: overlay;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .voice-wave::after {
+    animation: wave-sheen-sweep 11s linear infinite;
+  }
+}
+
+@keyframes wave-sheen-sweep {
+  to { transform: rotate(360deg); }
+}
+
+/* a thin ring inside the blob, right around the mic — grounds it as a
+   physical instrument face rather than the mic icon floating in open
+   glass. No animation of its own, so it never competes with or
+   distracts from the blob, which is the one shape that's actually
+   meant to move. */
+.voice-wave__ring--halo {
+  fill: none;
+  stroke-width: 1;
+  stroke: color-mix(in srgb, var(--hero-emerald-bright, var(--bright-green)) 45%, transparent);
+  transform-origin: 100px 100px;
+}
+
+/* --- the signature liquid blob: a smooth closed curve wrapped around
+   the mic. At rest its `d` is driven by an ordinary CSS keyframe
+   (voicewave-blob-idle) cycling through three gently-lobed shapes —
+   "continuously morphs and breathes", not frozen. The instant real
+   audio takes over (VoiceWave.jsx sets [data-audio-live]), that
+   keyframe is switched off and the exact same `d` attribute is instead
+   redrawn every frame from real microphone volume — same shape
+   language, different data source. A translucent glass fill plus a
+   three-stop blue → violet → magenta gradient stroke, both wrapped in a
+   drop-shadow glow, is what sells "liquid neon core" rather than a
+   thin outline. --- */
+.voice-wave__blob {
+  fill: color-mix(in srgb, var(--surface-warm) 55%, transparent);
+  stroke: url(#voice-wave-flow-gradient);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  opacity: 0.92;
+  filter: drop-shadow(0 0 16px color-mix(in srgb, var(--primary) 60%, transparent)) drop-shadow(0 0 34px color-mix(in srgb, var(--gold) 30%, transparent));
+  transition: opacity 0.4s ease, stroke-width 0.4s ease, filter 0.4s ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .voice-wave__blob {
+    animation: voicewave-blob-idle 12s ease-in-out infinite;
+  }
+}
+
+@keyframes voicewave-blob-idle {
+  0%, 100% {
+    d: path('M166.90,100.00 L167.39,102.21 L167.80,104.44 L168.15,106.71 L168.41,109.01 L168.60,111.33 L168.70,113.67 L168.73,116.03 L168.68,118.40 L167.54,120.49 L166.33,122.52 L165.07,124.49 L163.75,126.41 L162.37,128.26 L160.94,130.05 L159.46,131.78 L157.94,133.45 L156.37,135.05 L154.75,136.58 L153.10,138.05 L151.41,139.45 L149.69,140.78 L147.93,142.03 L146.15,143.22 L144.34,144.34 L143.22,146.15 L142.03,147.93 L140.78,149.69 L139.45,151.41 L138.05,153.10 L136.58,154.75 L135.05,156.37 L133.45,157.94 L131.78,159.46 L130.05,160.94 L128.26,162.37 L126.41,163.75 L124.49,165.07 L122.52,166.33 L120.49,167.54 L118.40,168.68 L116.03,168.73 L113.67,168.70 L111.33,168.60 L109.01,168.41 L106.71,168.15 L104.44,167.80 L102.21,167.39 L100.00,166.90 L97.83,166.34 L95.69,165.71 L93.60,165.01 L91.54,164.25 L89.53,163.42 L87.56,162.53 L85.64,161.57 L83.77,160.56 L81.65,160.50 L79.51,160.37 L77.36,160.16 L75.20,159.87 L73.04,159.50 L70.88,159.06 L68.71,158.54 L66.55,157.94 L64.40,157.26 L62.25,156.50 L60.11,155.66 L58.00,154.74 L55.89,153.74 L53.81,152.67 L51.76,151.51 L49.72,150.28 L48.49,148.24 L47.33,146.19 L46.26,144.11 L45.26,142.00 L44.34,139.89 L43.50,137.75 L42.74,135.60 L42.06,133.45 L41.46,131.29 L40.94,129.12 L40.50,126.96 L40.13,124.80 L39.84,122.64 L39.63,120.49 L39.50,118.35 L39.44,116.23 L38.43,114.36 L37.47,112.44 L36.58,110.47 L35.75,108.46 L34.99,106.40 L34.29,104.31 L33.66,102.17 L33.10,100.00 L32.61,97.79 L32.20,95.56 L31.85,93.29 L31.59,90.99 L31.40,88.67 L31.30,86.33 L31.27,83.97 L31.32,81.60 L32.46,79.51 L33.67,77.48 L34.93,75.51 L36.25,73.59 L37.63,71.74 L39.06,69.95 L40.54,68.22 L42.06,66.55 L43.63,64.95 L45.25,63.42 L46.90,61.95 L48.59,60.55 L50.31,59.22 L52.07,57.97 L53.85,56.78 L55.66,55.66 L56.78,53.85 L57.97,52.07 L59.22,50.31 L60.55,48.59 L61.95,46.90 L63.42,45.25 L64.95,43.63 L66.55,42.06 L68.22,40.54 L69.95,39.06 L71.74,37.63 L73.59,36.25 L75.51,34.93 L77.48,33.67 L79.51,32.46 L81.60,31.32 L83.97,31.27 L86.33,31.30 L88.67,31.40 L90.99,31.59 L93.29,31.85 L95.56,32.20 L97.79,32.61 L100.00,33.10 L102.17,33.66 L104.31,34.29 L106.40,34.99 L108.46,35.75 L110.47,36.58 L112.44,37.47 L114.36,38.43 L116.23,39.44 L118.35,39.50 L120.49,39.63 L122.64,39.84 L124.80,40.13 L126.96,40.50 L129.12,40.94 L131.29,41.46 L133.45,42.06 L135.60,42.74 L137.75,43.50 L139.89,44.34 L142.00,45.26 L144.11,46.26 L146.19,47.33 L148.24,48.49 L150.28,49.72 L151.51,51.76 L152.67,53.81 L153.74,55.89 L154.74,58.00 L155.66,60.11 L156.50,62.25 L157.26,64.40 L157.94,66.55 L158.54,68.71 L159.06,70.88 L159.50,73.04 L159.87,75.20 L160.16,77.36 L160.37,79.51 L160.50,81.65 L160.56,83.77 L161.57,85.64 L162.53,87.56 L163.42,89.53 L164.25,91.54 L165.01,93.60 L165.71,95.69 L166.34,97.83 L166.90,100.00 Z');
+  }
+  33% {
+    d: path('M170.53,100.00 L169.77,102.28 L168.94,104.52 L168.04,106.70 L167.07,108.83 L166.04,110.90 L164.94,112.92 L163.79,114.87 L162.57,116.77 L161.81,118.75 L160.99,120.70 L160.10,122.62 L159.15,124.50 L158.15,126.35 L157.09,128.15 L155.97,129.92 L154.80,131.64 L154.34,133.79 L153.81,135.95 L153.18,138.11 L152.48,140.27 L151.69,142.42 L150.81,144.56 L149.85,146.69 L148.80,148.80 L147.31,150.51 L145.76,152.18 L144.14,153.79 L142.48,155.35 L140.75,156.87 L138.97,158.33 L137.14,159.73 L135.26,161.08 L132.91,161.56 L130.56,161.96 L128.22,162.28 L125.89,162.50 L123.58,162.64 L121.28,162.70 L119.01,162.68 L116.77,162.57 L114.67,162.90 L112.56,163.17 L110.46,163.36 L108.36,163.48 L106.26,163.53 L104.16,163.51 L102.08,163.43 L100.00,163.27 L97.91,163.96 L95.77,164.57 L93.59,165.11 L91.37,165.58 L89.11,165.97 L86.82,166.29 L84.49,166.52 L82.14,166.67 L79.91,166.23 L77.69,165.71 L75.49,165.12 L73.30,164.46 L71.13,163.72 L68.97,162.91 L66.84,162.03 L64.74,161.08 L63.14,159.28 L61.62,157.45 L60.18,155.57 L58.82,153.67 L57.54,151.74 L56.34,149.78 L55.23,147.80 L54.19,145.81 L52.86,144.15 L51.58,142.46 L50.36,140.74 L49.20,138.98 L48.11,137.18 L47.08,135.36 L46.11,133.51 L45.20,131.64 L43.56,130.17 L41.96,128.62 L40.40,127.00 L38.89,125.31 L37.42,123.55 L36.00,121.72 L34.64,119.83 L33.33,117.86 L32.60,115.72 L31.94,113.54 L31.34,111.34 L30.82,109.11 L30.38,106.86 L30.00,104.59 L29.70,102.30 L29.47,100.00 L30.23,97.72 L31.06,95.48 L31.96,93.30 L32.93,91.17 L33.96,89.10 L35.06,87.08 L36.21,85.13 L37.43,83.23 L38.19,81.25 L39.01,79.30 L39.90,77.38 L40.85,75.50 L41.85,73.65 L42.91,71.85 L44.03,70.08 L45.20,68.36 L45.66,66.21 L46.19,64.05 L46.82,61.89 L47.52,59.73 L48.31,57.58 L49.19,55.44 L50.15,53.31 L51.20,51.20 L52.69,49.49 L54.24,47.82 L55.86,46.21 L57.52,44.65 L59.25,43.13 L61.03,41.67 L62.86,40.27 L64.74,38.92 L67.09,38.44 L69.44,38.04 L71.78,37.72 L74.11,37.50 L76.42,37.36 L78.72,37.30 L80.99,37.32 L83.23,37.43 L85.33,37.10 L87.44,36.83 L89.54,36.64 L91.64,36.52 L93.74,36.47 L95.84,36.49 L97.92,36.57 L100.00,36.73 L102.09,36.04 L104.23,35.43 L106.41,34.89 L108.63,34.42 L110.89,34.03 L113.18,33.71 L115.51,33.48 L117.86,33.33 L120.09,33.77 L122.31,34.29 L124.51,34.88 L126.70,35.54 L128.87,36.28 L131.03,37.09 L133.16,37.97 L135.26,38.92 L136.86,40.72 L138.38,42.55 L139.82,44.43 L141.18,46.33 L142.46,48.26 L143.66,50.22 L144.77,52.20 L145.81,54.19 L147.14,55.85 L148.42,57.54 L149.64,59.26 L150.80,61.02 L151.89,62.82 L152.92,64.64 L153.89,66.49 L154.80,68.36 L156.44,69.83 L158.04,71.38 L159.60,73.00 L161.11,74.69 L162.58,76.45 L164.00,78.28 L165.36,80.17 L166.67,82.14 L167.40,84.28 L168.06,86.46 L168.66,88.66 L169.18,90.89 L169.62,93.14 L170.00,95.41 L170.30,97.70 L170.53,100.00 Z');
+  }
+  66% {
+    d: path('M163.24,100.00 L163.53,102.08 L163.76,104.18 L163.91,106.29 L164.00,108.43 L164.01,110.57 L163.95,112.72 L163.82,114.88 L163.61,117.05 L163.65,119.31 L163.60,121.59 L163.48,123.89 L163.27,126.21 L162.97,128.53 L162.59,130.87 L162.13,133.21 L161.57,135.55 L159.81,137.19 L158.01,138.76 L156.17,140.25 L154.29,141.66 L152.38,142.99 L150.45,144.24 L148.49,145.41 L146.50,146.50 L144.75,147.78 L142.95,148.98 L141.13,150.12 L139.28,151.19 L137.40,152.20 L135.50,153.14 L133.58,154.01 L131.64,154.81 L130.22,156.54 L128.72,158.24 L127.14,159.91 L125.48,161.53 L123.75,163.10 L121.94,164.63 L120.05,166.10 L118.09,167.52 L115.85,167.96 L113.59,168.33 L111.33,168.62 L109.06,168.84 L106.79,168.98 L104.53,169.05 L102.26,169.04 L100.00,168.96 L97.77,168.16 L95.59,167.28 L93.47,166.34 L91.40,165.33 L89.39,164.26 L87.44,163.13 L85.56,161.94 L83.74,160.69 L81.61,160.62 L79.47,160.47 L77.32,160.25 L75.17,159.95 L73.01,159.57 L70.85,159.12 L68.68,158.59 L66.53,157.98 L64.38,157.28 L62.25,156.50 L60.13,155.64 L58.03,154.70 L55.94,153.68 L53.88,152.59 L51.84,151.42 L49.83,150.17 L48.78,147.97 L47.82,145.76 L46.95,143.54 L46.17,141.31 L45.48,139.07 L44.87,136.84 L44.35,134.61 L43.92,132.38 L42.98,130.48 L42.10,128.55 L41.28,126.60 L40.54,124.63 L39.86,122.64 L39.24,120.62 L38.70,118.60 L38.22,116.56 L36.90,114.71 L35.65,112.80 L34.45,110.82 L33.31,108.78 L32.24,106.67 L31.24,104.51 L30.30,102.28 L29.44,100.00 L29.80,97.70 L30.24,95.43 L30.76,93.18 L31.34,90.96 L32.00,88.77 L32.72,86.62 L33.51,84.50 L34.37,82.42 L35.61,80.47 L36.90,78.58 L38.25,76.76 L39.65,75.00 L41.10,73.31 L42.59,71.69 L44.13,70.13 L45.70,68.65 L46.19,66.54 L46.76,64.42 L47.41,62.31 L48.14,60.21 L48.96,58.11 L49.85,56.02 L50.83,53.95 L51.89,51.89 L53.28,50.12 L54.73,48.38 L56.25,46.69 L57.83,45.04 L59.47,43.44 L61.17,41.89 L62.93,40.38 L64.74,38.93 L67.15,38.54 L69.54,38.24 L71.92,38.03 L74.28,37.91 L76.62,37.88 L78.93,37.93 L81.21,38.06 L83.46,38.28 L85.46,37.66 L87.49,37.10 L89.53,36.61 L91.60,36.18 L93.68,35.82 L95.77,35.53 L97.88,35.31 L100.00,35.16 L102.15,34.43 L104.34,33.77 L106.58,33.18 L108.86,32.68 L111.19,32.25 L113.55,31.90 L115.94,31.63 L118.37,31.45 L120.45,32.58 L122.48,33.77 L124.46,35.02 L126.37,36.33 L128.23,37.70 L130.02,39.12 L131.76,40.59 L133.43,42.10 L135.04,43.65 L136.59,45.24 L138.07,46.88 L139.48,48.55 L140.83,50.25 L142.10,51.99 L143.31,53.76 L144.45,55.55 L146.44,56.50 L148.42,57.54 L150.38,58.65 L152.32,59.85 L154.23,61.14 L156.12,62.50 L157.97,63.95 L159.79,65.48 L160.98,67.41 L162.10,69.38 L163.16,71.38 L164.15,73.43 L165.08,75.51 L165.94,77.62 L166.73,79.76 L167.46,81.93 L167.21,84.33 L166.88,86.70 L166.46,89.03 L165.97,91.32 L165.40,93.56 L164.75,95.76 L164.03,97.90 L163.24,100.00 Z');
+  }
+}
+
+[data-wave-state='listening'] .voice-wave__blob {
+  opacity: 1;
+  stroke-width: 3;
+  filter: drop-shadow(0 0 26px color-mix(in srgb, var(--bright-green) 70%, transparent)) drop-shadow(0 0 50px color-mix(in srgb, var(--gold) 45%, transparent));
+}
+
+[data-wave-state='processing'] .voice-wave__blob {
+  opacity: 0.55;
+}
+
+/* the mic sits on a small glass disc riding inside the blob (matches the
+   inner ring) rather than a large flat surface — the blob itself is now
+   the primary "material", this is just enough of a face for the icon to
+   read as centred on something rather than floating in open glass. */
+.voice-wave__mic-wrap {
+  position: absolute;
+  z-index: 2;
+  width: 46%;
+  height: 46%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--hero-ivory, #fff) 35%, transparent) 0%, transparent 70%);
+  border: 1px solid color-mix(in srgb, var(--hero-emerald-bright, var(--bright-green)) 30%, transparent);
+  box-shadow: inset 0 0 24px color-mix(in srgb, var(--primary) 30%, transparent);
+  transition: box-shadow 0.3s ease;
+}
+
+.voice-wave__mic {
+  color: var(--hero-ivory, #f3eeff);
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--bright-green) 60%, transparent));
+  transition: color 0.3s ease, filter 0.3s ease;
+}
+
+/* --- small glass bubbles orbiting just outside the blob's rim — same
+   "highlight + tinted fade" glass look as the Home hero's bubble field,
+   scaled down to this one component. --- */
+.voice-wave__bubbles {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.voice-wave__bubble {
+  position: absolute;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  filter: blur(0.6px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: inset 0 0 4px rgba(255, 255, 255, 0.12);
+  background:
+    radial-gradient(circle at 30% 26%, rgba(255, 255, 255, 0.6) 0%, transparent 40%),
+    radial-gradient(circle, color-mix(in srgb, var(--hero-emerald, var(--primary)) 55%, transparent) 0%, transparent 78%);
+}
+
+.voice-wave__bubble--magenta {
+  background:
+    radial-gradient(circle at 30% 26%, rgba(255, 255, 255, 0.6) 0%, transparent 40%),
+    radial-gradient(circle, color-mix(in srgb, var(--gold) 55%, transparent) 0%, transparent 78%);
+}
+
+.voice-wave__bubble--blue {
+  background:
+    radial-gradient(circle at 30% 26%, rgba(255, 255, 255, 0.6) 0%, transparent 40%),
+    radial-gradient(circle, color-mix(in srgb, var(--bright-green) 55%, transparent) 0%, transparent 78%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .voice-wave__glow {
+    animation: wave-breathe 6s ease-in-out infinite;
+  }
+  .voice-wave__mote {
+    animation: wave-mote-drift var(--dur, 8s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+  }
+  .voice-wave__bubble {
+    animation: voicewave-bubble-drift var(--dur, 9s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+  }
+}
+
+@keyframes wave-breathe {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.04); }
+}
+
+@keyframes wave-mote-drift {
+  0%, 100% { transform: translate(-50%, -50%); opacity: calc(var(--peak-opacity, 0.7) * 0.7); }
+  50% { transform: translate(calc(-50% + 3px), calc(-50% - 4px)); opacity: var(--peak-opacity, 0.85); }
+}
+
+@keyframes voicewave-bubble-drift {
+  0%, 100% { transform: translate(-50%, -50%) scale(0.85); opacity: calc(var(--peak-opacity, 0.3) * 0.5); }
+  50% { transform: translate(calc(-50% - 4px), calc(-50% - 6px)) scale(1.1); opacity: var(--peak-opacity, 0.3); }
+}
+
+/* the "waking up" moment: a quick contract-then-release the instant
+   listening starts, on the Core's own root rather than the blob (which
+   is already busy with its own continuous morphing) so the two motions
+   never compete for the same property */
+@media (prefers-reduced-motion: no-preference) {
+  .voice-wave[data-wave-state='listening'] {
+    animation: wave-activate-contract 0.42s ease-out;
+  }
+}
+
+@keyframes wave-activate-contract {
+  0% { transform: scale(1); }
+  35% { transform: scale(0.93); }
+  70% { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+
+[data-wave-state='listening'] .voice-wave__glow {
+  animation-duration: 2.2s;
+  background: radial-gradient(circle, color-mix(in srgb, var(--bright-green) 26%, transparent) 0%, transparent 72%);
+}
+
+[data-wave-state='listening'] .voice-wave__mic-wrap {
+  box-shadow: inset 0 0 30px color-mix(in srgb, var(--bright-green) 45%, transparent);
+}
+
+[data-wave-state='listening'] .voice-wave__mic {
+  color: var(--bright-green);
+}
+
+/* real microphone volume driving the glow (`transform` scale) and the
+   blob (`d`), in via VoiceWave.jsx refs every animation frame: a CSS
+   `animation` touching either of those properties fights a live JS-set
+   value for as long as it runs, so both must be switched off for
+   exactly as long as `data-audio-live` is set. */
+[data-audio-live='true'] .voice-wave__glow {
+  animation: none;
+}
+
+[data-audio-live='true'] .voice-wave__blob {
+  animation: none;
+}
+
+/* a touch of extra teal bloom while genuinely audio-driven — the glow
+   already scales with average volume via JS, this just makes the color
+   itself feel a shade more "live" than the resting listening tint */
+[data-audio-live='true'] .voice-wave__glow {
+  background: radial-gradient(circle, color-mix(in srgb, var(--bright-green) 34%, transparent) 0%, transparent 74%);
+}
+
+[data-wave-state='processing'] .voice-wave__glow {
+  animation-duration: 1.6s;
+}
+
+[data-wave-state='answered'] .voice-wave__glow,
+[data-wave-state='listening'] .voice-wave__glow {
+  animation: wave-pulse-once 1.3s ease-out;
+}
+
+@keyframes wave-pulse-once {
+  0% { opacity: 1; transform: scale(1); }
+  55% { opacity: 1; transform: scale(1.25); }
+  100% { opacity: 0.7; transform: scale(1); }
+}
+
+
+/* ===================== Hero ===================== */
+.hero {
+  padding: 1.75rem 1.5rem 1.75rem;
+  /* fits within roughly one viewport together with the floating navbar
+     above it, so the first screen reads as a complete composition
+     rather than something that obviously needs scrolling */
+  min-height: clamp(560px, calc(100vh - 88px), 900px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  --core-x: 50%;
+  --core-y: 68%;
+  /* a fixed, deliberately restrained reference palette for the cosmic
+     scene and its lighting — kept constant across both themes (a brand
+     identity, not chrome UI), separate from the theme-aware --bg token
+     the base canvas below still uses. Deep space black, electric violet,
+     cyan and magenta — no ocean/gold. */
+  --hero-forest: #0c0824;
+  --hero-forest-deep: #050214;
+  --hero-forest-mid: #150f36;
+  --hero-emerald-deep: #5b21d6;
+  --hero-emerald: #8b5cf6;
+  --hero-emerald-bright: #22d3ee;
+  --hero-ivory: #f3eeff;
+  --hero-gold: #f83ecb;
+  --hero-sage: #6d5fa8;
+  --hero-glass: rgba(255, 255, 255, 0.06);
+  --hero-glass-strong: rgba(255, 255, 255, 0.1);
+  /* the one deliberate contrasting note in an otherwise violet/cyan
+     scene — a magenta nebula glow low on the horizon, not a literal
+     sunset, but filling the same "one warm accent" role */
+  --hero-sunset: #ff5fd1;
+  --hero-sunset-deep: #c721a0;
+  /* a symmetric cinematic vignette — brighter/cooler around the Voice
+     Core, quietly darkening toward every edge equally — reads as ONE
+     continuous composition instead of a diagonal sweep that leaves one
+     corner untouched and another deepened */
+  background:
+    radial-gradient(ellipse 58% 46% at var(--core-x) var(--core-y), color-mix(in srgb, var(--hero-emerald) 14%, transparent) 0%, transparent 72%),
+    radial-gradient(ellipse 130% 110% at 50% 42%, transparent 52%, color-mix(in srgb, var(--hero-forest-deep) 24%, transparent) 100%),
+    var(--bg);
+
+  --hero-sun-core: var(--hero-ivory);
+  --hero-sun: var(--hero-gold);
+  --hero-sun-deep: #7c1f9e;
+}
+
+:root[data-theme='light'] .hero {
+  /* the hero stays a fixed deep-space scene regardless of the site-wide
+     light/dark toggle — a brand identity moment, not chrome UI — so only
+     the vignette accent softens slightly for the lighter surroundings */
+  background:
+    radial-gradient(ellipse 58% 46% at var(--core-x) var(--core-y), color-mix(in srgb, var(--hero-emerald) 11%, transparent) 0%, transparent 72%),
+    radial-gradient(ellipse 130% 110% at 50% 42%, transparent 55%, color-mix(in srgb, var(--hero-sage) 18%, transparent) 100%),
+    var(--bg);
+}
+
+.hero__stack {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  --hero-heading: var(--text);
+  /* gently rises and fades as the hero scrolls out of view — --scrollp is
+     written by Hero.jsx's own scroll listener (0 at top, 1 once fully
+     scrolled past), separate from BeachScene's own copy of the same
+     metric used for its decorative layers */
+  transform: translateY(calc(var(--scrollp, 0) * -34px));
+  opacity: calc(1 - var(--scrollp, 0) * 0.7);
+}
+
+.hero__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  /* barely-there — present enough that the text reads as part of the same
+     3D space as the background, never enough to distract from reading it */
+  transform: translate(calc(var(--mx, 0) * 1px), calc(var(--my, 0) * 1px));
+  transition: transform 0.2s ease-out;
+}
+
+:root[data-theme='light'] .hero__stack {
+  --hero-heading: var(--primary-dark);
+}
+
+/* fade + slide up on load, staggered per element via --d; reduced-motion
+   visitors get the finished state immediately, no animation at all */
+.hero__reveal {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero__reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    animation: hero-reveal 0.7s ease-out forwards;
+    animation-delay: var(--d, 0s);
+  }
+}
+
+@keyframes hero-reveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* a small glass pill above the headline — translucent surface, blurred
+   backdrop, thin luminous border, matching the glassmorphism used on the
+   navbar/buttons/feature strip rather than sitting as bare text */
+.hero__eyebrow {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--gold) 70%, var(--hero-heading) 30%);
   margin-bottom: 1rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--hero-glass-strong) 100%, transparent);
+  border: 1px solid color-mix(in srgb, var(--hero-emerald) 35%, var(--hero-glass-strong));
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  backdrop-filter: blur(16px) saturate(1.3);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.hero__headline {
+  margin: 0 0 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+  line-height: 0.94;
+  font-size: clamp(2.3rem, 5.4vw, 3.8rem);
+  color: var(--hero-heading);
+  /* the multilingual demo swaps this text every few seconds — a floor
+     sized for three lines of the loosest script keeps the CTA below it
+     from visibly jumping on every swap */
+  min-height: 3.3em;
+}
+
+@media (min-width: 1024px) {
+  .hero__headline {
+    font-size: clamp(1.9rem, 2.9vw, 3rem);
+    min-height: 2.7em;
+  }
+}
+
+/* the 0.92 line-height above is tuned for Latin caps — most Indic
+   scripts carry matras/conjuncts above and below the baseline that
+   clip at that height, so every non-Latin script here gets a looser,
+   script-appropriate line-height instead of one hard-coded for English */
+:lang(hi) .hero__headline,
+:lang(mr) .hero__headline,
+:lang(kok) .hero__headline,
+:lang(bn) .hero__headline,
+:lang(gu) .hero__headline,
+:lang(pa) .hero__headline,
+:lang(or) .hero__headline,
+:lang(as) .hero__headline,
+:lang(ur) .hero__headline,
+:lang(ta) .hero__headline,
+:lang(te) .hero__headline,
+:lang(kn) .hero__headline,
+:lang(ml) .hero__headline,
+/* the headline's own multilingual demo sets `lang` directly on this
+   element rather than an ancestor, so it needs the self-matching form
+   of :lang() too, not just the descendant one above */
+.hero__headline:lang(hi),
+.hero__headline:lang(bn) {
+  line-height: 1.18;
+  letter-spacing: 0;
+}
+
+/* the visually tallest/widest scripts also get a touch less font-size so
+   the headline still clears the column width without wrapping awkwardly */
+:lang(ta) .hero__headline,
+:lang(te) .hero__headline,
+:lang(kn) .hero__headline,
+:lang(ml) .hero__headline {
+  font-size: clamp(2.3rem, 5.6vw, 4.1rem);
+}
+
+@media (min-width: 1024px) {
+  :lang(ta) .hero__headline,
+  :lang(te) .hero__headline,
+  :lang(kn) .hero__headline,
+  :lang(ml) .hero__headline {
+    font-size: clamp(1.95rem, 3vw, 3.15rem);
+  }
+}
+
+.hero__headline-row {
+  display: block;
+}
+
+.hero__headline-row--accent {
+  color: color-mix(in srgb, var(--gold) 55%, var(--hero-heading) 45%);
+}
+
+/* a handful of languages take a slow turn in the headline as a quiet
+   "this works in your language too" demo — each swap remounts this
+   wrapper (React key change), so the fade-in below plays every time */
+.hero__headline-morph {
+  display: block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero__headline-morph {
+    animation: headline-morph-in 0.7s ease;
+  }
+}
+
+@keyframes headline-morph-in {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hero__sub {
+  font-size: clamp(0.95rem, 1.3vw, 1.08rem);
+  color: var(--text-muted);
+  max-width: 46ch;
+  margin: 0 auto 1.1rem;
+}
+
+@media (min-width: 1024px) {
+  .hero__sub {
+    margin: 0 0 1.2rem;
+  }
+}
+
+.hero__sub-break {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .hero__sub-break {
+    display: inline;
+  }
+}
+
+.hero__cta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.85rem;
+  margin-bottom: 0;
+}
+
+@media (min-width: 1024px) {
+  .hero__cta {
+    justify-content: flex-start;
+  }
+}
+
+.hero__cta .hero__cta-primary {
+  border-radius: 999px;
+  gap: 0.6rem;
+  background: linear-gradient(135deg, var(--hero-gold), var(--primary) 65%, var(--hero-emerald-deep));
+  border: 1px solid color-mix(in srgb, var(--hero-emerald-bright) 40%, transparent);
+}
+
+/* a slow, quiet breathing glow at rest — the primary action should feel
+   alive without anyone touching it, not just on hover */
+@media (prefers-reduced-motion: no-preference) {
+  .hero__cta .hero__cta-primary {
+    animation: cta-breathe 4.5s ease-in-out infinite;
+  }
+}
+
+@keyframes cta-breathe {
+  0%, 100% { box-shadow: var(--shadow); }
+  50% { box-shadow: var(--shadow), var(--glow-green); }
+}
+
+.hero__cta .hero__cta-primary:hover:not(:disabled) {
+  box-shadow: var(--shadow), var(--glow-green);
+  transform: translateY(-2px);
+  animation-play-state: paused;
+  filter: brightness(1.08);
+}
+
+.hero__cta .hero__cta-primary:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--shadow);
+  transition-duration: 0.08s;
+}
+
+.hero__cta-arrow {
+  display: inline-block;
+  transition: transform 0.25s ease;
+}
+
+.hero__cta-primary:hover:not(:disabled) .hero__cta-arrow {
+  transform: translateX(3px);
+}
+
+.hero__cta .btn--ghost {
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--surface-warm) 45%, transparent);
+  border-color: color-mix(in srgb, var(--primary) 45%, var(--border-strong));
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.hero__cta .btn--ghost:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--bright-green) 16%, transparent);
+  border-color: var(--primary);
+  color: var(--hero-heading);
+  box-shadow: 0 0 22px -4px color-mix(in srgb, var(--hero-emerald-bright) 55%, transparent);
+  transform: translateY(-2px);
+}
+
+.hero__cta .btn--ghost:active:not(:disabled) {
+  background: color-mix(in srgb, var(--bright-green) 24%, transparent);
+  transition-duration: 0.08s;
+}
+
+/* --- the 4-item highlight strip along the bottom of the hero — one
+   glass panel (not four separate cards) so it reads as a single
+   instrument-panel object, matching the navbar/badge/button glass
+   language rather than adding a new visual vocabulary. --- */
+.hero__features {
+  margin-top: clamp(1.5rem, 4vw, 2.75rem);
+  width: 100%;
+  max-width: 1180px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.25rem 1.5rem;
+  padding: 1.1rem 1.5rem;
+  border-radius: 24px;
+  background: color-mix(in srgb, var(--hero-glass-strong) 100%, transparent);
+  border: 1px solid var(--hero-glass-strong);
+  -webkit-backdrop-filter: blur(22px) saturate(1.3);
+  backdrop-filter: blur(22px) saturate(1.3);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+@media (min-width: 860px) {
+  .hero__features {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem 1.25rem;
+    padding: 1.25rem 2rem;
+  }
+}
+
+.hero__feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 0.6rem;
+  margin: -0.6rem;
+  border-radius: 16px;
+  text-align: left;
+  transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* a slight lift + glow on hover — the "3D response" the feature strip
+   asks for, kept to a translate/shadow pair rather than a real per-pixel
+   tilt so it stays cheap and never feels gimmicky */
+.hero__feature:hover {
+  transform: translateY(-3px);
+  background: color-mix(in srgb, var(--hero-emerald) 8%, transparent);
+  box-shadow: 0 10px 24px -8px color-mix(in srgb, var(--hero-emerald) 35%, transparent);
+}
+
+.hero__feature-icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: var(--hero-emerald-bright);
+  background: radial-gradient(circle at 32% 28%, color-mix(in srgb, var(--hero-emerald) 45%, transparent), color-mix(in srgb, var(--hero-emerald-deep) 30%, transparent));
+  border: 1px solid color-mix(in srgb, var(--hero-emerald) 40%, transparent);
+  box-shadow: 0 0 16px -2px color-mix(in srgb, var(--hero-emerald) 55%, transparent);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.hero__feature:hover .hero__feature-icon {
+  transform: scale(1.12) rotate(-6deg);
+  box-shadow: 0 0 22px -1px color-mix(in srgb, var(--hero-emerald-bright) 65%, transparent);
+}
+
+.hero__feature-copy {
+  min-width: 0;
+}
+
+.hero__feature-title {
+  margin: 0 0 0.15rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--hero-heading);
+}
+
+.hero__feature-body {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: color-mix(in srgb, var(--hero-heading) 62%, transparent);
+}
+
+@media (max-width: 640px) {
+  .hero__features {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .hero__feature {
+    padding: 0.5rem 0;
+  }
+}
+
+/* ===================== Home page: voice journey pipeline ===================== */
+.voice-journey {
+  padding: clamp(3.5rem, 8vw, 5.5rem) 1.5rem clamp(4rem, 9vw, 6rem);
+  background: var(--bg-soft);
+}
+
+.voice-journey__title {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  margin: 0 0 0.6rem;
+  max-width: 32ch;
+}
+
+.voice-journey__subtitle {
+  margin: 0 0 clamp(2.5rem, 6vw, 4rem);
+  max-width: 46ch;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+.voice-journey__track {
+  position: relative;
+}
+
+.voice-journey__line {
+  position: absolute;
+  top: -2px;
+  left: 0;
+  width: 100%;
+  height: 84px;
+  overflow: visible;
+  display: none;
+}
+
+.voice-journey__line-path {
+  fill: none;
+  stroke: color-mix(in srgb, var(--bright-green) 60%, var(--border-strong));
+  stroke-width: 2.25;
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  transition: stroke-dashoffset 1.8s ease;
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--bright-green) 45%, transparent));
+}
+
+.voice-journey.is-visible .voice-journey__line-path {
+  stroke-dashoffset: 0;
+}
+
+@media (min-width: 860px) {
+  .voice-journey__line {
+    display: block;
+  }
+}
+
+.voice-journey__traveler {
+  position: absolute;
+  top: 40px;
+  left: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 10px 3px color-mix(in srgb, var(--gold) 70%, transparent);
+  opacity: 0;
+  display: none;
+}
+
+@media (min-width: 860px) {
+  .voice-journey__traveler {
+    display: block;
+  }
+}
+
+/* the signal makes one clean synced pass on scroll-in, then keeps a
+   slow, quiet loop going afterward so the pipeline reads as a living
+   system rather than a one-off scroll gimmick */
+@media (prefers-reduced-motion: no-preference) {
+  .voice-journey.is-visible .voice-journey__traveler {
+    animation:
+      journey-travel 1.8s ease forwards,
+      journey-travel-loop 4.6s ease-in-out 2.4s infinite;
+  }
+}
+
+/* left%/top values are keyed to match the node centers exactly (10/30/
+   50/70/90% of the track, see .voice-journey__stage) and the same
+   baseline/dip heights as the connecting SVG path, so the dot visibly
+   rides the line instead of drifting off it */
+@keyframes journey-travel {
+  0% { left: 10%; top: 42px; opacity: 0; }
+  6% { opacity: 1; }
+  20% { left: 20%; top: 14px; }
+  40% { left: 40%; top: 70px; }
+  50% { left: 50%; top: 42px; }
+  60% { left: 60%; top: 14px; }
+  80% { left: 80%; top: 70px; }
+  94% { opacity: 1; }
+  100% { left: 90%; top: 42px; opacity: 0; }
+}
+
+@keyframes journey-travel-loop {
+  0% { left: 10%; top: 42px; opacity: 0; }
+  4% { opacity: 0.9; }
+  16% { left: 20%; top: 14px; }
+  32% { left: 40%; top: 70px; }
+  40% { left: 50%; top: 42px; }
+  48% { left: 60%; top: 14px; }
+  64% { left: 80%; top: 70px; }
+  72% { opacity: 0.9; }
+  80%, 100% { left: 90%; top: 42px; opacity: 0; }
+}
+
+/* zero column-gap on the 5-up desktop row is deliberate: each column is
+   exactly 20% of the track width, so a node centered in column i sits at
+   a fixed (i + 0.5) * 20% — 10/30/50/70/90% — which the connecting SVG
+   path's baseline touchpoints and the traveling dot's keyframes are
+   hand-matched to. Adding a gap here would shift those centers and
+   break the alignment between the line and the nodes it's meant to
+   visibly pass through. */
+.voice-journey__stages {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  column-gap: 0;
+  row-gap: 0;
+}
+
+@media (max-width: 860px) {
+  .voice-journey__stages {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 1.5rem;
+    row-gap: 2.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .voice-journey__stages {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 2.75rem;
+  }
+}
+
+.voice-journey__stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.85rem;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  transition-delay: calc(0.3s + var(--i, 0) * 0.15s);
+}
+
+.voice-journey.is-visible .voice-journey__stage {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.voice-journey__node {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(64px, 7vw, 84px);
+  height: clamp(64px, 7vw, 84px);
+  border-radius: 50%;
+  color: var(--bright-green);
+  background: radial-gradient(circle at 32% 28%, color-mix(in srgb, var(--surface-warm) 60%, transparent) 0%, var(--surface) 70%);
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+/* the node "activates" roughly when the traveling signal reaches it —
+   a brief gold flash settling into a confirmed green state, then a
+   very quiet ambient breathing glow keeps it feeling alive */
+@media (prefers-reduced-motion: no-preference) {
+  .voice-journey.is-visible .voice-journey__node {
+    animation-name: journey-node-activate, journey-node-breathe;
+    animation-duration: 0.7s, 4.6s;
+    animation-timing-function: ease, ease-in-out;
+    animation-delay: calc(0.2s + var(--i, 0) * 0.36s), calc(1.4s + var(--i, 0) * 0.36s);
+    animation-iteration-count: 1, infinite;
+    animation-fill-mode: both, none;
+  }
+}
+
+@keyframes journey-node-activate {
+  0% {
+    border-color: var(--border-strong);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+  }
+  45% {
+    border-color: var(--gold);
+    color: var(--gold);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1), 0 0 0 10px color-mix(in srgb, var(--gold) 20%, transparent);
+  }
+  100% {
+    border-color: color-mix(in srgb, var(--bright-green) 45%, transparent);
+    color: var(--bright-green);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+@keyframes journey-node-breathe {
+  0%, 100% {
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1), 0 0 0 0 transparent;
+  }
+  50% {
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1), 0 0 20px 2px color-mix(in srgb, var(--bright-green) 22%, transparent);
+  }
+}
+
+/* --- per-stage micro motifs — a tiny hand-built visual under each node
+   so the icon set alone tells the story (speak → understand → retrieve
+   → generate → answer) without a caption --- */
+.voice-journey__motif {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3px;
+  height: 11px;
+  opacity: 0.85;
+}
+
+.voice-journey__motif-bar {
+  width: 3px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--bright-green) 70%, var(--gold) 15%);
+  height: 40%;
+  opacity: 0.75;
+  transform-origin: bottom center;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .voice-journey__motif-bar {
+    animation: motif-eq 1.9s ease-in-out infinite;
+  }
+  .voice-journey__motif-bar:nth-child(1) { animation-delay: -0.4s; }
+  .voice-journey__motif-bar:nth-child(2) { animation-delay: -0.1s; }
+  .voice-journey__motif-bar:nth-child(3) { animation-delay: -0.7s; }
+}
+
+@keyframes motif-eq {
+  0%, 100% { transform: scaleY(0.5); opacity: 0.55; }
+  50% { transform: scaleY(1.5); opacity: 1; }
+}
+
+/* retrieve — two stacked "documents", the shorter one glowing gold as
+   the match that got pulled into context */
+[data-step='retrieve'] .voice-journey__motif {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  height: auto;
+  bottom: -19px;
+}
+
+[data-step='retrieve'] .voice-journey__motif-bar {
+  width: 20px;
+  height: 3px;
+  border-radius: 1px;
+  background: var(--border-strong);
+  opacity: 1;
+  animation: none;
+  transform: none;
+}
+
+[data-step='retrieve'] .voice-journey__motif-bar:nth-child(2) {
+  width: 13px;
+  background: var(--gold);
+  box-shadow: 0 0 6px 1px color-mix(in srgb, var(--gold) 55%, transparent);
+}
+
+[data-step='retrieve'] .voice-journey__motif-bar:nth-child(3) {
+  width: 16px;
+}
+
+/* generate — a small glowing processing core instead of bars */
+[data-step='generate'] .voice-journey__motif {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  bottom: -18px;
+  background: radial-gradient(circle, var(--gold) 0%, transparent 72%);
+}
+
+[data-step='generate'] .voice-journey__motif-bar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-step='generate'] .voice-journey__motif {
+    animation: motif-core-pulse 2.3s ease-in-out infinite;
+  }
+}
+
+@keyframes motif-core-pulse {
+  0%, 100% { transform: translateX(-50%) scale(0.8); opacity: 0.55; }
+  50% { transform: translateX(-50%) scale(1.3); opacity: 1; }
+}
+
+/* answer — a small confirming checkmark instead of bars */
+[data-step='answer'] .voice-journey__motif {
+  bottom: -18px;
+  height: 13px;
+}
+
+[data-step='answer'] .voice-journey__motif-bar {
+  display: none;
+}
+
+[data-step='answer'] .voice-journey__motif::after {
+  content: '✓';
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--bright-green);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-step='answer'] .voice-journey__motif::after {
+    display: inline-block;
+    animation: motif-pop 2.6s ease-in-out infinite;
+  }
+}
+
+@keyframes motif-pop {
+  0%, 70%, 100% { transform: scale(1); opacity: 0.85; }
+  80% { transform: scale(1.35); opacity: 1; }
+  90% { transform: scale(0.95); }
+}
+
+.voice-journey__label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gold-dark);
+}
+
+
+.final-cta {
+  position: relative;
+  min-height: clamp(280px, 30vw, 340px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem 4.5rem;
+  /* cream in light, deep green in dark — a soft atmosphere rather than
+     a flat block, and distinct from both the section above and the
+     always-dark footer it hands off to */
+  background: linear-gradient(180deg, var(--bg) 0%, color-mix(in srgb, var(--sea-muted) 30%, var(--bg)) 100%);
+  overflow: hidden;
+}
+
+.final-cta::before {
+  content: '';
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  width: 460px;
+  height: 460px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, color-mix(in srgb, var(--bright-green) 16%, transparent) 0%, color-mix(in srgb, var(--gold) 6%, transparent) 45%, transparent 70%);
+  pointer-events: none;
+}
+
+/* a curved boundary handing off into the footer's fixed dark-green,
+   instead of a hard horizontal seam between the two sections */
+.final-cta__wave {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 56px;
+  fill: var(--footer-bg);
+  pointer-events: none;
+}
+
+.final-cta__inner {
+  position: relative;
+  max-width: 480px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.final-cta__title {
+  margin: 0;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  font-size: clamp(1.3rem, 2.6vw, 1.7rem);
+  color: var(--text);
+}
+
+.final-cta__body {
+  margin: 0 0 0.4rem;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.final-cta__btn {
+  padding-inline: 1.6rem;
+}
+
+.final-cta__footnote {
+  margin: 0.9rem 0 0;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  opacity: 0.75;
+}
+
+/* ===================== Supported languages ===================== */
+.info-section--languages {
+  background: var(--bg-soft);
+  padding-top: 0;
+}
+
+.lang-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.lang-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.lang-chip:hover {
+  border-color: color-mix(in srgb, var(--bright-green) 45%, transparent);
+  color: var(--bright-green);
+  transform: translateY(-2px);
+}
+
+/* ===================== Beach scene ===================== */
+.beach-scene {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* shared parallax handling: every direct decorative layer gets a --depth
+   (1 = far background, 5 = foreground) and reacts to --mx/--my (mouse,
+   set via JS, range -1..1) and --scrollp (scroll progress 0..1). Actual
+   sway/float/pulse animation always lives on an INNER element so it never
+   fights this transform. */
+.beach-scene__layer {
+  position: absolute;
+  transform: translate(calc(var(--mx, 0) * var(--depth, 1) * 2px), calc(var(--my, 0) * var(--depth, 1) * 2px))
+    translateY(calc(var(--scrollp, 0) * var(--depth, 1) * -4px));
+  opacity: calc(1 - var(--scrollp, 0) * 0.5);
+  transition: transform 0.25s ease-out;
+}
+
+/* --- a soft light that tracks the real cursor position (--px/--py,
+   written by Hero.jsx's pointermove handler) — a large, heavily-blurred
+   radial glow so it reads as ambient light shifting in the scene, never
+   a literal dot chasing the pointer. Fades in/out on enter/leave via
+   --cursor-glow-opacity from that same handler. Off entirely on coarse
+   pointers (Hero.jsx never attaches the listener there), and the CSS
+   fallback below covers browsers where the custom properties are unset. --- */
+.beach-scene__cursor-glow {
+  position: absolute;
+  left: var(--px, 50%);
+  top: var(--py, 40%);
+  width: 46vw;
+  height: 46vw;
+  max-width: 620px;
+  max-height: 620px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--hero-emerald) 26%, transparent) 0%, color-mix(in srgb, var(--hero-gold) 10%, transparent) 45%, transparent 72%);
+  filter: blur(60px);
+  opacity: calc(var(--cursor-glow-opacity, 0) * 0.6);
+  transition: opacity 0.5s ease, left 0.15s linear, top 0.15s linear;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+@media (max-width: 900px), (pointer: coarse) {
+  .beach-scene__cursor-glow {
+    display: none;
+  }
+}
+
+/* --- the flowing colour-mesh field: four blurred, screen-blended colour
+   pools drifting on very slow, independently-timed loops. Screen
+   blending is what actually sells "energy field" — where two pools
+   overlap they brighten into a lighter blended hue instead of muddying
+   into grey the way normal alpha blending would. This is the closest
+   plain CSS gets to a real shader mesh-gradient: no canvas, no WebGL,
+   just `transform`/`opacity` on a handful of elements. --- */
+.beach-scene__mesh {
+  position: absolute;
+  inset: -10%;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.beach-scene__mesh-pool {
+  position: absolute;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  filter: blur(60px);
+  opacity: 0.4;
+}
+
+.beach-scene__mesh-pool--violet {
+  background: radial-gradient(circle, color-mix(in srgb, var(--hero-emerald) 70%, transparent) 0%, transparent 70%);
+}
+
+.beach-scene__mesh-pool--magenta {
+  background: radial-gradient(circle, color-mix(in srgb, var(--hero-gold) 65%, transparent) 0%, transparent 70%);
+}
+
+.beach-scene__mesh-pool--blue {
+  background: radial-gradient(circle, color-mix(in srgb, var(--hero-emerald-deep) 75%, transparent) 0%, transparent 70%);
+}
+
+.beach-scene__mesh-pool--cyan {
+  background: radial-gradient(circle, color-mix(in srgb, var(--hero-emerald-bright) 60%, transparent) 0%, transparent 70%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .beach-scene__mesh-pool {
+    animation: mesh-drift var(--dur, 44s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+  }
+}
+
+/* a wide, lazy figure-of-eight — never a straight back-and-forth, which
+   would read as mechanical panning rather than fluid drift */
+@keyframes mesh-drift {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.34; }
+  25% { transform: translate(calc(-50% + 4vw), calc(-50% - 3vw)) scale(1.12); opacity: 0.44; }
+  50% { transform: translate(calc(-50% - 2vw), calc(-50% + 4vw)) scale(0.94); opacity: 0.4; }
+  75% { transform: translate(calc(-50% - 4vw), calc(-50% - 2vw)) scale(1.06); opacity: 0.46; }
+}
+
+.hero[data-voice-state='listening'] .beach-scene__mesh-pool {
+  opacity: 0.56;
+}
+
+@media (max-width: 640px) {
+  .beach-scene__mesh-pool {
+    filter: blur(36px);
+  }
+}
+
+/* --- the two soft organic blobs — the primary visual now. Each is a
+   large div with an animated organic `border-radius` (the same
+   blob-morph technique proven on the mic disc/button elsewhere) filled
+   with a radial gradient that's dark at its own centre, brightest
+   around ~75% of its radius, and fades to nothing at the true edge —
+   that "glow concentrated at the rim, not a flat glowing disc" is what
+   actually sells "soft 3D blob" rather than "coloured smudge". Anchored
+   to the lower corners, mostly off-canvas, so the middle of the hero —
+   where the headline lives — stays clean and dark. --- */
+.beach-scene__blob-wrap {
+  position: absolute;
+  overflow: visible;
+}
+
+.beach-scene__blob-wrap--a {
+  left: -18%;
+  bottom: -24%;
+  width: min(60vw, 800px);
+  height: min(64vw, 820px);
+}
+
+.beach-scene__blob-wrap--b {
+  right: -16%;
+  top: 0%;
+  width: min(54vw, 740px);
+  height: min(80vw, 940px);
+}
+
+.beach-scene__blob {
+  position: absolute;
+  inset: 0;
+  border-radius: 42% 58% 65% 35% / 45% 40% 60% 55%;
+  filter: blur(14px);
+  opacity: 0.7;
+}
+
+.beach-scene__blob--a {
+  background: radial-gradient(
+    circle at 44% 48%,
+    color-mix(in srgb, var(--hero-forest-mid) 60%, transparent) 0%,
+    color-mix(in srgb, var(--hero-emerald-deep) 30%, transparent) 40%,
+    color-mix(in srgb, var(--hero-gold) 62%, transparent) 76%,
+    color-mix(in srgb, var(--hero-gold) 15%, transparent) 92%,
+    transparent 100%
+  );
+}
+
+.beach-scene__blob--b {
+  background: radial-gradient(
+    circle at 56% 46%,
+    color-mix(in srgb, var(--hero-forest-mid) 60%, transparent) 0%,
+    color-mix(in srgb, var(--hero-emerald-deep) 35%, transparent) 42%,
+    color-mix(in srgb, var(--hero-emerald) 62%, transparent) 78%,
+    color-mix(in srgb, var(--hero-emerald-bright) 30%, transparent) 93%,
+    transparent 100%
+  );
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .beach-scene__blob--a {
+    animation: blob-morph-a 26s ease-in-out infinite;
+  }
+  .beach-scene__blob--b {
+    animation: blob-morph-b 32s ease-in-out infinite;
+  }
+}
+
+@keyframes blob-morph-a {
+  0%, 100% { border-radius: 42% 58% 65% 35% / 45% 40% 60% 55%; }
+  33% { border-radius: 58% 42% 38% 62% / 55% 62% 38% 45%; }
+  66% { border-radius: 48% 52% 55% 45% / 40% 55% 45% 60%; }
+}
+
+@keyframes blob-morph-b {
+  0%, 100% { border-radius: 55% 45% 40% 60% / 50% 45% 55% 50%; }
+  33% { border-radius: 40% 60% 58% 42% / 62% 50% 50% 38%; }
+  66% { border-radius: 50% 50% 48% 52% / 45% 58% 42% 55%; }
+}
+
+.hero[data-voice-state='listening'] .beach-scene__blob {
+  opacity: 0.88;
+}
+
+@media (max-width: 640px) {
+  .beach-scene__blob-wrap--a { width: 82vw; height: 78vw; bottom: -20%; left: -26%; }
+  .beach-scene__blob-wrap--b { width: 78vw; height: 90vw; right: -26%; top: 2%; }
+}
+
+/* --- processing only: a curved data pulse orbiting the Core, centred on
+   the same point the orb itself sits at --- */
+.beach-scene__processing-ring {
+  left: var(--core-x);
+  top: var(--core-y);
+  width: 68%;
+  height: 68%;
+  max-width: 760px;
+  max-height: 760px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) translate(calc(var(--mx, 0) * var(--depth, 1) * 2px), calc(var(--my, 0) * var(--depth, 1) * 2px));
+  background: conic-gradient(
+    from 0deg,
+    transparent 0%,
+    color-mix(in srgb, var(--hero-emerald) 30%, transparent) 8%,
+    transparent 20%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero[data-voice-state='processing'] .beach-scene__processing-ring {
+    opacity: 1;
+    animation: processing-ring-spin 4.5s linear infinite;
+  }
+}
+
+@keyframes processing-ring-spin {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* --- answered only: one ripple travelling outward through the grid
+   from the Core, then gone --- */
+.beach-scene__answer-ripple {
+  left: var(--core-x);
+  top: var(--core-y);
+  width: 10%;
+  height: 10%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid color-mix(in srgb, var(--hero-emerald) 60%, transparent);
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero[data-voice-state='answered'] .beach-scene__answer-ripple {
+    animation: answer-ripple-expand 1.4s ease-out;
+  }
+}
+
+@keyframes answer-ripple-expand {
+  0% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(9); }
+}
+
+/* --- the signature interaction: while listening, rings travel outward
+   and DOWN from the Core, flattening as they go, as if the voice itself
+   were disturbing the field around it. Three rings, staggered, looping
+   only for as long as listening actually lasts. --- */
+.beach-scene__voice-ripples {
+  position: absolute;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.beach-scene__voice-ripple {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 140px;
+  height: 140px;
+  margin: -70px 0 0 -70px;
+  border-radius: 50%;
+  border: 1.5px solid color-mix(in srgb, var(--hero-emerald-bright) 60%, transparent);
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero[data-voice-state='listening'] .beach-scene__voice-ripple {
+    animation: voice-ripple-travel 2.8s ease-out infinite;
+  }
+  .hero[data-voice-state='listening'] .beach-scene__voice-ripple--b {
+    animation-delay: 0.9s;
+  }
+  .hero[data-voice-state='listening'] .beach-scene__voice-ripple--c {
+    animation-delay: 1.8s;
+  }
+}
+
+@keyframes voice-ripple-travel {
+  0% { opacity: 0.55; transform: translateY(0) scale(0.3) scaleY(0.6); }
+  100% { opacity: 0; transform: translateY(160px) scale(2.4) scaleY(0.35); }
+}
+
+.beach-scene__stars {
+  inset: 0;
+}
+
+/* --- a few brighter structured nodes sitting on top of the matrix —
+   static grid positions, slow individual pulse, never drifting --- */
+.beach-scene__particles {
+  inset: 0;
+}
+
+.beach-scene__particle {
+  position: absolute;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--hero-emerald) 85%, white 15%);
+  opacity: 0;
+}
+
+.beach-scene__particle--gold {
+  background: color-mix(in srgb, var(--hero-gold) 85%, white 15%);
+  border-radius: 50%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .beach-scene__particle {
+    animation: signal-node-pulse var(--dur, 8s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+  }
+}
+
+@keyframes signal-node-pulse {
+  0%, 100% { opacity: calc(var(--peak-opacity, 0.5) * 0.35); transform: scale(0.85); }
+  50% { opacity: var(--peak-opacity, 0.5); transform: scale(1.15); }
+}
+
+/* --- translucent glass bubbles: a soft highlight near the top-left plus
+   a tinted, fading body reads as a lit glass sphere rather than a flat
+   dot; a whisper of blur stands in for refraction. Each rises the full
+   height of the hero and back down to transparent, swaying sideways by
+   its own --drift-x, so no two bubbles trace the same path. Biased to
+   the edges in the .jsx generator, never the centre text column. --- */
+.beach-scene__bubbles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.beach-scene__bubble {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0;
+  filter: blur(1.4px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.1);
+  background:
+    radial-gradient(circle at 30% 26%, rgba(255, 255, 255, 0.55) 0%, transparent 38%),
+    radial-gradient(circle, color-mix(in srgb, var(--hero-emerald) 55%, transparent) 0%, transparent 76%);
+  transition: filter 0.5s ease;
+}
+
+.beach-scene__bubble--magenta {
+  background:
+    radial-gradient(circle at 30% 26%, rgba(255, 255, 255, 0.55) 0%, transparent 38%),
+    radial-gradient(circle, color-mix(in srgb, var(--hero-gold) 55%, transparent) 0%, transparent 76%);
+}
+
+.beach-scene__bubble--blue {
+  background:
+    radial-gradient(circle at 30% 26%, rgba(255, 255, 255, 0.55) 0%, transparent 38%),
+    radial-gradient(circle, color-mix(in srgb, var(--hero-emerald-bright) 55%, transparent) 0%, transparent 76%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .beach-scene__bubble {
+    animation: bubble-float var(--dur, 24s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+  }
+  /* `scale` is its own CSS property, independent of `transform` — so the
+     drift (transform) and the breathing (scale) can run as two separate
+     animations on the same element without the usual "one transform
+     animation always wins" conflict documented elsewhere in this file */
+  .beach-scene__bubble--breathe {
+    animation-name: bubble-float, bubble-breathe;
+    animation-duration: var(--dur, 24s), 5.5s;
+    animation-timing-function: ease-in-out, ease-in-out;
+    animation-iteration-count: infinite, infinite;
+    animation-delay: var(--delay, 0s), 0s;
+  }
+}
+
+@keyframes bubble-float {
+  0% { transform: translateY(10vh) translateX(0); opacity: 0; }
+  12% { opacity: var(--peak-opacity, 0.25); }
+  50% { transform: translateY(-42vh) translateX(var(--drift-x, 12px)); }
+  88% { opacity: var(--peak-opacity, 0.25); }
+  100% { transform: translateY(-92vh) translateX(calc(var(--drift-x, 12px) * -1)); opacity: 0; }
+}
+
+@keyframes bubble-breathe {
+  0%, 100% { scale: 1; }
+  50% { scale: 1.2; }
+}
+
+[data-voice-state='listening'] .beach-scene__bubble {
+  filter: blur(1.4px) brightness(1.4);
+}
+
+@media (max-width: 640px) {
+  .beach-scene__bubbles { opacity: 0.7; }
+}
+
+/* --- a full starfield, barely there, twinkling out of sync with each
+   other so it never reads as one synchronised blink --- */
+.beach-scene__star {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--hero-ivory);
+  box-shadow: 0 0 4px 1px color-mix(in srgb, var(--hero-emerald-bright) 60%, transparent);
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .beach-scene__star {
+    animation: light-flicker var(--dur, 5s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+  }
+}
+
+@keyframes light-flicker {
+  0%, 100% { opacity: 0.15; }
+  45% { opacity: 0.15; }
+  55% { opacity: 0.7; }
+  75% { opacity: 0.35; }
+}
+
+/* --- a single wide radial wash across the whole hero, once, the instant
+   listening starts — distinct from .beach-scene__voice-ripple (tight
+   rings travelling from the Core): this is the "the whole scene just
+   breathed in" moment, gone in just over a second. --- */
+.beach-scene__hero-pulse {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 40vw;
+  height: 40vw;
+  min-width: 420px;
+  min-height: 420px;
+  transform: translate(-50%, -50%) scale(0.6);
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--hero-emerald-bright) 22%, transparent) 0%, transparent 70%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero[data-voice-state='listening'] .beach-scene__hero-pulse {
+    animation: hero-pulse-wash 1.3s ease-out;
+  }
+}
+
+@keyframes hero-pulse-wash {
+  0% { opacity: 0.55; transform: translate(-50%, -50%) scale(0.6); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.6); }
+}
+
+/* --- atmospheric haze: softens the join between the hero and the
+   section below instead of a hard edge --- */
+.beach-scene__haze {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 14%;
+  background: linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--bg) 70%, transparent) 100%);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .beach-scene__layer {
+    transform: none !important;
+    opacity: 1 !important;
+    transition: none !important;
+  }
+}
+
+/* ===================== Section transition wave ===================== */
+.wave-divider {
+  display: block;
+  line-height: 0;
+  margin-bottom: -1px;
+  margin-top: -1px;
+  position: relative;
+  z-index: 1;
+  /* the SVG path only fills below its wave curve — without this, the
+     transparent area above the curve would show the page's base
+     background (near-black in dark mode) instead of continuing the
+     previous section's color */
+  background: var(--primary-dark);
+}
+
+.wave-divider svg {
+  display: block;
+  width: 100%;
+  height: 64px;
+}
+
+@media (max-width: 640px) {
+  .wave-divider svg {
+    height: 40px;
+  }
+}
+
+.wave-divider--about-docs {
+  background: var(--bg-soft);
+}
+
+/* ===================== Ask Anything section ===================== */
+.ask-section {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(
+    180deg,
+    var(--primary-dark) 0%,
+    var(--sea-muted) 10%,
+    var(--bg-soft) 26%,
+    var(--surface-warm) 58%,
+    var(--bg) 100%
+  );
+  padding: 1.75rem 0 2.5rem;
+  display: flex;
+  align-items: center;
+}
+
+/* the app workspace gets its own centered max-width, wider than the
+   sitewide .shell (1080px) but still with real gutters at 1280px+ so the
+   3-column layout has room without ever touching the browser edge */
+.ask-section .shell {
+  max-width: 1280px;
+  padding: 0 40px;
+}
+
+@media (max-width: 640px) {
+  .ask-section .shell {
+    padding: 0 1.25rem;
+  }
+}
+
+:root[data-theme='light'] .ask-section {
+  background: linear-gradient(180deg, var(--bg-soft) 0%, var(--surface-warm) 55%, var(--bg) 100%);
+}
+
+.ask-section .shell {
+  width: 100%;
+}
+
+.ask-atmo {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.ask-atmo__glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(900px, 130vw);
+  height: 560px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse, color-mix(in srgb, var(--bright-green) 12%, transparent), transparent 70%);
+  filter: blur(10px);
+}
+
+.ask-atmo__particle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.ask-atmo__particle--green { background: var(--bright-green); }
+.ask-atmo__particle--gold { background: var(--gold); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .ask-atmo__glow { animation: atmo-drift-a 30s ease-in-out infinite; }
+  .ask-atmo__particle { animation: atmo-particle-float var(--dur, 14s) ease-in-out infinite; animation-delay: var(--delay, 0s); }
+}
+
+/* ===================== Voice card ===================== */
+.voice-card {
+  position: relative;
+  background: var(--surface);
+  -webkit-backdrop-filter: blur(22px);
+  backdrop-filter: blur(22px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem clamp(1.25rem, 3vw, 2.25rem) 1.85rem;
+  box-shadow: var(--shadow-lg);
+  margin-top: 0.5rem;
+  overflow: hidden;
+}
+
+.voice-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(420px 320px at 50% 62%, color-mix(in srgb, var(--bright-green) 10%, transparent), transparent 72%),
+    radial-gradient(600px 260px at 50% -10%, var(--bg-soft), transparent 70%);
+  opacity: 1;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+
+.voice-card[data-listening='true']::before {
+  background:
+    radial-gradient(460px 380px at 50% 60%, color-mix(in srgb, var(--gold) 22%, transparent), transparent 72%),
+    radial-gradient(600px 260px at 50% -10%, var(--bg-soft), transparent 70%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .voice-card[data-listening='true']::before {
+    animation: voice-glow-pulse 2.6s ease-in-out infinite;
+  }
+}
+
+@keyframes voice-glow-pulse {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; }
+}
+
+.voice-card__ambient {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.voice-card__ambient-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.6);
+}
+
+.voice-card__ambient-dot--1 { margin-top: -140px; margin-left: -120px; }
+.voice-card__ambient-dot--2 { margin-top: -110px; margin-left: 130px; background: var(--bright-green); }
+.voice-card__ambient-dot--3 { margin-top: 40px; margin-left: -160px; background: var(--bright-green); }
+.voice-card__ambient-dot--4 { margin-top: 60px; margin-left: 150px; }
+
+.voice-card__ambient-lines {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 340px;
+  height: 340px;
+  margin: -170px 0 0 -170px;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--gold) 40%, transparent);
+  opacity: 0;
+  transform: scale(0.85);
+}
+
+.voice-card[data-listening='true'] .voice-card__ambient-dot {
+  opacity: 0.7;
+}
+
+.voice-card[data-listening='true'] .voice-card__ambient-lines {
+  opacity: 0.5;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .voice-card[data-listening='true'] .voice-card__ambient-dot {
+    animation: ambient-dot-pulse 2.2s ease-in-out infinite;
+  }
+  .voice-card[data-listening='true'] .voice-card__ambient-dot--2 { animation-delay: 0.4s; }
+  .voice-card[data-listening='true'] .voice-card__ambient-dot--3 { animation-delay: 0.8s; }
+  .voice-card[data-listening='true'] .voice-card__ambient-dot--4 { animation-delay: 1.2s; }
+  .voice-card[data-listening='true'] .voice-card__ambient-lines {
+    animation: ambient-ring-expand 2.6s ease-out infinite;
+  }
+}
+
+@keyframes ambient-dot-pulse {
+  0%, 100% { opacity: 0.35; transform: translate(-50%, -50%) scale(0.6); }
+  50% { opacity: 0.85; transform: translate(-50%, -50%) scale(1.15); }
+}
+
+@keyframes ambient-ring-expand {
+  0% { opacity: 0.5; transform: scale(0.85); }
+  100% { opacity: 0; transform: scale(1.25); }
+}
+
+/* --- three-zone workspace: controls / voice interaction / answer — laid
+   out with named grid areas (not just column order) specifically so the
+   text-input row can be pinned under the center orb on desktop, folded in
+   under the two-column tablet tier, and the answer card takes its natural
+   place last on mobile, without three different DOM orderings of the same
+   markup. --- */
+.voice-card__stage-grid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  /* 25 / 45 / 30 */
+  grid-template-columns: minmax(0, 5fr) minmax(0, 9fr) minmax(0, 6fr);
+  grid-template-areas: 'intro stage answer' '. textform .';
+  column-gap: clamp(1.75rem, 3.5vw, 3rem);
+  row-gap: 1.5rem;
+  align-items: center;
+}
+
+.voice-card__panel--intro {
+  grid-area: intro;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.85rem;
+}
+
+.voice-card__panel--stage {
+  grid-area: stage;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.voice-card__panel--answer {
+  grid-area: answer;
+  width: 100%;
+  align-self: start;
+}
+
+.voice-card__panel--textform {
+  grid-area: textform;
+  width: 100%;
+  max-width: 460px;
+}
+
+/* tablet: controls + orb side by side, the answer card becomes a compact
+   strip beneath rather than a tall third column competing for width */
+@media (max-width: 1180px) and (min-width: 761px) {
+  .voice-card__stage-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas: 'intro stage' 'textform textform' 'answer answer';
+  }
+
+  .answer-card {
+    max-height: min(420px, 55vh);
+  }
+}
+
+/* mobile: natural reading order top to bottom — ask, controls, mic, text
+   input, then the answer once there is one */
+@media (max-width: 760px) {
+  .voice-card__stage-grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'intro' 'stage' 'textform' 'answer';
+    justify-items: center;
+    text-align: center;
+    row-gap: 2rem;
+  }
+
+  .voice-card__panel--intro {
+    align-items: center;
+  }
+
+  .voice-card__lead {
+    max-width: 46ch;
+  }
+
+  .voice-card__controls {
+    align-items: center;
+  }
+}
+
+.voice-card__title {
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.voice-card__lead {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  max-width: 34ch;
+}
+
+.voice-card__controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  margin-top: 0.25rem;
+  position: relative;
+}
+
+.voice-card__field {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
 }
 
-.field label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-muted);
+.voice-card__field-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
 }
 
-.field select,
-.field input[type='text'] {
-  padding: 0.55rem 0.65rem;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  color: var(--text);
-  min-height: 40px;
+.voice-mode {
+  justify-content: center;
 }
 
-.checkbox-field {
-  flex-direction: row;
+.toggle {
+  width: 46px;
+  height: 26px;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface-2);
+  padding: 2px;
+  display: flex;
   align-items: center;
-  gap: 0.5rem;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
-.checkbox-field input {
-  width: 18px;
-  height: 18px;
+.toggle__thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  transition: transform 0.2s ease, background 0.2s ease;
 }
 
-.checkbox-field label {
-  font-weight: 400;
-  color: var(--text);
+.toggle.is-on {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.toggle.is-on .toggle__thumb {
+  transform: translateX(20px);
+  background: var(--gold);
+}
+
+.voice-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.25rem 1rem 0.5rem;
+  position: relative;
+}
+
+/* nudged upward relative to its panel — the text-input row now lives in
+   its own grid area below rather than stacked directly under this stage,
+   so the orb no longer needs to make room for it here */
+.voice-stage--focus {
+  padding-top: 0.1rem;
+  padding-bottom: 0.4rem;
+}
+
+/* the real, interactive mic button sits centered inside the decorative
+   Orb — the Orb supplies the ambient "listening field" ring/wave/glow
+   language, MicButton keeps its own tighter recording rings for direct
+   feedback, and the two layer rather than duplicate at very different
+   scales. */
+.voice-stage__orb-frame {
+  position: relative;
+  display: inline-flex;
+}
+
+.voice-stage__mic-wrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.voice-stage__status {
+  margin: 0.5rem 0 0;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.voice-stage__timer {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.95rem;
+  color: var(--gold-dark);
+  font-weight: 700;
+}
+
+.voice-stage__hint {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-align: center;
+  max-width: 40ch;
+}
+
+.mic-stage {
+  position: relative;
+  width: 168px;
+  height: 168px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* soft always-on glow behind the mic — the "audio field" the mic sits in */
+.mic-idle-glow {
+  position: absolute;
+  inset: -20px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--bright-green) 20%, transparent), transparent 72%);
+  filter: blur(6px);
+  opacity: 0.8;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+}
+
+.mic-stage:hover .mic-idle-glow {
+  opacity: 1;
+  transform: scale(1.08);
+}
+
+/* two barely-visible concentric rings that breathe gently at idle, giving
+   the mic a sense of being "the center of an audio field" even at rest */
+.mic-idle-ring {
+  position: absolute;
+  inset: 12px;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--bright-green) 35%, transparent);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.mic-idle-ring--2 {
+  inset: -2px;
+  border-color: color-mix(in srgb, var(--gold) 30%, transparent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mic-idle-ring { animation: mic-idle-breathe 4.5s ease-in-out infinite; }
+  .mic-idle-ring--2 { animation-delay: 0.8s; animation-duration: 5.5s; }
+}
+
+.is-recording .mic-idle-ring,
+.is-processing .mic-idle-ring {
+  opacity: 0;
+  animation: none;
+}
+
+@keyframes mic-idle-breathe {
+  0%, 100% { transform: scale(0.96); opacity: 0.28; }
+  50% { transform: scale(1.04); opacity: 0.55; }
+}
+
+.mic-button {
+  width: 104px;
+  height: 104px;
+  border-radius: 50% 47% 53% 48% / 52% 48% 52% 48%;
+  border: none;
+  background: linear-gradient(155deg, var(--primary), var(--primary-dark));
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 30px rgba(92, 42, 200, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.25s ease;
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+}
+
+/* a liquid edge on the actual button too, out of phase with the disc
+   beneath it (different duration/offsets) so the two never move in
+   perfect lockstep — a live surface, not a synced mechanical pair */
+@media (prefers-reduced-motion: no-preference) {
+  .mic-button {
+    animation: mic-button-blob 7s ease-in-out infinite;
+  }
+}
+
+@keyframes mic-button-blob {
+  0%, 100% { border-radius: 50% 47% 53% 48% / 52% 48% 52% 48%; }
+  40% { border-radius: 53% 50% 47% 52% / 48% 53% 47% 51%; }
+  70% { border-radius: 48% 53% 49% 52% / 51% 47% 53% 49%; }
+}
+
+.mic-stage:hover .mic-button:not(:disabled),
+.mic-button:hover:not(:disabled) {
+  transform: scale(1.06);
+  box-shadow: 0 16px 40px rgba(92, 42, 200, 0.5);
+}
+
+.mic-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.mic-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.mic-button--recording {
+  background: linear-gradient(155deg, var(--gold), var(--gold-dark));
+  box-shadow: 0 10px 30px rgba(248, 62, 203, 0.45);
+  color: var(--primary-dark);
+}
+
+.mic-button--processing {
+  background: linear-gradient(155deg, var(--primary-dark), var(--primary));
+}
+
+.mic-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mic-ring--1 { animation: mic-ring 1.8s ease-out infinite; }
+  .mic-ring--2 { animation: mic-ring 1.8s ease-out infinite; animation-delay: 0.5s; }
+  .mic-ring--3 { animation: mic-ring 1.8s ease-out infinite; animation-delay: 1s; }
+  /* combines with (not replaces) the base .mic-button blob-morph above —
+     both listed here since this shorthand would otherwise overwrite it */
+  .mic-button--recording { animation: mic-breathe 1.4s ease-in-out infinite, mic-button-blob 7s ease-in-out infinite; }
+}
+
+@keyframes mic-ring {
+  0% { transform: scale(1); opacity: 0.55; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+
+@keyframes mic-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+
+/* processing — a smooth orbiting dot, distinct from the recording rings */
+.mic-orbit {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px dashed color-mix(in srgb, var(--bright-green) 45%, transparent);
+}
+
+.mic-orbit__dot {
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  border-radius: 50%;
+  background: var(--bright-green);
+  box-shadow: 0 0 8px 2px color-mix(in srgb, var(--bright-green) 55%, transparent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mic-orbit { animation: mic-orbit-spin 2.4s linear infinite; }
+}
+
+@keyframes mic-orbit-spin {
+  to { transform: rotate(360deg); }
+}
+
+.mic-waveform {
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 22px;
+}
+
+.mic-waveform__bar {
+  width: 3px;
+  border-radius: 3px;
+  background: var(--gold-dark);
+  height: 6px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mic-waveform__bar {
+    animation: wave-bar 0.9s ease-in-out infinite;
+    animation-delay: calc(var(--i) * 0.08s);
+  }
+}
+
+@keyframes wave-bar {
+  0%, 100% { height: 5px; }
+  50% { height: 20px; }
+}
+
+.voice-card__divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 0 0.9rem;
+  color: var(--text-faint);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.voice-card__divider::before,
+.voice-card__divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.text-form {
+  position: relative;
+}
+
+.text-form-row {
+  display: flex;
+  gap: 0.6rem;
+}
+
+@media (max-width: 420px) {
+  .text-form-row {
+    flex-direction: column;
+  }
+
+  .text-form-row .btn {
+    width: 100%;
+  }
+}
+
+.text-form-row input {
+  flex: 1;
+  padding: 1rem 1.15rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background: var(--surface-2);
+  min-height: 52px;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.text-form-row input:focus-visible {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 14%, transparent);
+  outline: none;
 }
 
 .field-error {
@@ -160,155 +3009,304 @@ select {
   margin: 0;
 }
 
-.mic-row {
-  display: flex;
+/* an overlay near the top of the workspace, not a block in normal flow —
+   a connectivity notice shouldn't shove the voice interface down the
+   page whenever it happens to be showing */
+.status-pill {
+  position: absolute;
+  top: 0.85rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  max-width: calc(100% - 2.5rem);
+  display: inline-flex;
   align-items: center;
-  gap: 1rem;
-  margin: 1.25rem 0;
+  gap: 0.5rem;
+  background: color-mix(in srgb, var(--warn-bg) 92%, var(--bg));
+  color: var(--text);
+  padding: 0.4rem 0.85rem 0.4rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  border: 1px solid color-mix(in srgb, var(--warn) 30%, transparent);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
 }
 
-.mic-button {
-  width: 64px;
-  height: 64px;
-  min-width: 40px;
-  min-height: 40px;
-  border-radius: 50%;
-  border: none;
-  background: var(--accent);
-  color: var(--accent-contrast);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
+@media (max-width: 640px) {
+  .status-pill {
+    white-space: normal;
+    text-align: left;
+  }
+}
+
+.status-pill__icon {
   flex-shrink: 0;
-  transition: transform 0.15s ease;
+  width: 15px;
+  height: 15px;
+  color: var(--warn);
 }
 
-.mic-button:hover:not(:disabled) {
-  transform: scale(1.04);
+
+/* ===================== Answer card — the workspace's right column =====================
+   A fixed header (title + grounded badge) and a fixed footer (latency)
+   bookend a scrollable body, so a long answer scrolls in place instead of
+   growing the card (or the whole page) without limit. */
+.answer-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 260px;
+  max-height: min(520px, 64vh);
+  background: color-mix(in srgb, var(--surface-warm) 40%, var(--surface));
+  -webkit-backdrop-filter: blur(22px);
+  backdrop-filter: blur(22px);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
 }
 
-.mic-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.answer-card::before {
+  content: '';
+  position: absolute;
+  top: -60px;
+  left: -60px;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--bright-green) 14%, transparent), transparent 72%);
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  pointer-events: none;
 }
 
-.mic-button--recording {
-  background: var(--danger);
+.answer-card[data-status='success']::before {
+  opacity: 1;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .mic-button--recording {
-    animation: pulse 1.4s ease-in-out infinite;
+  .answer-card[data-status='success']::before {
+    animation: answer-glow-settle 0.45s ease-out;
   }
 }
 
-@keyframes pulse {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 rgba(179, 38, 30, 0.4);
-  }
-  50% {
-    box-shadow: 0 0 0 10px rgba(179, 38, 30, 0);
-  }
+@keyframes answer-glow-settle {
+  0% { opacity: 0; transform: scale(0.75); }
+  60% { opacity: 1; transform: scale(1.04); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
-.mic-status {
+.answer-card__head {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 1.1rem 1.25rem 0.85rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.answer-card__title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
   margin: 0;
-  color: var(--text-muted);
-  font-size: 0.9rem;
+  color: var(--text-faint);
 }
 
-.text-form {
+/* the one status readout this card keeps — grounded vs. fallback — the
+   old separate "voice status" card's Idle/Mode/Language rows are gone */
+.answer-card__status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.28rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.64rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+/* this badge and .answer-content below are both conditionally rendered
+   on status==='success', so they genuinely remount (and this replays)
+   for every fresh answer, not just the first one */
+@media (prefers-reduced-motion: no-preference) {
+  .answer-card__status-badge {
+    animation: answer-badge-in 0.32s ease-out 0.08s both;
+  }
+}
+
+@keyframes answer-badge-in {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.answer-card__status-badge.is-grounded {
+  color: var(--bright-green);
+  background: color-mix(in srgb, var(--bright-green) 14%, var(--surface-2));
+  border-color: color-mix(in srgb, var(--bright-green) 35%, var(--border));
+}
+
+.answer-card__status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  flex: none;
+}
+
+.answer-card__status-badge.is-grounded .answer-card__status-dot {
+  background: var(--bright-green);
+}
+
+.answer-card__body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  min-height: 0;
+  padding: 1rem 1.25rem;
+}
+
+.answer-card__footer {
+  flex: none;
   display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7rem 1.25rem;
   border-top: 1px solid var(--border);
-  padding-top: 1rem;
+  background: color-mix(in srgb, var(--surface-2) 55%, transparent);
 }
 
-.text-form label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-muted);
+.answer-card__footer-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
 }
 
-.text-form-row {
+.answer-card__footer-values {
   display: flex;
+  align-items: baseline;
   gap: 0.5rem;
 }
 
-.text-form-row input {
-  flex: 1;
-  padding: 0.55rem 0.65rem;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  color: var(--text);
-  min-height: 40px;
+.answer-card__footer-value {
+  font-size: 0.92rem;
+  font-weight: 700;
+  font-family: var(--font-display);
+  color: var(--bright-green);
+  font-variant-numeric: tabular-nums;
 }
 
-.secondary-button {
-  padding: 0.55rem 1rem;
-  min-height: 40px;
-  border-radius: 8px;
-  border: 1px solid var(--accent);
-  background: transparent;
-  color: var(--accent);
+:root[data-theme='light'] .answer-card__footer-value {
+  color: var(--primary);
+}
+
+/* the target threshold is context for the number beside it, not a
+   second measurement — kept small and muted so it never competes with
+   the real, measured latency value */
+.answer-card__footer-target {
+  font-size: 0.68rem;
   font-weight: 600;
-  cursor: pointer;
+  color: var(--text-faint);
+  white-space: nowrap;
 }
 
-.secondary-button:hover:not(:disabled) {
-  background: var(--accent);
-  color: var(--accent-contrast);
+.answer-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.85rem;
 }
 
-.secondary-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.answer-card__meta-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.22rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
 }
 
 .empty-state {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   margin: 0;
 }
 
-.error-state {
-  background: var(--danger-bg);
-  color: var(--danger);
-  border-radius: 8px;
-  padding: 0.85rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  align-items: flex-start;
+.empty-state__icon {
+  flex-shrink: 0;
+  color: var(--text-faint);
+  opacity: 0.7;
 }
 
 .answer-content {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.8rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .answer-content {
+    animation: answer-content-in 0.4s ease-out;
+  }
+}
+
+@keyframes answer-content-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .answer-block p {
-  margin: 0.25rem 0 0;
+  margin: 0.35rem 0 0;
 }
 
 .answer-label {
-  font-size: 0.75rem;
+  font-size: 0.66rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.05em;
   color: var(--text-muted);
+}
+
+.answer-query {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.answer-text {
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.answer-block--grounded {
+  background: var(--bg-soft);
+  border-radius: var(--radius);
+  padding: 0.85rem 1rem;
+  border-left: 3px solid var(--primary);
 }
 
 .answer-block--refused {
   background: var(--warn-bg);
   color: var(--warn);
-  border-radius: 8px;
-  padding: 0.75rem;
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
 }
 
 .answer-block--refused .answer-label {
@@ -318,8 +3316,8 @@ select {
 .answer-block--fallback {
   background: var(--info-bg);
   color: var(--info);
-  border-radius: 8px;
-  padding: 0.75rem;
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
 }
 
 .answer-block--fallback .answer-label {
@@ -331,8 +3329,8 @@ select {
 }
 
 .answer-reason {
-  font-size: 0.78rem;
-  opacity: 0.75;
+  font-size: 0.8rem;
+  opacity: 0.8;
   font-family: ui-monospace, 'SF Mono', Menlo, monospace;
 }
 
@@ -342,18 +3340,34 @@ select {
   font-weight: 700;
 }
 
-.answer-audio {
-  width: 100%;
+.answer-source {
+  border-top: 1px solid var(--border);
+  padding-top: 0.9rem;
+  font-size: 0.85rem;
+}
+
+.answer-source summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--text-muted);
+  list-style: none;
+}
+
+.answer-source summary::-webkit-details-marker {
+  display: none;
+}
+
+.answer-source summary::before {
+  content: '▸ ';
+  color: var(--primary);
+}
+
+.answer-source[open] summary::before {
+  content: '▾ ';
 }
 
 .answer-strategy {
-  margin: 0.3rem 0 0;
-}
-
-.badge--info {
-  background: var(--bg);
-  color: var(--accent);
-  border: 1px solid var(--accent);
+  margin: 0.4rem 0 0;
 }
 
 .strategy-scores {
@@ -368,16 +3382,27 @@ select {
   font-variant-numeric: tabular-nums;
 }
 
-.answer-skeleton,
-.latency-skeleton {
+.answer-audio-hidden {
+  display: none;
+}
+
+.answer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+
+/* ===================== Loading / error states ===================== */
+.answer-skeleton {
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
 }
 
-.skeleton-line,
-.skeleton-bar {
-  background: var(--border);
+.skeleton-line {
+  background: var(--bg-soft);
   border-radius: 6px;
   height: 14px;
 }
@@ -386,109 +3411,549 @@ select {
   width: 40%;
 }
 
-.skeleton-bar {
-  height: 28px;
-  border-radius: 8px;
-}
-
 @media (prefers-reduced-motion: no-preference) {
-  .skeleton-line,
-  .skeleton-bar {
+  .skeleton-line {
     animation: shimmer 1.4s ease-in-out infinite;
   }
 }
 
 @keyframes shimmer {
-  0%,
-  100% {
-    opacity: 0.6;
-  }
-  50% {
-    opacity: 1;
-  }
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
 }
 
-.latency-summary {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.25rem;
-}
-
-.latency-stat {
+.error-state {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border-radius: var(--radius);
+  padding: 1.25rem;
   display: flex;
   flex-direction: column;
+  gap: 0.85rem;
+  align-items: flex-start;
 }
 
-.latency-stat-label {
+.error-state__icon {
+  color: var(--danger);
+}
+
+.error-state__title {
+  margin: 0 0 0.2rem;
+  font-weight: 700;
+  font-family: var(--font-display);
+}
+
+.error-state__body {
+  margin: 0;
+  color: var(--text);
+  opacity: 0.85;
+}
+
+/* ===================== Info sections ===================== */
+.info-section {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(3rem, 8vw, 5.5rem) 1.5rem;
+}
+
+.info-section--about {
+  background: var(--bg-soft);
+  padding: clamp(3rem, 6vw, 4.5rem) 1.5rem;
+}
+
+.info-section--journey {
+  background: linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
+  min-height: min(72vh, 720px);
+  display: flex;
+  align-items: center;
+}
+
+.info-section--docs {
+  background: linear-gradient(180deg, var(--footer-bg-2) 0%, var(--footer-bg) 100%);
+  color: var(--footer-text);
+}
+
+.editorial-atmo {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.editorial-atmo__curve {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.editorial-atmo__curve path {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-dasharray: 1 10;
+  opacity: 0.16;
+}
+
+.editorial-atmo__particle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.editorial-atmo__particle--green { background: var(--bright-green); }
+.editorial-atmo__particle--gold { background: var(--gold); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .editorial-atmo__curve path { animation: signal-travel 9s linear infinite; }
+  .editorial-atmo__particle { animation: atmo-particle-float var(--dur, 14s) ease-in-out infinite; animation-delay: var(--delay, 0s); }
+}
+
+.info-section__inner {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+.info-section__inner--split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 2.5rem;
+  align-items: start;
+}
+
+@media (max-width: 780px) {
+  .info-section__inner--split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.eyebrow {
+  display: block;
   font-size: 0.75rem;
-  color: var(--text-muted);
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.1em;
+  color: var(--gold-dark);
+  margin-bottom: 0.6rem;
 }
 
-.latency-stat-value {
-  font-size: 1.4rem;
+.eyebrow--gold {
+  color: var(--gold);
+}
+
+.info-section__title {
+  font-size: clamp(1.5rem, 3.2vw, 2.1rem);
+  margin: 0 0 1.75rem;
+  max-width: 24ch;
+}
+
+.info-section__title--display {
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  max-width: 14ch;
+}
+
+.info-section__title--on-dark {
+  color: var(--footer-text);
+}
+
+.info-section__body {
+  color: var(--text-muted);
+  max-width: 60ch;
+  font-size: 1rem;
+}
+
+/* --- How it works: an organic journey instead of a numbered card grid --- */
+.journey {
+  position: relative;
+  margin-top: 1rem;
+}
+
+.journey__line {
+  position: absolute;
+  top: 34px;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  overflow: visible;
+  display: none;
+}
+
+.journey__line-path {
+  fill: none;
+  stroke: color-mix(in srgb, var(--bright-green) 45%, transparent);
+  stroke-width: 1.5;
+  stroke-dasharray: 2 10;
+  stroke-linecap: round;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .journey__line-path {
+    animation: signal-travel 12s linear infinite;
+  }
+}
+
+@media (min-width: 900px) {
+  .journey__line {
+    display: block;
+  }
+}
+
+.journey__steps {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .journey__steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .journey__steps {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.journey__step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.65rem;
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  transition-delay: calc(var(--i, 0) * 0.08s);
+}
+
+.journey__number {
+  position: absolute;
+  top: -0.6rem;
+  right: 0;
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  font-weight: 800;
+  line-height: 1;
+  color: color-mix(in srgb, var(--text) 10%, transparent);
+  pointer-events: none;
+}
+
+.journey__step.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.journey__node {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  color: var(--bright-green);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.journey__step.is-visible .journey__node {
+  border-color: color-mix(in srgb, var(--bright-green) 45%, transparent);
+  box-shadow: var(--glow-green);
+}
+
+.journey__label {
+  margin: 0;
+  font-size: 0.78rem;
   font-weight: 700;
-  font-variant-numeric: tabular-nums;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gold-dark);
 }
 
-.badge {
-  padding: 0.3rem 0.65rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 700;
+.journey__body {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  max-width: 26ch;
 }
 
-.badge--ok {
-  background: var(--ok-bg);
-  color: var(--ok);
+/* --- About: statistics as the dominant visual, not a sidebar list --- */
+.about-copy {
+  max-width: 52ch;
 }
 
-.badge--warn {
-  background: var(--warn-bg);
-  color: var(--warn);
-}
-
-.latency-bars {
+.about-stats {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
+  gap: 1.5rem;
 }
 
-.latency-bar-row {
-  display: grid;
-  grid-template-columns: 9rem 1fr 4rem;
-  align-items: center;
-  gap: 0.6rem;
+.about-stats li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
 }
 
-.latency-bar-label {
-  font-size: 0.8rem;
+.about-stats strong {
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 6vw, 3.6rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--bright-green);
+}
+
+.about-stats strong em {
+  font-style: normal;
+  font-size: 0.42em;
+  font-weight: 700;
+  margin-left: 0.15em;
+  color: var(--gold-dark);
+}
+
+:root[data-theme='light'] .about-stats strong {
+  color: var(--primary);
+}
+
+.about-stats span {
+  font-size: 0.85rem;
   color: var(--text-muted);
 }
 
-.latency-bar-track {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  height: 10px;
+/* --- Docs: dark developer-focused section, stays dark in both themes --- */
+.docs-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+@media (max-width: 780px) {
+  .docs-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.docs-card {
+  background: rgba(255, 255, 255, 0.04);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius);
+  padding: 1.4rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.docs-card:hover {
+  transform: translateY(-4px);
+  border-color: color-mix(in srgb, var(--gold) 45%, transparent);
+  box-shadow: var(--glow-gold);
+}
+
+.docs-card h3 {
+  margin: 0 0 0.6rem;
+  font-size: 0.98rem;
+  color: var(--footer-text);
+}
+
+.docs-card p {
+  margin: 0 0 0.4rem;
+  font-size: 0.86rem;
+  color: var(--footer-text-muted);
+}
+
+.docs-card p:last-child {
+  margin-bottom: 0;
+}
+
+.docs-card code {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.2rem 0.5rem;
+  border-radius: 5px;
+  font-size: 0.82rem;
+  color: var(--footer-text);
+}
+
+.docs-method {
+  display: inline-block;
+  font-weight: 700;
+  margin-right: 0.4em;
+}
+
+.docs-method--get {
+  color: var(--bright-green);
+}
+
+.docs-method--post {
+  color: var(--gold);
+}
+
+/* ===================== Footer — compact deep green ending ===================== */
+.site-footer {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--footer-bg) 0%, var(--footer-bg-2) 100%);
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+  padding: 2.75rem 1.5rem;
+}
+
+.site-footer::before {
+  content: '';
+  position: absolute;
+  top: -30%;
+  left: 50%;
+  width: min(900px, 130vw);
+  height: 340px;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse, color-mix(in srgb, var(--bright-green) 10%, transparent), transparent 72%);
+  pointer-events: none;
+}
+
+.site-footer__inner {
+  position: relative;
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 2rem;
+  align-items: start;
+}
+
+.site-footer__brand-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.site-footer__brand {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--footer-text);
+  font-size: clamp(1.7rem, 4vw, 2.3rem);
+  line-height: 1;
+}
+
+.site-footer__desc {
+  margin: 0.5rem 0 0;
+  max-width: 32ch;
+  color: var(--footer-text-muted);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.site-footer__links-title {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  margin-bottom: 0.75rem;
+}
+
+.site-footer__links ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.site-footer__links a {
+  color: var(--footer-text-muted);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.2s ease;
+}
+
+.site-footer__links a:hover {
+  color: var(--footer-text);
+}
+
+@media (max-width: 720px) {
+  .site-footer {
+    min-height: 0;
+    padding: 2.5rem 1.5rem;
+  }
+
+  .site-footer__inner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.75rem;
+    text-align: center;
+  }
+
+  .site-footer__desc {
+    max-width: none;
+    margin: 0 auto;
+  }
+}
+
+.footer-atmo {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
   overflow: hidden;
 }
 
-.latency-bar-fill {
-  height: 100%;
-  background: var(--accent);
-  border-radius: 999px;
+.footer-atmo__waves {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  transform: translateY(-1px);
 }
 
-.latency-bar-value {
-  font-size: 0.8rem;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-  color: var(--text-muted);
+.footer-atmo__particle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--gold);
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .footer-atmo__particle { animation: atmo-particle-float var(--dur, 14s) ease-in-out infinite; animation-delay: var(--delay, 0s); }
+}
+
+@media (max-width: 640px) {
+  .site-footer {
+    min-height: min(38vh, 320px);
+  }
+}
+
+/* ===================== Reduced motion ===================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }

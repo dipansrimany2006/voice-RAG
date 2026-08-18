@@ -1,17 +1,18 @@
 import { useEffect, useRef, useState } from 'react'
 import { speak } from '../api'
+import { PlayIcon, PauseIcon, CopyIcon, CheckIcon, RefreshIcon, AlertIcon, WaveformIcon } from './Icons'
+import { friendlyError } from '../errorMessages'
+import { formatResponseTime } from './LatencyPanel'
+import { useLanguage } from '../i18n/LanguageContext'
 
-const STRATEGY_LABELS = {
-  fixed_overlap: 'Fixed-size + overlap',
-  semantic: 'Semantic',
-  metadata_aware: 'Metadata-aware',
+const STRATEGY_LABEL_KEY = {
+  fixed_overlap: 'answer.strategyFixedOverlap',
+  semantic: 'answer.strategySemantic',
+  metadata_aware: 'answer.strategyMetadataAware',
 }
 
-function strategyLabel(key) {
-  return STRATEGY_LABELS[key] || key
-}
-
-export default function AnswerPanel({ status, result, error, onRetry }) {
+export default function AnswerPanel({ status, result, error, onRetry, onAskAgain, language, frontendLatencyMs }) {
+  const { t } = useLanguage()
   const audioRef = useRef(null)
   const [listenState, setListenState] = useState('idle') // idle | loading | ready | error
   const [audioSrc, setAudioSrc] = useState(null)
@@ -49,85 +50,72 @@ export default function AnswerPanel({ status, result, error, onRetry }) {
       setListenState('error')
     }
   }
+  const [autoplayBlocked, setAutoplayBlocked] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [copied, setCopied] = useState(false)
 
-  if (status === 'idle') {
-    return <p className="empty-state">Ask a question to see the transcript and answer here.</p>
+  function strategyLabel(key) {
+    const labelKey = STRATEGY_LABEL_KEY[key]
+    return labelKey ? t(labelKey) : key
   }
 
-  if (status === 'loading') {
-    return (
-      <div className="answer-skeleton" aria-hidden="true">
-        <div className="skeleton-line skeleton-line--short" />
-        <div className="skeleton-line" />
-        <div className="skeleton-line" />
-        <div className="skeleton-line skeleton-line--short" />
-      </div>
-    )
+  useEffect(() => {
+    if (!result?.audio_base64 || !audioRef.current) return
+    setAutoplayBlocked(false)
+    audioRef.current
+      .play()
+      .then(() => setIsPlaying(true))
+      .catch(() => {
+        // Browsers can block programmatic autoplay depending on user-gesture
+        // timing — the Listen button below still lets the user hit play.
+        setAutoplayBlocked(true)
+      })
+  }, [result?.audio_base64])
+
+  function toggleListen() {
+    const audio = audioRef.current
+    if (!audio) return
+    if (audio.paused) {
+      audio.play().then(() => setIsPlaying(true)).catch(() => setAutoplayBlocked(true))
+    } else {
+      audio.pause()
+    }
   }
 
-  if (status === 'error') {
-    return (
-      <div className="error-state">
-        <p>{error || 'Something went wrong reaching the pipeline.'}</p>
-        <button type="button" className="secondary-button" onClick={onRetry}>
-          Try again
-        </button>
-      </div>
-    )
+  async function handleCopy() {
+    if (!result?.answer_text) return
+    try {
+      await navigator.clipboard.writeText(result.answer_text)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1800)
+    } catch {
+      // Clipboard API unavailable — nothing to fall back to gracefully here.
+    }
   }
 
-  if (!result) return null
+  const showFooter = status === 'success' && result && !result.refused && frontendLatencyMs != null
 
   return (
-    <div className="answer-content">
-      <div className="answer-block">
-        <span className="answer-label">You asked</span>
-        <p className="answer-query">{result.query_text || '(no speech detected)'}</p>
+    <section id="answer" className="answer-card" data-status={status} aria-labelledby="answer-heading">
+      <div className="answer-card__head">
+        <h2 id="answer-heading" className="answer-card__title">
+          {t('answer.title')}
+        </h2>
+        {status === 'success' && result && !result.refused && (
+          <span className={`answer-card__status-badge${result.grounded ? ' is-grounded' : ''}`}>
+            <span className="answer-card__status-dot" aria-hidden="true" />
+            {result.grounded ? t('answer.groundedLabel') : t('answer.answerFallbackLabel')}
+          </span>
+        )}
       </div>
 
-      {result.refused ? (
-        <div className="answer-block answer-block--refused">
-          <span className="answer-label">Blocked, no answer given</span>
-          <p>{result.answer_text}</p>
-          {result.refusal_reason && (
-            <p className="answer-reason">
-              <span className="answer-reason-tag">guardrail:</span> {result.refusal_reason}
-            </p>
-          )}
-        </div>
-      ) : (
-        <div className={`answer-block${result.grounded ? '' : ' answer-block--fallback'}`}>
-          <span className="answer-label">
-            {result.grounded ? 'Answer' : 'Answer (general knowledge, not from dataset)'}
-          </span>
-          <p>{result.answer_text}</p>
-          {!result.grounded && result.fallback_reason && (
-            <p className="answer-reason">
-              <span className="answer-reason-tag">fallback reason:</span> {result.fallback_reason}
-            </p>
-          )}
-        </div>
-      )}
-
-      {result.selected_strategy && (
-        <div className="answer-block">
-          <span className="answer-label">Chunking strategy used (auto-selected)</span>
-          <p className="answer-strategy">
-            <span className="badge badge--info">{strategyLabel(result.selected_strategy)}</span>
+      <div className="answer-card__body">
+        {status === 'idle' && (
+          <p className="empty-state">
+            <WaveformIcon className="empty-state__icon" width={18} height={18} />
+            {t('answer.empty')}
           </p>
-          {result.strategy_scores && (
-            <ul className="strategy-scores">
-              {Object.entries(result.strategy_scores)
-                .sort((a, b) => b[1] - a[1])
-                .map(([name, score]) => (
-                  <li key={name}>
-                    {strategyLabel(name)}: {score.toFixed(3)}
-                  </li>
-                ))}
-            </ul>
-          )}
-        </div>
-      )}
+        )}
 
       {result.answer_text && (
         <div className="answer-audio-block">
@@ -150,8 +138,142 @@ export default function AnswerPanel({ status, result, error, onRetry }) {
               Couldn't synthesize speech: {listenError}
             </p>
           )}
+        {status === 'loading' && (
+          <div className="answer-skeleton" aria-hidden="true">
+            <div className="skeleton-line skeleton-line--short" />
+            <div className="skeleton-line" />
+            <div className="skeleton-line" />
+            <div className="skeleton-line skeleton-line--short" />
+          </div>
+        )}
+
+        {status === 'error' && (
+          <div className="error-state">
+            <AlertIcon className="error-state__icon" />
+            <div>
+              <p className="error-state__title">{t('answer.connectionUnavailable')}</p>
+              <p className="error-state__body">{friendlyError(error, t)}</p>
+            </div>
+            <button type="button" className="btn btn--primary" onClick={onRetry}>
+              <RefreshIcon /> {t('answer.tryAgain')}
+            </button>
+          </div>
+        )}
+
+        {status === 'success' && result && (
+          <div className="answer-content">
+            {!result.refused && (
+              <div className="answer-card__meta">
+                <span className="answer-card__meta-chip">
+                  <WaveformIcon width={13} height={13} />
+                  {language?.label || 'English'}
+                </span>
+                {result.audio_base64 && (
+                  <span className="answer-card__meta-chip">
+                    <PlayIcon width={11} height={11} />
+                    {t('answer.voiceAvailableLabel')}
+                  </span>
+                )}
+              </div>
+            )}
+
+            <div className="answer-block">
+              <span className="answer-label">{t('answer.youAsked')}</span>
+              <p className="answer-query">{result.query_text || t('answer.noSpeechDetected')}</p>
+            </div>
+
+            {result.refused ? (
+              <div className="answer-block answer-block--refused">
+                <span className="answer-label">{t('answer.blockedLabel')}</span>
+                <p>{result.answer_text}</p>
+                {result.refusal_reason && (
+                  <p className="answer-reason">
+                    <span className="answer-reason-tag">{t('answer.guardrailLabel')}</span> {result.refusal_reason}
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div className={`answer-block${result.grounded ? ' answer-block--grounded' : ' answer-block--fallback'}`}>
+                <span className="answer-label">
+                  {result.grounded ? t('answer.answerLabel') : t('answer.answerFallbackLabel')}
+                </span>
+                <p className="answer-text">{result.answer_text}</p>
+                {!result.grounded && result.fallback_reason && (
+                  <p className="answer-reason">
+                    <span className="answer-reason-tag">{t('answer.fallbackReasonLabel')}</span> {result.fallback_reason}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {result.selected_strategy && (
+              <details className="answer-source">
+                <summary>{t('answer.sourceDetails')}</summary>
+                <span className="answer-label">{t('answer.chunkingStrategyUsed')}</span>
+                <p className="answer-strategy">
+                  <span className="badge badge--info">{strategyLabel(result.selected_strategy)}</span>
+                </p>
+                {result.strategy_scores && (
+                  <ul className="strategy-scores">
+                    {Object.entries(result.strategy_scores)
+                      .sort((a, b) => b[1] - a[1])
+                      .map(([name, score]) => (
+                        <li key={name}>
+                          {strategyLabel(name)}: {score.toFixed(3)}
+                        </li>
+                      ))}
+                  </ul>
+                )}
+              </details>
+            )}
+
+            {result.audio_base64 && (
+              <audio
+                ref={audioRef}
+                src={`data:audio/mpeg;base64,${result.audio_base64}`}
+                className="answer-audio-hidden"
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
+                onEnded={() => setIsPlaying(false)}
+              >
+                {t('answer.noAudioSupport')}
+              </audio>
+            )}
+
+            <div className="answer-actions">
+              {result.audio_base64 && (
+                <button type="button" className="btn btn--ghost btn--sm" onClick={toggleListen}>
+                  {isPlaying ? <PauseIcon /> : <PlayIcon />}
+                  {isPlaying ? t('answer.pause') : t('answer.listen')}
+                </button>
+              )}
+              <button type="button" className="btn btn--ghost btn--sm" onClick={handleCopy}>
+                {copied ? <CheckIcon /> : <CopyIcon />}
+                {copied ? t('answer.copied') : t('answer.copy')}
+              </button>
+              <button type="button" className="btn btn--primary btn--sm" onClick={onAskAgain}>
+                <RefreshIcon /> {t('answer.askAgain')}
+              </button>
+            </div>
+
+            {autoplayBlocked && (
+              <p className="answer-reason" role="status">
+                {t('answer.autoplayBlocked')}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+
+      {showFooter && (
+        <div className="answer-card__footer">
+          <span className="answer-card__footer-label">{t('ask.panelLatency')}</span>
+          <span className="answer-card__footer-values">
+            <span className="answer-card__footer-value">{formatResponseTime(frontendLatencyMs)}</span>
+            <span className="answer-card__footer-target">{t('ask.latencyTarget')}</span>
+          </span>
         </div>
       )}
-    </div>
+    </section>
   )
 }

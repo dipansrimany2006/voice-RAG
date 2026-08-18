@@ -4,6 +4,11 @@ import { useCallback, useRef, useState } from 'react'
 export function useRecorder() {
   const [state, setState] = useState('idle')
   const [error, setError] = useState(null)
+  // also exposed as reactive state (see `stream` in the return value) —
+  // read-only, purely for driving the live waveform visualization. Never
+  // written to by anything outside start()/stop() below, so the actual
+  // recording lifecycle is unchanged.
+  const [stream, setStream] = useState(null)
   const mediaRecorderRef = useRef(null)
   const chunksRef = useRef([])
   const streamRef = useRef(null)
@@ -11,9 +16,10 @@ export function useRecorder() {
   const start = useCallback(async () => {
     setError(null)
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      streamRef.current = stream
-      const recorder = new MediaRecorder(stream)
+      const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      streamRef.current = mediaStream
+      setStream(mediaStream)
+      const recorder = new MediaRecorder(mediaStream)
       chunksRef.current = []
       recorder.ondataavailable = (e) => {
         if (e.data.size > 0) chunksRef.current.push(e.data)
@@ -37,6 +43,7 @@ export function useRecorder() {
       recorder.onstop = () => {
         const blob = new Blob(chunksRef.current, { type: 'audio/webm' })
         streamRef.current?.getTracks().forEach((track) => track.stop())
+        setStream(null)
         setState('idle')
         resolve(blob)
       }
@@ -44,5 +51,5 @@ export function useRecorder() {
     })
   }, [])
 
-  return { state, error, start, stop, isSupported: typeof MediaRecorder !== 'undefined' }
+  return { state, error, start, stop, stream, isSupported: typeof MediaRecorder !== 'undefined' }
 }
