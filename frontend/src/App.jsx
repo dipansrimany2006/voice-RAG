@@ -53,30 +53,6 @@ export default function App() {
     return () => observer.disconnect()
   }, [path])
 
-  async function handleTextSubmit(e) {
-    e.preventDefault()
-    if (!textInput.trim()) return
-    const text = textInput.trim()
-    runQuery(() => queryText({ text }))
-  }
-
-  async function handleMicClick() {
-    if (recorder.state === 'recording') {
-      const blob = await recorder.stop()
-      if (blob) runQuery(() => queryAudio({ blob }))
-      return
-    }
-    await recorder.start()
-  }
-
-  const micDisabled = !recorder.isSupported || !ready || status === 'loading'
-  const micStatusText = !recorder.isSupported
-    ? 'Voice recording is not supported in this browser — use the text field instead.'
-    : recorder.state === 'recording'
-    ? 'Recording… tap again to stop and submit.'
-    : status === 'loading'
-    ? 'Processing your question…'
-    : 'Tap to record a question, in any of 14 languages.'
   const activeSection = path === '/' ? 'home' : appSection
 
   return (

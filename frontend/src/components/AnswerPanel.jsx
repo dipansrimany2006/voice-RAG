@@ -14,9 +14,15 @@ const STRATEGY_LABEL_KEY = {
 export default function AnswerPanel({ status, result, error, onRetry, onAskAgain, language, frontendLatencyMs }) {
   const { t } = useLanguage()
   const audioRef = useRef(null)
+  // Audio is fetched on demand from POST /api/speak when the user clicks
+  // Listen — the query response itself never carries audio (TTS latency
+  // shouldn't be paid on every answer, only when someone wants to hear it).
   const [listenState, setListenState] = useState('idle') // idle | loading | ready | error
   const [audioSrc, setAudioSrc] = useState(null)
   const [listenError, setListenError] = useState(null)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [autoplayBlocked, setAutoplayBlocked] = useState(false)
+  const [copied, setCopied] = useState(false)
 
   // A new answer arrived — forget any previously synthesized audio so the
   // Listen button re-fetches for the current answer instead of replaying
@@ -25,15 +31,21 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
     setListenState('idle')
     setAudioSrc(null)
     setListenError(null)
+    setIsPlaying(false)
+    setAutoplayBlocked(false)
   }, [result?.answer_text])
 
+  // Autoplay once the fetched audio is ready — this still counts as
+  // triggered by a user gesture (the Listen click that started the fetch),
+  // but some browsers block play() when it isn't called synchronously
+  // within the click handler itself, hence the fallback message below.
   useEffect(() => {
     if (audioSrc && audioRef.current) {
-      audioRef.current.play().catch(() => {
-        // Autoplay should work here since this only runs right after a
-        // direct click (the Listen button), a genuine user gesture — but
-        // fall back silently to the visible player if a browser still blocks it.
-      })
+      setAutoplayBlocked(false)
+      audioRef.current
+        .play()
+        .then(() => setIsPlaying(true))
+        .catch(() => setAutoplayBlocked(true))
     }
   }, [audioSrc])
 
@@ -50,29 +62,12 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
       setListenState('error')
     }
   }
-  const [autoplayBlocked, setAutoplayBlocked] = useState(false)
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [copied, setCopied] = useState(false)
 
-  function strategyLabel(key) {
-    const labelKey = STRATEGY_LABEL_KEY[key]
-    return labelKey ? t(labelKey) : key
-  }
-
-  useEffect(() => {
-    if (!result?.audio_base64 || !audioRef.current) return
-    setAutoplayBlocked(false)
-    audioRef.current
-      .play()
-      .then(() => setIsPlaying(true))
-      .catch(() => {
-        // Browsers can block programmatic autoplay depending on user-gesture
-        // timing — the Listen button below still lets the user hit play.
-        setAutoplayBlocked(true)
-      })
-  }, [result?.audio_base64])
-
-  function toggleListen() {
+  function handlePlayPauseClick() {
+    if (!audioSrc) {
+      handleListen()
+      return
+    }
     const audio = audioRef.current
     if (!audio) return
     if (audio.paused) {
@@ -80,6 +75,11 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
     } else {
       audio.pause()
     }
+  }
+
+  function strategyLabel(key) {
+    const labelKey = STRATEGY_LABEL_KEY[key]
+    return labelKey ? t(labelKey) : key
   }
 
   async function handleCopy() {
@@ -117,27 +117,6 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
           </p>
         )}
 
-      {result.answer_text && (
-        <div className="answer-audio-block">
-          {audioSrc ? (
-            <audio ref={audioRef} controls src={audioSrc} className="answer-audio">
-              Your browser does not support audio playback.
-            </audio>
-          ) : (
-            <button
-              type="button"
-              className="secondary-button listen-button"
-              onClick={handleListen}
-              disabled={listenState === 'loading'}
-            >
-              {listenState === 'loading' ? 'Synthesizing…' : '🔊 Listen'}
-            </button>
-          )}
-          {listenState === 'error' && (
-            <p className="answer-reason" role="alert">
-              Couldn't synthesize speech: {listenError}
-            </p>
-          )}
         {status === 'loading' && (
           <div className="answer-skeleton" aria-hidden="true">
             <div className="skeleton-line skeleton-line--short" />
@@ -168,12 +147,6 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
                   <WaveformIcon width={13} height={13} />
                   {language?.label || 'English'}
                 </span>
-                {result.audio_base64 && (
-                  <span className="answer-card__meta-chip">
-                    <PlayIcon width={11} height={11} />
-                    {t('answer.voiceAvailableLabel')}
-                  </span>
-                )}
               </div>
             )}
 
@@ -227,10 +200,10 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
               </details>
             )}
 
-            {result.audio_base64 && (
+            {audioSrc && (
               <audio
                 ref={audioRef}
-                src={`data:audio/mpeg;base64,${result.audio_base64}`}
+                src={audioSrc}
                 className="answer-audio-hidden"
                 onPlay={() => setIsPlaying(true)}
                 onPause={() => setIsPlaying(false)}
@@ -241,12 +214,15 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
             )}
 
             <div className="answer-actions">
-              {result.audio_base64 && (
-                <button type="button" className="btn btn--ghost btn--sm" onClick={toggleListen}>
-                  {isPlaying ? <PauseIcon /> : <PlayIcon />}
-                  {isPlaying ? t('answer.pause') : t('answer.listen')}
-                </button>
-              )}
+              <button
+                type="button"
+                className="btn btn--ghost btn--sm"
+                onClick={handlePlayPauseClick}
+                disabled={listenState === 'loading'}
+              >
+                {isPlaying ? <PauseIcon /> : <PlayIcon />}
+                {listenState === 'loading' ? 'Synthesizing…' : isPlaying ? t('answer.pause') : t('answer.listen')}
+              </button>
               <button type="button" className="btn btn--ghost btn--sm" onClick={handleCopy}>
                 {copied ? <CheckIcon /> : <CopyIcon />}
                 {copied ? t('answer.copied') : t('answer.copy')}
@@ -255,6 +231,12 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
                 <RefreshIcon /> {t('answer.askAgain')}
               </button>
             </div>
+
+            {listenState === 'error' && (
+              <p className="answer-reason" role="alert">
+                {listenError}
+              </p>
+            )}
 
             {autoplayBlocked && (
               <p className="answer-reason" role="status">
