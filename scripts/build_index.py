@@ -25,13 +25,14 @@ from rag_pipeline.chunking import STRATEGIES  # noqa: E402
 from rag_pipeline.config import load_settings  # noqa: E402
 from rag_pipeline.data_loader import LANGUAGE_FILES, load_multilingual_passages  # noqa: E402
 from rag_pipeline.embeddings import build_embeddings  # noqa: E402
+from rag_pipeline.sparse_index import build_bm25  # noqa: E402
 from rag_pipeline.vectorstore import build_index  # noqa: E402
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--languages", nargs="+", default=list(LANGUAGE_FILES), help="default: all 14 languages")
-    parser.add_argument("--limit-per-language", type=int, default=200, help="source queries randomly sampled per language")
+    parser.add_argument("--limit-per-language", type=int, default=800, help="source queries randomly sampled per language")
     parser.add_argument("--strategies", nargs="+", default=list(STRATEGIES.keys()))
     args = parser.parse_args()
 
@@ -51,7 +52,11 @@ def main():
 
         t0 = time.perf_counter()
         build_index(chunks, embeddings, name, settings.index_dir)
-        print(f"[{name}] indexed to {settings.index_dir}/{name} in {time.perf_counter() - t0:.1f}s")
+        print(f"[{name}] FAISS indexed to {settings.index_dir}/{name} in {time.perf_counter() - t0:.1f}s")
+
+        t0 = time.perf_counter()
+        build_bm25(chunks, name, settings.index_dir)
+        print(f"[{name}] BM25 indexed to {settings.index_dir}/{name}/bm25 in {time.perf_counter() - t0:.1f}s")
 
     print("\nDone. Compare strategies with scripts/benchmark_latency.py --strategy <name>.")
 

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { speak } from '../api'
+import { polishAnswer, speak } from '../api'
 import { PlayIcon, PauseIcon, CopyIcon, CheckIcon, RefreshIcon, AlertIcon, WaveformIcon } from './Icons'
 import { friendlyError } from '../errorMessages'
 import LatencyPanel, { SessionMetrics } from './LatencyPanel'
@@ -16,6 +16,22 @@ const STRATEGY_LABEL_KEY = {
 // flat, structured area. No floating card, no glass panel: this section
 // sits directly in the page's own background.
 export default function AnswerPanel({ status, result, error, onRetry, onAskAgain, language, frontendLatencyMs, latencyHistory = [] }) {
+// Per-stage latency breakdown, in pipeline order. Stages with no translated
+// label (finer-grained than the existing pipeline.* keys) use a plain
+// English technical name, same precedent as the "refining…" indicator.
+const STAGE_LABELS = [
+  ['stt', (t) => t('pipeline.latencySTT')],
+  ['input_guardrail', () => 'Input guardrail'],
+  ['embed_query', () => 'Embed query'],
+  ['vector_search', () => 'Vector search'],
+  ['retrieval_guardrail', () => 'Retrieval guardrail'],
+  ['tts', () => 'TTS'],
+  ['generate', (t) => t('pipeline.latencyGeneration')],
+  ['fallback_generate', () => 'Fallback generation'],
+  ['grounding_guardrail', () => 'Grounding check'],
+]
+
+export default function AnswerPanel({ status, result, error, onRetry, onAskAgain, language, frontendLatencyMs }) {
   const { t } = useLanguage()
   const audioRef = useRef(null)
   // Audio is fetched on demand from POST /api/speak when the user clicks
@@ -31,10 +47,15 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
   // from isPlaying so "Speaking…" and "Voice response complete" read as
   // two distinct real moments rather than one boolean doing both jobs.
   const [voiceDone, setVoiceDone] = useState(false)
+  // The fast path returns an extractive answer immediately; polishState
+  // tracks the background LLM-refined answer fetched separately so the
+  // initial response never waits on it.
+  const [polishState, setPolishState] = useState('idle') // idle | loading | ready | error
+  const [polished, setPolished] = useState(null)
 
-  // A new answer arrived — forget any previously synthesized audio so the
-  // Listen button re-fetches for the current answer instead of replaying
-  // the last one.
+  // A new query came in — forget any previously synthesized audio/polish so
+  // the Listen button and the extractive->polished swap start fresh instead
+  // of carrying over state from the last answer.
   useEffect(() => {
     setListenState('idle')
     setAudioSrc(null)
@@ -43,6 +64,41 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
     setAutoplayBlocked(false)
     setVoiceDone(false)
   }, [result?.answer_text])
+    setPolishState('idle')
+    setPolished(null)
+  }, [result?.query_text])
+
+  // Auto-fire the LLM polish request in the background as soon as the fast
+  // extractive answer is shown, same on-demand-off-critical-path pattern
+  // already used for TTS (see handleListen below) but fired automatically
+  // instead of on click, since the polished answer should just arrive.
+  useEffect(() => {
+    if (status !== 'success' || !result || result.refused || result.answer_source !== 'extractive') return
+    let cancelled = false
+    setPolishState('loading')
+    polishAnswer({ text: result.query_text })
+      .then((data) => {
+        if (!cancelled) {
+          setPolished(data)
+          setPolishState('ready')
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setPolishState('error')
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [status, result])
+
+  // Polished text just replaced the extractive text — any audio already
+  // synthesized for the extractive answer no longer matches what's shown.
+  useEffect(() => {
+    if (polishState !== 'ready') return
+    setListenState('idle')
+    setAudioSrc(null)
+    setIsPlaying(false)
+  }, [polishState])
 
   // Autoplay once the fetched audio is ready — this still counts as
   // triggered by a user gesture (the Listen click that started the fetch),
@@ -59,11 +115,12 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
   }, [audioSrc])
 
   async function handleListen() {
-    if (!result?.answer_text) return
+    const textToSpeak = polishState === 'ready' && polished ? polished.answer_text : result?.answer_text
+    if (!textToSpeak) return
     setListenState('loading')
     setListenError(null)
     try {
-      const data = await speak({ text: result.answer_text })
+      const data = await speak({ text: textToSpeak })
       setAudioSrc(`data:audio/mpeg;base64,${data.audio_base64}`)
       setListenState('ready')
     } catch (err) {
@@ -92,9 +149,10 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
   }
 
   async function handleCopy() {
-    if (!result?.answer_text) return
+    const textToCopy = polishState === 'ready' && polished ? polished.answer_text : result?.answer_text
+    if (!textToCopy) return
     try {
-      await navigator.clipboard.writeText(result.answer_text)
+      await navigator.clipboard.writeText(textToCopy)
       setCopied(true)
       setTimeout(() => setCopied(false), 1800)
     } catch {
@@ -109,6 +167,11 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
   const dotState = status === 'loading' ? 'processing' : status === 'success' ? 'complete' : 'ready'
   const dotLabel =
     dotState === 'processing' ? t('pipeline.statusProcessing') : dotState === 'complete' ? t('pipeline.statusComplete') : t('pipeline.statusReady')
+  const showFooter = status === 'success' && result && !result.refused && frontendLatencyMs != null
+  // Extractive answer shows immediately; once the background LLM polish
+  // resolves, swap the displayed text/grounding over to it.
+  const displayed = polishState === 'ready' && polished ? polished : result
+  const isRefining = status === 'success' && result && !result.refused && polishState === 'loading'
 
   return (
     <section id="answer" className="workspace__response" data-status={status} aria-labelledby="answer-heading">
@@ -120,6 +183,13 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
           <span className="workspace__response-status-dot" aria-hidden="true" />
           {dotLabel}
         </span>
+        {status === 'success' && result && !result.refused && (
+          <span className={`answer-card__status-badge${displayed.grounded ? ' is-grounded' : ''}`}>
+            <span className="answer-card__status-dot" aria-hidden="true" />
+            {displayed.grounded ? t('answer.groundedLabel') : t('answer.answerFallbackLabel')}
+            {isRefining && <span className="answer-card__refining"> · refining…</span>}
+          </span>
+        )}
       </div>
 
       {/* the session performance strip is a persistent fixture, not tied
@@ -190,17 +260,81 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
                 )}
               </div>
             ) : (
-              <div className={`answer-block${result.grounded ? ' answer-block--grounded' : ' answer-block--fallback'}`}>
+              <div className={`answer-block${displayed.grounded ? ' answer-block--grounded' : ' answer-block--fallback'}`}>
                 <span className="answer-label">
-                  {result.grounded ? t('answer.answerLabel') : t('answer.answerFallbackLabel')}
+                  {displayed.grounded ? t('answer.answerLabel') : t('answer.answerFallbackLabel')}
                 </span>
-                <p className="answer-text">{result.answer_text}</p>
-                {!result.grounded && result.fallback_reason && (
+                <p className="answer-text">{displayed.answer_text}</p>
+                {!displayed.grounded && displayed.fallback_reason && (
                   <p className="answer-reason">
-                    <span className="answer-reason-tag">{t('answer.fallbackReasonLabel')}</span> {result.fallback_reason}
+                    <span className="answer-reason-tag">{t('answer.fallbackReasonLabel')}</span> {displayed.fallback_reason}
                   </p>
                 )}
               </div>
+            )}
+
+            {result.selected_strategy && (
+              <details className="answer-source">
+                <summary>{t('answer.sourceDetails')}</summary>
+                <span className="answer-label">{t('answer.chunkingStrategyUsed')}</span>
+                <p className="answer-strategy">
+                  <span className="badge badge--info">{strategyLabel(result.selected_strategy)}</span>
+                </p>
+                {result.strategy_scores && (
+                  <ul className="strategy-scores">
+                    {Object.entries(result.strategy_scores)
+                      .sort((a, b) => b[1] - a[1])
+                      .map(([name, score]) => (
+                        <li key={name}>
+                          {strategyLabel(name)}: {score.toFixed(3)}
+                        </li>
+                      ))}
+                  </ul>
+                )}
+              </details>
+            )}
+
+            {result.trace_ms && (
+              <details className="answer-source">
+                <summary>{t('pipeline.latencyTitle')}</summary>
+
+                <span className="answer-label">{t('answer.answerLabel')} (instant, {result.answer_source || 'extractive'})</span>
+                <ul className="strategy-scores">
+                  {STAGE_LABELS.filter(([key]) => result.trace_ms[key] != null).map(([key, label]) => (
+                    <li key={key}>
+                      {label(t)}: {formatResponseTime(result.trace_ms[key])}
+                    </li>
+                  ))}
+                  <li>
+                    <strong>
+                      {t('pipeline.latencyTotal')}: {formatResponseTime(result.total_ms)}
+                    </strong>
+                  </li>
+                </ul>
+                <p className="answer-strategy">
+                  <span className={`badge ${result.retrieval_under_200ms ? 'badge--ok' : 'badge--warn'}`}>
+                    {result.retrieval_under_200ms ? t('pipeline.retrievalUnder') : t('pipeline.retrievalOver')}
+                  </span>
+                </p>
+
+                {polishState === 'ready' && polished?.trace_ms && (
+                  <>
+                    <span className="answer-label">{t('pipeline.stageLlm')} (polished)</span>
+                    <ul className="strategy-scores">
+                      {STAGE_LABELS.filter(([key]) => polished.trace_ms[key] != null).map(([key, label]) => (
+                        <li key={key}>
+                          {label(t)}: {formatResponseTime(polished.trace_ms[key])}
+                        </li>
+                      ))}
+                      <li>
+                        <strong>
+                          {t('pipeline.latencyTotal')}: {formatResponseTime(polished.total_ms)}
+                        </strong>
+                      </li>
+                    </ul>
+                  </>
+                )}
+              </details>
             )}
 
             {audioSrc && (

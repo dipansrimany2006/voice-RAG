@@ -12,6 +12,8 @@ from dataclasses import dataclass
 
 from langchain_core.documents import Document
 
+from .tokenize import tokenize_set
+
 UNSAFE_PATTERNS = [
     r"\bhow (to|do i) (make|build) (a )?(bomb|weapon|explosive)\b",
     r"\b(kill|harm) (myself|someone)\b",
@@ -41,24 +43,16 @@ def retrieval_guardrail(top_score: float, min_score: float) -> GuardrailVerdict:
     return GuardrailVerdict(True)
 
 
-def _tokenize(text: str) -> set[str]:
-    # Latin + Arabic (Urdu) + the contiguous Devanagari-through-Malayalam
-    # Unicode block, which covers all 14 MSMARCO-XI languages' native scripts
-    # (Hindi, Bengali, Punjabi, Gujarati, Odia, Tamil, Telugu, Kannada,
-    # Malayalam, Marathi, Nepali, Sanskrit, Assamese) plus Urdu separately.
-    return set(re.findall(r"[a-zA-Z؀-ۿऀ-ൿ]{2,}", text.lower()))
-
-
 def grounding_guardrail(answer: str, context_chunks: list[Document], min_overlap: float = 0.15) -> GuardrailVerdict:
     """Flags answers that don't lexically overlap with retrieved context at
     all — a cheap proxy for hallucination that doesn't cost another LLM call."""
-    answer_tokens = _tokenize(answer)
+    answer_tokens = tokenize_set(answer)
     if not answer_tokens:
         return GuardrailVerdict(False, "empty answer")
 
     context_tokens: set[str] = set()
     for chunk in context_chunks:
-        context_tokens |= _tokenize(chunk.page_content)
+        context_tokens |= tokenize_set(chunk.page_content)
 
     overlap = len(answer_tokens & context_tokens) / len(answer_tokens)
     if overlap < min_overlap:

@@ -1,6 +1,6 @@
 # Voice-Enabled RAG Pipeline
 
-Voice in → ElevenLabs STT → guardrail → chunked/embedded retrieval (FAISS) → Groq LLM → guardrail → ElevenLabs TTS → voice out, orchestrated as a LangGraph state machine.
+Voice in → ElevenLabs STT → guardrail → chunked/embedded hybrid retrieval (FAISS dense + BM25 sparse, fused via RRF) → an instant extractive answer (no LLM) → ElevenLabs TTS → voice out. A Groq LLM-polished answer is generated separately, off the response-latency critical path, mirroring the on-demand TTS pattern. Orchestrated as a LangGraph state machine.
 
 Built for the HH Goa 2026 Task 2 spec, on the [ai4bharat/MSMARCO-XI](https://huggingface.co/datasets/ai4bharat/MSMARCO-XI) dataset — **all 14 languages** (Assamese, Bengali, Gujarati, Hindi, Kannada, Malayalam, Marathi, Nepali, Odia, Punjabi, Sanskrit, Tamil, Telugu, Urdu) indexed into one multilingual corpus per chunking strategy.
 
@@ -16,9 +16,10 @@ We use the `validation` split rather than `train`: train shards are ~3.7GB each 
 |---|---|
 | STT / TTS | ElevenLabs (Scribe / Flash) |
 | Chunking | LangChain splitters — 3 strategies (see below) |
-| Embeddings | Local `intfloat/multilingual-e5-base` (sentence-transformers) — no network call in the retrieval hot path |
-| Vector DB | FAISS, local/in-memory — avoids a network round-trip |
-| Generation | Groq (`llama-3.3-70b-versatile`) |
+| Embeddings | Local `intfloat/multilingual-e5-small` (sentence-transformers) — no network call in the retrieval hot path |
+| Vector DB | FAISS (dense) + BM25 via `bm25s` (sparse), fused with Reciprocal Rank Fusion — local/in-memory, no network round-trip |
+| Fast answer | Extractive — best-matching sentence(s) pulled straight from the top chunk, no LLM call |
+| Generation | Groq (`llama-3.3-70b-versatile`), fetched separately via `/api/query/polish` |
 | Harness | LangGraph — structured state, conditional routing, retries, error recovery |
 
 ## Chunking strategies

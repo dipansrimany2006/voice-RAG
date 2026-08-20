@@ -18,6 +18,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile  # noqa: E402
+from fastapi.concurrency import run_in_threadpool  # noqa: E402
 from fastapi.middleware.cors import CORSMiddleware  # noqa: E402
 from fastapi.staticfiles import StaticFiles  # noqa: E402
 from pydantic import BaseModel  # noqa: E402
@@ -26,6 +27,8 @@ from rag_pipeline.chunking import STRATEGIES  # noqa: E402
 from rag_pipeline.config import load_settings  # noqa: E402
 from rag_pipeline.embeddings import build_embeddings  # noqa: E402
 from rag_pipeline.pipeline import PipelineOutput, VoicePipeline  # noqa: E402
+from rag_pipeline.retrieval import StrategyIndex  # noqa: E402
+from rag_pipeline.sparse_index import load_bm25  # noqa: E402
 from rag_pipeline.vectorstore import load_index  # noqa: E402
 
 app = FastAPI(title="Voice RAG Pipeline")
@@ -50,8 +53,12 @@ def get_pipeline() -> VoicePipeline:
                 503,
                 "no chunking-strategy indexes are built yet — run: python scripts/build_index.py",
             )
-        stores = {name: load_index(embeddings, name, settings.index_dir) for name in built}
-        _pipeline = VoicePipeline(settings, stores, embeddings)
+        indexes = {}
+        for name in built:
+            faiss_store = load_index(embeddings, name, settings.index_dir)
+            bm25_index, bm25_chunks = load_bm25(name, settings.index_dir)
+            indexes[name] = StrategyIndex(faiss=faiss_store, bm25=bm25_index, bm25_chunks=bm25_chunks)
+        _pipeline = VoicePipeline(settings, indexes, embeddings)
     return _pipeline
 
 
@@ -70,6 +77,7 @@ def _serialize(result: PipelineOutput) -> dict:
         "retrieval_under_200ms": result.retrieval_ms < 200,
         "selected_strategy": result.selected_strategy,
         "strategy_scores": result.strategy_scores,
+        "answer_source": result.answer_source,
     }
 
 
@@ -80,6 +88,10 @@ class TextQuery(BaseModel):
 
 class SpeakRequest(BaseModel):
     text: str
+
+
+class PolishRequest(BaseModel):
+    query_text: str
 
 
 @app.get("/api/strategies")
@@ -99,7 +111,21 @@ def query_text(body: TextQuery):
 async def query_audio(file: UploadFile = File(...), speak: bool = Form(False)):
     pipeline = get_pipeline()
     audio_bytes = await file.read()
-    result = pipeline.run_audio(audio_bytes, speak_response=speak)
+    # run_audio is a blocking, CPU/network-bound call (STT + retrieval +
+    # TTS) — dispatch it to the worker threadpool instead of running it
+    # directly on the event loop, same as FastAPI already does automatically
+    # for the sync `def` routes below.
+    result = await run_in_threadpool(pipeline.run_audio, audio_bytes, speak_response=speak)
+    return _serialize(result)
+
+
+@app.post("/api/query/polish")
+def query_polish(body: PolishRequest):
+    """LLM-refined answer for a query already answered via the fast
+    extractive path — decoupled from /api/query/* the same way /api/speak
+    is, so the initial response never waits on the LLM call."""
+    pipeline = get_pipeline()
+    result = pipeline.polish_text(body.query_text)
     return _serialize(result)
 
 

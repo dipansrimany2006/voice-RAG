@@ -35,7 +35,7 @@ def load_settings() -> Settings:
         # native voice for. Without it, those two languages fall back to
         # edge-tts's closest-script voice instead.
         sarvam_api_key=os.environ.get("SARVAM_API_KEY") or None,
-        embedding_model=os.environ.get("EMBEDDING_MODEL", "intfloat/multilingual-e5-base"),
+        embedding_model=os.environ.get("EMBEDDING_MODEL", "intfloat/multilingual-e5-small"),
         index_dir=os.environ.get("INDEX_DIR", "data/index"),
         min_retrieval_score=float(os.environ.get("MIN_RETRIEVAL_SCORE", "0.55")),
     )

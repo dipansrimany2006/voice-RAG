@@ -35,6 +35,15 @@ export async function queryAudio({ blob }) {
   return handle(res)
 }
 
+export async function polishAnswer({ text }) {
+  const res = await fetch(`${BASE}/query/polish`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query_text: text }),
+  })
+  return handle(res)
+}
+
 export async function speak({ text }) {
   const res = await fetch(`${BASE}/speak`, {
     method: 'POST',
