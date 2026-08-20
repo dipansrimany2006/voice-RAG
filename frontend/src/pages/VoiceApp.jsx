@@ -30,6 +30,11 @@ export default function VoiceApp() {
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
   const [frontendLatencyMs, setFrontendLatencyMs] = useState(null)
   const [voiceMode, setVoiceMode] = useState(true)
+  // Real per-query totals for this session only — the source for the
+  // session performance strip's P50/P70/P100/budget numbers. Never
+  // persisted, never synthetic: one entry per successful query, appended
+  // the moment its real total_ms/retrieval_under_200ms land.
+  const [latencyHistory, setLatencyHistory] = useState([])
 
   const recorder = useRecorder()
 
@@ -87,6 +92,9 @@ export default function VoiceApp() {
       setFrontendLatencyMs(performance.now() - startedAt)
       setResult(data)
       setStatus('success')
+      if (typeof data.total_ms === 'number') {
+        setLatencyHistory((h) => [...h, { total: data.total_ms, underBudget: Boolean(data.retrieval_under_200ms) }])
+      }
     } catch (err) {
       setErrorMessage(err.message)
       setStatus('error')
@@ -141,8 +149,8 @@ export default function VoiceApp() {
         <AskAtmosphere />
         <div className="shell">
           {strategiesError && (
-            <div className="status-pill" role="alert">
-              <AlertIcon className="status-pill__icon" />
+            <div className="inline-notice inline-notice--warn" role="alert">
+              <AlertIcon className="inline-notice__icon" />
               <span>{strategiesError}</span>
             </div>
           )}
@@ -156,14 +164,13 @@ export default function VoiceApp() {
             micStream={recorder.stream}
             elapsedSeconds={elapsedSeconds}
             language={language}
-            voiceMode={voiceMode}
-            onVoiceModeChange={setVoiceMode}
             textInput={textInput}
             onTextInputChange={setTextInput}
             onTextSubmit={handleTextSubmit}
             ready={ready}
             loading={status === 'loading'}
             resultReady={status === 'success'}
+            hasError={status === 'error'}
             answerSlot={
               <AnswerPanel
                 status={status}
@@ -173,6 +180,7 @@ export default function VoiceApp() {
                 onAskAgain={handleAskAgain}
                 language={language}
                 frontendLatencyMs={frontendLatencyMs}
+                latencyHistory={latencyHistory}
               />
             }
           />

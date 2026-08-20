@@ -17,7 +17,7 @@ export default function Footer() {
       <FooterAtmosphere />
       <div className="site-footer__inner">
         <div className="site-footer__brand-col">
-          <span className="site-footer__brand">Voice RAG</span>
+          <span className="site-footer__brand">Vaani</span>
           <p className="site-footer__desc">{t('hero.subLine1')}</p>
         </div>
 

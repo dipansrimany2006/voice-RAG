@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { SunIcon, MoonIcon, GlobeIcon, ChevronDownIcon, MenuIcon, CloseIcon, SpeakerOnIcon, SpeakerOffIcon } from './Icons'
+import { GlobeIcon, ChevronDownIcon, MenuIcon, CloseIcon, SpeakerOnIcon, SpeakerOffIcon } from './Icons'
 import { LANGUAGES } from '../languages'
 import { useLanguage } from '../i18n/LanguageContext'
 import { useSound } from '../SoundContext'
@@ -14,7 +14,7 @@ const NAV_LINKS = [
   { id: 'about', route: '/app', hash: '#about', labelKey: 'nav.about' },
 ]
 
-export default function Header({ theme, onToggleTheme, language, onLanguageChange, activeSection }) {
+export default function Header({ language, onLanguageChange, activeSection }) {
   const { t } = useLanguage()
   const { muted, toggleMuted } = useSound()
   const { navigate } = useRouter()
@@ -22,6 +22,7 @@ export default function Header({ theme, onToggleTheme, language, onLanguageChang
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const langRef = useRef(null)
+  const navRef = useRef(null)
 
   useEffect(() => {
     function handleScroll() {
@@ -55,6 +56,7 @@ export default function Header({ theme, onToggleTheme, language, onLanguageChang
 
   return (
     <header className={`site-header${scrolled ? ' is-scrolled' : ''}`}>
+      <span className="site-header__shimmer" aria-hidden="true" />
       <div className="site-header__inner">
         <a
           className="brand"
@@ -65,20 +67,21 @@ export default function Header({ theme, onToggleTheme, language, onLanguageChang
           }}
         >
           <span className="brand__mark" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.2">
               <rect x="9" y="2" width="6" height="12" rx="3" />
               <path d="M5 11a7 7 0 0 0 14 0" strokeLinecap="round" />
             </svg>
           </span>
           <span className="brand__text">
-            <span className="brand__name">Voice RAG</span>
+            <span className="brand__name">Vaani</span>
           </span>
         </a>
 
-        <nav className="site-nav" aria-label={t('a11y.primaryNav')}>
+        <nav className="site-nav" aria-label={t('a11y.primaryNav')} ref={navRef}>
           {NAV_LINKS.map((link) => (
             <a
               key={link.id}
+              data-nav-id={link.id}
               href={`${link.route}${link.hash || ''}`}
               className={`site-nav__link${activeSection === link.id ? ' is-active' : ''}`}
               onClick={(e) => {
@@ -134,15 +137,6 @@ export default function Header({ theme, onToggleTheme, language, onLanguageChang
             onClick={toggleMuted}
           >
             {muted ? <SpeakerOffIcon /> : <SpeakerOnIcon />}
-          </button>
-
-          <button
-            type="button"
-            className="theme-toggle"
-            aria-label={theme === 'dark' ? t('a11y.switchToLight') : t('a11y.switchToDark')}
-            onClick={onToggleTheme}
-          >
-            {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
           </button>
 
           <button

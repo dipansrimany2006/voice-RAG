@@ -11,25 +11,10 @@ import { useRouter } from './router'
 // active-state while the visitor is on that page.
 const APP_SECTION_IDS = ['how-it-works', 'about', 'languages']
 
-function getInitialTheme() {
-  // Dark HH-Goa is the primary brand identity now — default to it regardless
-  // of OS preference; the toggle still lets a visitor opt into the lighter
-  // alternate, and that choice is remembered.
-  const stored = typeof localStorage !== 'undefined' && localStorage.getItem('voice-rag-theme')
-  if (stored === 'light' || stored === 'dark') return stored
-  return 'dark'
-}
-
 export default function App() {
   const { language, setLanguage } = useLanguage()
   const { path } = useRouter()
-  const [theme, setTheme] = useState(getInitialTheme)
   const [appSection, setAppSection] = useState(null)
-
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme)
-    localStorage.setItem('voice-rag-theme', theme)
-  }, [theme])
 
   useEffect(() => {
     // fresh arrival on /app (or leaving it) always starts with nothing
@@ -59,13 +44,7 @@ export default function App() {
     <div className="page">
       <BackgroundDecor />
 
-      <Header
-        theme={theme}
-        onToggleTheme={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))}
-        language={language}
-        onLanguageChange={setLanguage}
-        activeSection={activeSection}
-      />
+      <Header language={language} onLanguageChange={setLanguage} activeSection={activeSection} />
 
       <main>{path === '/app' ? <VoiceApp /> : <Home />}</main>
 

@@ -1,107 +1,67 @@
 /* ===================== Design tokens ===================== */
-/* Dark neon cosmic palette is the primary/default identity — bare :root
-   carries it so there's no flash of the old palette before React's
-   data-theme attribute lands. A lighter neon-accented alternate survives
-   as :root[data-theme='light'], still reachable via the toggle. */
+/* Premium warm-dark palette is the site's only identity — permanently
+   dark, no light-mode alternate and no toggle. Charcoal/ivory surfaces
+   with a single warm gold accent; no purple, cyan, or magenta anywhere
+   in the system. Every component in this file reads exclusively through
+   these tokens (verified — no hardcoded brand colors live outside this
+   block plus three legacy box-shadows fixed alongside it), so this one
+   block is what carries the identity across the entire app. */
 :root {
-  /* deep-space black with electric blue / violet / cyan / magenta accents
-     — a cosmic neon identity, not a beach scene */
-  --bg: #060216;
-  --bg-soft: #0b0a24;
-  --surface: rgba(14, 10, 36, 0.68);
-  --surface-2: rgba(19, 12, 46, 0.72);
-  --surface-warm: #140f30;
-  --border: rgba(139, 92, 246, 0.16);
-  --border-strong: rgba(139, 92, 246, 0.28);
-  --text: #f5f2ff;
-  --text-muted: #b3a8d9;
-  --text-faint: #746a94;
+  --bg: #0b0b09;
+  --bg-soft: #10100e;
+  --surface: rgba(21, 21, 18, 0.68);
+  --surface-2: rgba(25, 25, 22, 0.74);
+  --surface-warm: #17170f;
+  --border: rgba(244, 197, 66, 0.14);
+  --border-strong: rgba(244, 197, 66, 0.26);
+  --text: #f7f5ee;
+  --text-muted: #a8a49a;
+  --text-faint: #6b6860;
 
-  --primary: #7c3aed;
-  --primary-dark: #1a0c3d;
-  --primary-contrast: #f5f2ff;
-  --bright-green: #22d3ee;
-  --gold: #f83ecb;
-  --gold-dark: #c026a3;
+  --primary: #f4c542;
+  --primary-dark: #d9a928;
+  --primary-contrast: #14130c;
+  --bright-green: #f3e7c1;
+  --gold: #ffd76a;
+  --gold-dark: #b8862e;
 
-  --sand: #4b3a8f;
-  --sea-muted: #221450;
+  --sand: #4a4030;
+  --sea-muted: #1c1a13;
 
-  --ok: #22d3ee;
-  --ok-bg: rgba(34, 211, 238, 0.14);
-  --warn: #f0a63e;
-  --warn-bg: rgba(240, 166, 62, 0.14);
-  --danger: #ff5f8f;
-  --danger-bg: rgba(255, 95, 143, 0.14);
-  --info: #22d3ee;
-  --info-bg: rgba(34, 211, 238, 0.14);
+  --ok: #93b871;
+  --ok-bg: rgba(147, 184, 113, 0.14);
+  --warn: #e8a33d;
+  --warn-bg: rgba(232, 163, 61, 0.14);
+  --danger: #e8635f;
+  --danger-bg: rgba(232, 99, 95, 0.14);
+  --info: #e2c584;
+  --info-bg: rgba(226, 197, 132, 0.14);
 
   --radius-sm: 10px;
   --radius: 16px;
   --radius-lg: 28px;
-  --focus-ring: #a78bfa;
+  --focus-ring: #f4c542;
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
   --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.5);
-  --glow-green: 0 0 0 1px rgba(124, 58, 237, 0.28), 0 8px 28px rgba(124, 58, 237, 0.35);
-  --glow-gold: 0 0 24px rgba(248, 62, 203, 0.4);
+  --glow-green: 0 0 0 1px rgba(244, 197, 66, 0.26), 0 8px 28px rgba(244, 197, 66, 0.3);
+  --glow-gold: 0 0 24px rgba(244, 197, 66, 0.4);
 
-  --font-display: 'Manrope', 'Inter', system-ui, sans-serif;
-  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* one consistent typeface across the whole product — Manrope for both
+     display and body text, not a two-font pairing */
+  --font-display: 'Manrope', system-ui, sans-serif;
+  --font-body: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
-  /* fixed dark ending — the footer stays deep cosmic black regardless of
+  /* fixed dark ending — the footer stays deep charcoal regardless of
      the light/dark theme toggle, so it's tokenized separately from --bg/--text */
-  --footer-bg: #050113;
-  --footer-bg-2: #0b0a24;
-  --footer-text: #f5f2ff;
-  --footer-text-muted: #b3a8d9;
-  --footer-border: rgba(139, 92, 246, 0.18);
+  --footer-bg: #0b0b09;
+  --footer-bg-2: #101009;
+  --footer-text: #f7f5ee;
+  --footer-text-muted: #a8a49a;
+  --footer-border: rgba(244, 197, 66, 0.12);
 
   color-scheme: dark;
-}
-
-:root[data-theme='light'] {
-  /* same electric violet / cyan / magenta accent family, tuned for
-     contrast on a soft lavender-white base instead of near-black */
-  --bg: #faf9ff;
-  --bg-soft: #f0ecfd;
-  --surface: #ffffff;
-  --surface-2: #f7f4ff;
-  --surface-warm: #fdfcff;
-  --border: rgba(124, 58, 237, 0.14);
-  --border-strong: rgba(124, 58, 237, 0.24);
-  --text: #150e2e;
-  --text-muted: #5c5478;
-  --text-faint: #8a82a3;
-
-  --primary: #7c3aed;
-  --primary-dark: #2a1660;
-  --primary-contrast: #ffffff;
-  --bright-green: #0c8599;
-  --gold: #b0179a;
-  --gold-dark: #7c3aed;
-
-  --sand: #ded4f7;
-  --sea-muted: #b9a8ea;
-
-  --ok: #0c8599;
-  --ok-bg: #e3f6f8;
-  --warn: #9a5b00;
-  --warn-bg: #fdecd1;
-  --danger: #c0175a;
-  --danger-bg: #fbe6f0;
-  --info: #7c3aed;
-  --info-bg: #f0ecfd;
-
-  --shadow-sm: 0 1px 2px rgba(17, 24, 39, 0.06);
-  --shadow: 0 8px 24px rgba(17, 24, 39, 0.08);
-  --shadow-lg: 0 24px 60px rgba(17, 24, 39, 0.12);
-  --glow-green: 0 0 0 1px rgba(124, 58, 237, 0.16), 0 8px 24px rgba(124, 58, 237, 0.14);
-  --glow-gold: 0 0 20px rgba(176, 23, 154, 0.3);
-
-  --focus-ring: #7c3aed;
-  color-scheme: light;
 }
 
 /* ===================== Reset & base ===================== */
@@ -171,13 +131,23 @@ a {
   padding: 0 1.5rem;
 }
 
-/* ===================== Background decor (sitewide grain only) ===================== */
+/* ===================== Background decor (sitewide) ===================== */
 .bg-decor {
   position: fixed;
   inset: 0;
   z-index: -1;
   overflow: hidden;
   pointer-events: none;
+  /* the floating navbar's own gap (.page > main's padding-top) is the one
+     place this fixed layer sits fully exposed with nothing opaque over it
+     — without this fade, its ambient glows read as a hard-edged bright
+     band that gets sliced off exactly where the hero's opaque background
+     begins, looking like a stray horizontal divider under the navbar.
+     Fading this layer out to fully transparent by that same boundary (the
+     hero starts at 108px / 102px mobile) keeps a soft trace of glow right
+     around the navbar while guaranteeing nothing is left to cut off. */
+  -webkit-mask-image: linear-gradient(to bottom, black 0, black 36px, transparent 106px, transparent 106px, black 160px, black 100%);
+  mask-image: linear-gradient(to bottom, black 0, black 36px, transparent 106px, transparent 106px, black 160px, black 100%);
 }
 
 .bg-decor__grain {
@@ -188,9 +158,117 @@ a {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
 }
 
-:root[data-theme='light'] .bg-decor__grain {
-  mix-blend-mode: multiply;
-  opacity: 0.5;
+/* three large, very slow radial glows — the sitewide "premium AI dashboard"
+   backdrop signature (violet, blue, magenta). Blurred hard enough that they
+   read as ambient light pooling in open space rather than distinct shapes,
+   and each one's own border-radius softly morphs so the pooled light feels
+   like it's breathing rather than a static painted circle. */
+.bg-decor__glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.45;
+}
+
+.bg-decor__glow--a {
+  top: -12%;
+  left: -10%;
+  width: min(720px, 60vw);
+  height: min(720px, 60vw);
+  background: radial-gradient(circle, color-mix(in srgb, var(--primary) 55%, transparent), transparent 72%);
+}
+
+.bg-decor__glow--b {
+  bottom: -16%;
+  right: -12%;
+  width: min(760px, 62vw);
+  height: min(760px, 62vw);
+  background: radial-gradient(circle, color-mix(in srgb, var(--bright-green) 45%, transparent), transparent 72%);
+}
+
+.bg-decor__glow--c {
+  top: 32%;
+  right: -14%;
+  width: min(560px, 48vw);
+  height: min(560px, 48vw);
+  background: radial-gradient(circle, color-mix(in srgb, var(--gold) 42%, transparent), transparent 74%);
+  opacity: 0.32;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bg-decor__glow--a { animation: atmo-drift-a 42s ease-in-out infinite, atmo-blob-morph 26s ease-in-out infinite; }
+  .bg-decor__glow--b { animation: atmo-drift-b 48s ease-in-out infinite, atmo-blob-morph 32s ease-in-out infinite reverse; }
+  .bg-decor__glow--c { animation: atmo-drift-a 55s ease-in-out infinite reverse, atmo-blob-morph 22s ease-in-out infinite; }
+}
+
+@keyframes atmo-blob-morph {
+  0%, 100% { border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%; }
+  33% { border-radius: 58% 42% 53% 47% / 46% 55% 45% 54%; }
+  66% { border-radius: 44% 56% 42% 58% / 55% 44% 56% 44%; }
+}
+
+.bg-decor__stars {
+  position: absolute;
+  inset: 0;
+}
+
+.bg-decor__star {
+  position: absolute;
+  border-radius: 50%;
+  background: #f7f5ee;
+  opacity: var(--peak-opacity, 0.5);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bg-decor__star {
+    animation: bg-star-twinkle var(--dur, 5s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+  }
+}
+
+@keyframes bg-star-twinkle {
+  0%, 100% { opacity: calc(var(--peak-opacity, 0.5) * 0.35); }
+  50% { opacity: var(--peak-opacity, 0.5); }
+}
+
+.bg-decor__particles {
+  position: absolute;
+  inset: 0;
+}
+
+.bg-decor__particle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.bg-decor__particle--violet { background: var(--primary); }
+.bg-decor__particle--blue { background: var(--bright-green); }
+.bg-decor__particle--magenta { background: var(--gold); }
+
+/* mobile: fewer painted particles and cheaper (smaller-radius) blur —
+   phones are the GPUs least able to afford dozens of blurred, animated
+   layers, so density and glow cost both come down here rather than
+   just shrinking things in place. Every third particle/star instead of
+   hiding half, so the field still reads as scattered, not stripped. */
+@media (max-width: 640px) {
+  .bg-decor__glow {
+    filter: blur(60px);
+    opacity: 0.32;
+  }
+  .bg-decor__particle:nth-child(3n) {
+    display: none;
+  }
+  .bg-decor__star:nth-child(3n) {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bg-decor__particle {
+    animation: atmo-particle-float var(--dur, 16s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+  }
 }
 
 /* shared atmosphere keyframes — reused per-section below so each area gets
@@ -218,39 +296,104 @@ a {
   100% { transform: translate(calc(var(--dx, 12px) * 1.6), -90px); opacity: 0; }
 }
 
+/* a slow diagonal light band that sweeps across a glass surface once every
+   several seconds — mostly resting invisible, brief and subtle when it
+   passes, the way real curved glass occasionally catches a reflection.
+   Shared by every "premium" card/button surface below rather than each
+   one defining its own copy. */
+@keyframes glass-shimmer-sweep {
+  0%, 55% { transform: translateX(-140%) rotate(8deg); opacity: 0; }
+  68% { opacity: 0.9; }
+  82% { opacity: 0.9; }
+  100% { transform: translateX(140%) rotate(8deg); opacity: 0; }
+}
+
 /* ===================== Header ===================== */
-/* a floating glass pill, not a full-bleed bar — margin on every side
-   plus a large radius so the black background shows around it, and
-   `top` (not just the initial `margin-top`) keeps that same gap once it
-   sticks, rather than snapping flush to the viewport edge on scroll */
+/* a genuinely floating capsule: position: fixed (not sticky) so it never
+   participates in document flow or scrolls with the page, centred via
+   left:50%/translateX rather than margin auto. .page > main carries the
+   padding-top that compensates for the header no longer reserving flow
+   space (see below) so nothing starts underneath it. */
 .site-header {
-  position: sticky;
-  top: 14px;
-  z-index: 40;
-  width: calc(100% - 28px);
-  max-width: 1300px;
-  margin: 14px auto 0;
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+  width: min(1350px, calc(100% - 80px));
+  height: 68px;
   border-radius: 999px;
   -webkit-backdrop-filter: blur(20px) saturate(1.3);
   backdrop-filter: blur(20px) saturate(1.3);
-  background: color-mix(in srgb, var(--surface) 78%, transparent);
-  border: 1px solid var(--border-strong);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  background: rgba(12, 12, 10, 0.78);
+  border: 1px solid rgba(255, 205, 80, 0.15);
+  /* a plain soft shadow underneath — no ambient glow layer */
+  box-shadow:
+    0 10px 32px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: background 0.3s ease, box-shadow 0.3s ease, backdrop-filter 0.3s ease;
+}
+
+@media (max-width: 640px) {
+  .site-header {
+    top: 14px;
+    width: calc(100% - 28px);
+  }
 }
 
 .site-header.is-scrolled {
-  background: color-mix(in srgb, var(--surface) 94%, transparent);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  background: rgba(10, 10, 8, 0.88);
+  -webkit-backdrop-filter: blur(22px) saturate(1.35);
+  backdrop-filter: blur(22px) saturate(1.35);
+  box-shadow:
+    0 14px 36px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+/* compensates for the header being removed from flow by `fixed` — keeps
+   every page's first section starting exactly where it did when the
+   header was sticky, instead of sliding underneath it */
+.page > main {
+  padding-top: 108px;
+}
+
+@media (max-width: 640px) {
+  .page > main {
+    padding-top: 102px;
+  }
+}
+
+/* the periodic shimmer sweep that used to run across the header on a
+   timer has been removed — motion with no interaction or state behind
+   it read as decoration, not product. .site-header__shimmer stays as an
+   inert layer (Header.jsx still renders it) so the language dropdown's
+   stacking context is unaffected. */
+.site-header__shimmer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .site-header__inner {
+  position: relative;
+  z-index: 1;
   max-width: 1180px;
+  height: 100%;
   margin: 0 auto;
-  padding: 0.6rem 1.35rem;
+  padding: 0 1.5rem;
   display: flex;
   align-items: center;
   gap: 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .site-header__inner {
+    min-height: 62px;
+    padding: 0.6rem 1.1rem;
+  }
 }
 
 .brand {
@@ -263,9 +406,9 @@ a {
 }
 
 .brand__mark {
-  width: 38px;
-  height: 38px;
-  border-radius: 11px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -273,6 +416,25 @@ a {
   color: #fff;
   flex-shrink: 0;
   box-shadow: 0 4px 14px -2px color-mix(in srgb, var(--primary) 65%, transparent);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.brand:hover .brand__mark {
+  transform: scale(1.03);
+  box-shadow: 0 4px 20px -1px color-mix(in srgb, var(--primary) 80%, transparent);
+}
+
+/* a slow, quiet breathing glow — the logo should feel alive without ever
+   drawing the eye away from the nav around it */
+@media (prefers-reduced-motion: no-preference) {
+  .brand__mark {
+    animation: brand-mark-breathe 5s ease-in-out infinite;
+  }
+}
+
+@keyframes brand-mark-breathe {
+  0%, 100% { box-shadow: 0 4px 14px -2px color-mix(in srgb, var(--primary) 65%, transparent); }
+  50% { box-shadow: 0 4px 20px 0 color-mix(in srgb, var(--bright-green) 55%, transparent); }
 }
 
 .brand__text {
@@ -284,11 +446,18 @@ a {
 .brand__name {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.15rem;
+  font-size: 1.4rem;
   letter-spacing: -0.01em;
 }
 
+@media (max-width: 640px) {
+  .brand__name {
+    font-size: 1.2rem;
+  }
+}
+
 .site-nav {
+  position: relative;
   display: none;
   align-items: center;
   gap: 0.25rem;
@@ -302,33 +471,28 @@ a {
 
 .site-nav__link {
   position: relative;
-  padding: 0.5rem 0.85rem;
+  padding: 0.5rem 0.9rem;
   border-radius: 999px;
   text-decoration: none;
+  font-family: var(--font-display);
   font-size: 0.88rem;
   font-weight: 600;
   color: var(--text-muted);
-  transition: color 0.2s ease, background 0.2s ease;
+  transition: color 0.18s ease, background 0.18s ease;
 }
 
 .site-nav__link:hover {
   color: var(--text);
-  background: var(--bg-soft);
+  background: color-mix(in srgb, var(--primary) 8%, transparent);
 }
 
+/* a subtle active pill — a soft dark-gold tinted background, not the
+   old sliding underline. Simple CSS, no measured-DOM indicator to keep
+   in sync. */
 .site-nav__link.is-active {
   color: var(--primary);
-}
-
-.site-nav__link.is-active::after {
-  content: '';
-  position: absolute;
-  left: 0.85rem;
-  right: 0.85rem;
-  bottom: 0.1rem;
-  height: 2px;
-  border-radius: 2px;
-  background: var(--bright-green);
+  font-weight: 600;
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
 }
 
 .site-header__actions {
@@ -374,7 +538,8 @@ a {
 }
 
 .lang-select__trigger:hover {
-  border-color: var(--primary);
+  border-color: color-mix(in srgb, var(--primary) 45%, var(--border));
+  background: color-mix(in srgb, var(--surface) 96%, var(--primary) 4%);
 }
 
 .lang-select__menu {
@@ -425,13 +590,14 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text);
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  color: var(--text-muted);
+  transition: color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 .theme-toggle:hover {
-  border-color: var(--primary);
-  transform: rotate(-12deg);
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--primary) 40%, var(--border));
+  box-shadow: 0 0 14px -4px color-mix(in srgb, var(--primary) 55%, transparent);
 }
 
 .nav-menu-toggle {
@@ -484,6 +650,7 @@ a {
 
 /* ===================== Buttons & badges ===================== */
 .btn {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -497,6 +664,7 @@ a {
   text-decoration: none;
   transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
   white-space: nowrap;
+  overflow: hidden;
 }
 
 .btn:active {
@@ -513,6 +681,28 @@ a {
   background: var(--primary-dark);
   box-shadow: var(--shadow);
   transform: translateY(-1px);
+}
+
+.btn--primary::after {
+  content: '';
+  position: absolute;
+  top: -60%;
+  left: 0;
+  width: 30%;
+  height: 220%;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    color-mix(in srgb, #fff 22%, transparent) 50%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .btn--primary::after {
+    animation: glass-shimmer-sweep 7s ease-in-out infinite;
+  }
 }
 
 .btn--primary:disabled {
@@ -552,6 +742,11 @@ a {
   font-weight: 700;
   letter-spacing: 0.03em;
   text-transform: uppercase;
+}
+
+.badge--sm {
+  padding: 0.2rem 0.55rem;
+  font-size: 0.62rem;
 }
 
 .badge--pill {
@@ -605,359 +800,21 @@ a {
   border: 1px solid color-mix(in srgb, var(--info) 30%, transparent);
 }
 
-/* ===================== Voice Wave (signature visual) =====================
-   Voice RAG's signature identity: a concentric target built outward from
-   the product itself — mic at the center, thin sound rings around it,
-   particles in the outer field. Everything nests around one focal point
-   instead of sitting in empty space next to the headline. The literal
-   backdrop the real mic button sits inside on the voice interaction
-   page. */
-.voice-wave {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  isolation: isolate;
-  transition: transform 0.4s ease;
-}
-
-.voice-wave:hover {
-  transform: scale(1.03);
-}
-
-.voice-wave:hover .voice-wave__blob {
-  opacity: 1;
-}
-
-.voice-wave:hover .voice-wave__glow {
-  opacity: 1;
-  transform: scale(1.06);
-}
-
-.voice-wave--stage {
-  width: clamp(230px, 22vw, 320px);
-  height: clamp(230px, 22vw, 320px);
-}
-
-.voice-wave--compact {
-  width: 128px;
-  height: 128px;
-}
-
-.voice-wave__glow {
-  position: absolute;
-  inset: -14%;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    color-mix(in srgb, var(--bright-green) 16%, transparent) 0%,
-    color-mix(in srgb, var(--gold) 8%, transparent) 48%,
-    transparent 72%
-  );
-  filter: blur(8px);
-}
-
-/* orbits independently of the ring/waveform field below, at a different
-   speed, so the particle field reads as its own depth layer drifting
-   around the center rather than being glued to the rings' rotation */
-.voice-wave__motes {
-  position: absolute;
-  inset: 0;
-  transform-origin: 50% 50%;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .voice-wave__motes {
-    animation: wave-motes-orbit 140s linear infinite;
-  }
-}
-
-@keyframes wave-motes-orbit {
-  to {
-    transform: rotate(-360deg);
-  }
-}
-
-/* the "system waking up" click moment — particles briefly sweep faster
-   before the route change */
-[data-wave-state='answered'] .voice-wave__motes,
-[data-wave-state='listening'] .voice-wave__motes {
-  animation-duration: 4s;
-}
-
-.voice-wave__mote {
-  position: absolute;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--gold) 60%, var(--bright-green) 40%);
-  transform: translate(-50%, -50%);
-  opacity: var(--peak-opacity, 0.7);
-  filter: blur(var(--blur, 0px));
-}
-
-.voice-wave__field {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  fill: none;
-  transform-origin: 50% 50%;
-}
-
-/* a slow, faint sweep of light around the whole field — the "occasional
-   reflection" a curved glass surface would catch, not a spinner. Purely
-   ambient (like the motes below) — unrelated to the flow ring itself,
-   which is the one element here that never carries its own animation. */
-.voice-wave::after {
-  content: '';
-  position: absolute;
-  inset: 4%;
-  z-index: 1;
-  border-radius: 50%;
-  pointer-events: none;
-  background: conic-gradient(
-    from 0deg,
-    transparent 0%,
-    transparent 88%,
-    color-mix(in srgb, var(--bright-green) 40%, #f3eeff 60%) 93%,
-    transparent 98%
-  );
-  opacity: 0.3;
-  mix-blend-mode: overlay;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .voice-wave::after {
-    animation: wave-sheen-sweep 11s linear infinite;
-  }
-}
-
-@keyframes wave-sheen-sweep {
-  to { transform: rotate(360deg); }
-}
-
-/* a thin ring inside the blob, right around the mic — grounds it as a
-   physical instrument face rather than the mic icon floating in open
-   glass. No animation of its own, so it never competes with or
-   distracts from the blob, which is the one shape that's actually
-   meant to move. */
-.voice-wave__ring--halo {
-  fill: none;
-  stroke-width: 1;
-  stroke: color-mix(in srgb, var(--hero-emerald-bright, var(--bright-green)) 45%, transparent);
-  transform-origin: 100px 100px;
-}
-
-/* --- the signature liquid blob: a smooth closed curve wrapped around
-   the mic. At rest its `d` is driven by an ordinary CSS keyframe
-   (voicewave-blob-idle) cycling through three gently-lobed shapes —
-   "continuously morphs and breathes", not frozen. The instant real
-   audio takes over (VoiceWave.jsx sets [data-audio-live]), that
-   keyframe is switched off and the exact same `d` attribute is instead
-   redrawn every frame from real microphone volume — same shape
-   language, different data source. A translucent glass fill plus a
-   three-stop blue → violet → magenta gradient stroke, both wrapped in a
-   drop-shadow glow, is what sells "liquid neon core" rather than a
-   thin outline. --- */
-.voice-wave__blob {
-  fill: color-mix(in srgb, var(--surface-warm) 55%, transparent);
-  stroke: url(#voice-wave-flow-gradient);
-  stroke-width: 2.5;
-  stroke-linejoin: round;
-  opacity: 0.92;
-  filter: drop-shadow(0 0 16px color-mix(in srgb, var(--primary) 60%, transparent)) drop-shadow(0 0 34px color-mix(in srgb, var(--gold) 30%, transparent));
-  transition: opacity 0.4s ease, stroke-width 0.4s ease, filter 0.4s ease;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .voice-wave__blob {
-    animation: voicewave-blob-idle 12s ease-in-out infinite;
-  }
-}
-
-@keyframes voicewave-blob-idle {
-  0%, 100% {
-    d: path('M166.90,100.00 L167.39,102.21 L167.80,104.44 L168.15,106.71 L168.41,109.01 L168.60,111.33 L168.70,113.67 L168.73,116.03 L168.68,118.40 L167.54,120.49 L166.33,122.52 L165.07,124.49 L163.75,126.41 L162.37,128.26 L160.94,130.05 L159.46,131.78 L157.94,133.45 L156.37,135.05 L154.75,136.58 L153.10,138.05 L151.41,139.45 L149.69,140.78 L147.93,142.03 L146.15,143.22 L144.34,144.34 L143.22,146.15 L142.03,147.93 L140.78,149.69 L139.45,151.41 L138.05,153.10 L136.58,154.75 L135.05,156.37 L133.45,157.94 L131.78,159.46 L130.05,160.94 L128.26,162.37 L126.41,163.75 L124.49,165.07 L122.52,166.33 L120.49,167.54 L118.40,168.68 L116.03,168.73 L113.67,168.70 L111.33,168.60 L109.01,168.41 L106.71,168.15 L104.44,167.80 L102.21,167.39 L100.00,166.90 L97.83,166.34 L95.69,165.71 L93.60,165.01 L91.54,164.25 L89.53,163.42 L87.56,162.53 L85.64,161.57 L83.77,160.56 L81.65,160.50 L79.51,160.37 L77.36,160.16 L75.20,159.87 L73.04,159.50 L70.88,159.06 L68.71,158.54 L66.55,157.94 L64.40,157.26 L62.25,156.50 L60.11,155.66 L58.00,154.74 L55.89,153.74 L53.81,152.67 L51.76,151.51 L49.72,150.28 L48.49,148.24 L47.33,146.19 L46.26,144.11 L45.26,142.00 L44.34,139.89 L43.50,137.75 L42.74,135.60 L42.06,133.45 L41.46,131.29 L40.94,129.12 L40.50,126.96 L40.13,124.80 L39.84,122.64 L39.63,120.49 L39.50,118.35 L39.44,116.23 L38.43,114.36 L37.47,112.44 L36.58,110.47 L35.75,108.46 L34.99,106.40 L34.29,104.31 L33.66,102.17 L33.10,100.00 L32.61,97.79 L32.20,95.56 L31.85,93.29 L31.59,90.99 L31.40,88.67 L31.30,86.33 L31.27,83.97 L31.32,81.60 L32.46,79.51 L33.67,77.48 L34.93,75.51 L36.25,73.59 L37.63,71.74 L39.06,69.95 L40.54,68.22 L42.06,66.55 L43.63,64.95 L45.25,63.42 L46.90,61.95 L48.59,60.55 L50.31,59.22 L52.07,57.97 L53.85,56.78 L55.66,55.66 L56.78,53.85 L57.97,52.07 L59.22,50.31 L60.55,48.59 L61.95,46.90 L63.42,45.25 L64.95,43.63 L66.55,42.06 L68.22,40.54 L69.95,39.06 L71.74,37.63 L73.59,36.25 L75.51,34.93 L77.48,33.67 L79.51,32.46 L81.60,31.32 L83.97,31.27 L86.33,31.30 L88.67,31.40 L90.99,31.59 L93.29,31.85 L95.56,32.20 L97.79,32.61 L100.00,33.10 L102.17,33.66 L104.31,34.29 L106.40,34.99 L108.46,35.75 L110.47,36.58 L112.44,37.47 L114.36,38.43 L116.23,39.44 L118.35,39.50 L120.49,39.63 L122.64,39.84 L124.80,40.13 L126.96,40.50 L129.12,40.94 L131.29,41.46 L133.45,42.06 L135.60,42.74 L137.75,43.50 L139.89,44.34 L142.00,45.26 L144.11,46.26 L146.19,47.33 L148.24,48.49 L150.28,49.72 L151.51,51.76 L152.67,53.81 L153.74,55.89 L154.74,58.00 L155.66,60.11 L156.50,62.25 L157.26,64.40 L157.94,66.55 L158.54,68.71 L159.06,70.88 L159.50,73.04 L159.87,75.20 L160.16,77.36 L160.37,79.51 L160.50,81.65 L160.56,83.77 L161.57,85.64 L162.53,87.56 L163.42,89.53 L164.25,91.54 L165.01,93.60 L165.71,95.69 L166.34,97.83 L166.90,100.00 Z');
-  }
-  33% {
-    d: path('M170.53,100.00 L169.77,102.28 L168.94,104.52 L168.04,106.70 L167.07,108.83 L166.04,110.90 L164.94,112.92 L163.79,114.87 L162.57,116.77 L161.81,118.75 L160.99,120.70 L160.10,122.62 L159.15,124.50 L158.15,126.35 L157.09,128.15 L155.97,129.92 L154.80,131.64 L154.34,133.79 L153.81,135.95 L153.18,138.11 L152.48,140.27 L151.69,142.42 L150.81,144.56 L149.85,146.69 L148.80,148.80 L147.31,150.51 L145.76,152.18 L144.14,153.79 L142.48,155.35 L140.75,156.87 L138.97,158.33 L137.14,159.73 L135.26,161.08 L132.91,161.56 L130.56,161.96 L128.22,162.28 L125.89,162.50 L123.58,162.64 L121.28,162.70 L119.01,162.68 L116.77,162.57 L114.67,162.90 L112.56,163.17 L110.46,163.36 L108.36,163.48 L106.26,163.53 L104.16,163.51 L102.08,163.43 L100.00,163.27 L97.91,163.96 L95.77,164.57 L93.59,165.11 L91.37,165.58 L89.11,165.97 L86.82,166.29 L84.49,166.52 L82.14,166.67 L79.91,166.23 L77.69,165.71 L75.49,165.12 L73.30,164.46 L71.13,163.72 L68.97,162.91 L66.84,162.03 L64.74,161.08 L63.14,159.28 L61.62,157.45 L60.18,155.57 L58.82,153.67 L57.54,151.74 L56.34,149.78 L55.23,147.80 L54.19,145.81 L52.86,144.15 L51.58,142.46 L50.36,140.74 L49.20,138.98 L48.11,137.18 L47.08,135.36 L46.11,133.51 L45.20,131.64 L43.56,130.17 L41.96,128.62 L40.40,127.00 L38.89,125.31 L37.42,123.55 L36.00,121.72 L34.64,119.83 L33.33,117.86 L32.60,115.72 L31.94,113.54 L31.34,111.34 L30.82,109.11 L30.38,106.86 L30.00,104.59 L29.70,102.30 L29.47,100.00 L30.23,97.72 L31.06,95.48 L31.96,93.30 L32.93,91.17 L33.96,89.10 L35.06,87.08 L36.21,85.13 L37.43,83.23 L38.19,81.25 L39.01,79.30 L39.90,77.38 L40.85,75.50 L41.85,73.65 L42.91,71.85 L44.03,70.08 L45.20,68.36 L45.66,66.21 L46.19,64.05 L46.82,61.89 L47.52,59.73 L48.31,57.58 L49.19,55.44 L50.15,53.31 L51.20,51.20 L52.69,49.49 L54.24,47.82 L55.86,46.21 L57.52,44.65 L59.25,43.13 L61.03,41.67 L62.86,40.27 L64.74,38.92 L67.09,38.44 L69.44,38.04 L71.78,37.72 L74.11,37.50 L76.42,37.36 L78.72,37.30 L80.99,37.32 L83.23,37.43 L85.33,37.10 L87.44,36.83 L89.54,36.64 L91.64,36.52 L93.74,36.47 L95.84,36.49 L97.92,36.57 L100.00,36.73 L102.09,36.04 L104.23,35.43 L106.41,34.89 L108.63,34.42 L110.89,34.03 L113.18,33.71 L115.51,33.48 L117.86,33.33 L120.09,33.77 L122.31,34.29 L124.51,34.88 L126.70,35.54 L128.87,36.28 L131.03,37.09 L133.16,37.97 L135.26,38.92 L136.86,40.72 L138.38,42.55 L139.82,44.43 L141.18,46.33 L142.46,48.26 L143.66,50.22 L144.77,52.20 L145.81,54.19 L147.14,55.85 L148.42,57.54 L149.64,59.26 L150.80,61.02 L151.89,62.82 L152.92,64.64 L153.89,66.49 L154.80,68.36 L156.44,69.83 L158.04,71.38 L159.60,73.00 L161.11,74.69 L162.58,76.45 L164.00,78.28 L165.36,80.17 L166.67,82.14 L167.40,84.28 L168.06,86.46 L168.66,88.66 L169.18,90.89 L169.62,93.14 L170.00,95.41 L170.30,97.70 L170.53,100.00 Z');
-  }
-  66% {
-    d: path('M163.24,100.00 L163.53,102.08 L163.76,104.18 L163.91,106.29 L164.00,108.43 L164.01,110.57 L163.95,112.72 L163.82,114.88 L163.61,117.05 L163.65,119.31 L163.60,121.59 L163.48,123.89 L163.27,126.21 L162.97,128.53 L162.59,130.87 L162.13,133.21 L161.57,135.55 L159.81,137.19 L158.01,138.76 L156.17,140.25 L154.29,141.66 L152.38,142.99 L150.45,144.24 L148.49,145.41 L146.50,146.50 L144.75,147.78 L142.95,148.98 L141.13,150.12 L139.28,151.19 L137.40,152.20 L135.50,153.14 L133.58,154.01 L131.64,154.81 L130.22,156.54 L128.72,158.24 L127.14,159.91 L125.48,161.53 L123.75,163.10 L121.94,164.63 L120.05,166.10 L118.09,167.52 L115.85,167.96 L113.59,168.33 L111.33,168.62 L109.06,168.84 L106.79,168.98 L104.53,169.05 L102.26,169.04 L100.00,168.96 L97.77,168.16 L95.59,167.28 L93.47,166.34 L91.40,165.33 L89.39,164.26 L87.44,163.13 L85.56,161.94 L83.74,160.69 L81.61,160.62 L79.47,160.47 L77.32,160.25 L75.17,159.95 L73.01,159.57 L70.85,159.12 L68.68,158.59 L66.53,157.98 L64.38,157.28 L62.25,156.50 L60.13,155.64 L58.03,154.70 L55.94,153.68 L53.88,152.59 L51.84,151.42 L49.83,150.17 L48.78,147.97 L47.82,145.76 L46.95,143.54 L46.17,141.31 L45.48,139.07 L44.87,136.84 L44.35,134.61 L43.92,132.38 L42.98,130.48 L42.10,128.55 L41.28,126.60 L40.54,124.63 L39.86,122.64 L39.24,120.62 L38.70,118.60 L38.22,116.56 L36.90,114.71 L35.65,112.80 L34.45,110.82 L33.31,108.78 L32.24,106.67 L31.24,104.51 L30.30,102.28 L29.44,100.00 L29.80,97.70 L30.24,95.43 L30.76,93.18 L31.34,90.96 L32.00,88.77 L32.72,86.62 L33.51,84.50 L34.37,82.42 L35.61,80.47 L36.90,78.58 L38.25,76.76 L39.65,75.00 L41.10,73.31 L42.59,71.69 L44.13,70.13 L45.70,68.65 L46.19,66.54 L46.76,64.42 L47.41,62.31 L48.14,60.21 L48.96,58.11 L49.85,56.02 L50.83,53.95 L51.89,51.89 L53.28,50.12 L54.73,48.38 L56.25,46.69 L57.83,45.04 L59.47,43.44 L61.17,41.89 L62.93,40.38 L64.74,38.93 L67.15,38.54 L69.54,38.24 L71.92,38.03 L74.28,37.91 L76.62,37.88 L78.93,37.93 L81.21,38.06 L83.46,38.28 L85.46,37.66 L87.49,37.10 L89.53,36.61 L91.60,36.18 L93.68,35.82 L95.77,35.53 L97.88,35.31 L100.00,35.16 L102.15,34.43 L104.34,33.77 L106.58,33.18 L108.86,32.68 L111.19,32.25 L113.55,31.90 L115.94,31.63 L118.37,31.45 L120.45,32.58 L122.48,33.77 L124.46,35.02 L126.37,36.33 L128.23,37.70 L130.02,39.12 L131.76,40.59 L133.43,42.10 L135.04,43.65 L136.59,45.24 L138.07,46.88 L139.48,48.55 L140.83,50.25 L142.10,51.99 L143.31,53.76 L144.45,55.55 L146.44,56.50 L148.42,57.54 L150.38,58.65 L152.32,59.85 L154.23,61.14 L156.12,62.50 L157.97,63.95 L159.79,65.48 L160.98,67.41 L162.10,69.38 L163.16,71.38 L164.15,73.43 L165.08,75.51 L165.94,77.62 L166.73,79.76 L167.46,81.93 L167.21,84.33 L166.88,86.70 L166.46,89.03 L165.97,91.32 L165.40,93.56 L164.75,95.76 L164.03,97.90 L163.24,100.00 Z');
-  }
-}
-
-[data-wave-state='listening'] .voice-wave__blob {
-  opacity: 1;
-  stroke-width: 3;
-  filter: drop-shadow(0 0 26px color-mix(in srgb, var(--bright-green) 70%, transparent)) drop-shadow(0 0 50px color-mix(in srgb, var(--gold) 45%, transparent));
-}
-
-[data-wave-state='processing'] .voice-wave__blob {
-  opacity: 0.55;
-}
-
-/* the mic sits on a small glass disc riding inside the blob (matches the
-   inner ring) rather than a large flat surface — the blob itself is now
-   the primary "material", this is just enough of a face for the icon to
-   read as centred on something rather than floating in open glass. */
-.voice-wave__mic-wrap {
-  position: absolute;
-  z-index: 2;
-  width: 46%;
-  height: 46%;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--hero-ivory, #fff) 35%, transparent) 0%, transparent 70%);
-  border: 1px solid color-mix(in srgb, var(--hero-emerald-bright, var(--bright-green)) 30%, transparent);
-  box-shadow: inset 0 0 24px color-mix(in srgb, var(--primary) 30%, transparent);
-  transition: box-shadow 0.3s ease;
-}
-
-.voice-wave__mic {
-  color: var(--hero-ivory, #f3eeff);
-  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--bright-green) 60%, transparent));
-  transition: color 0.3s ease, filter 0.3s ease;
-}
-
-/* --- small glass bubbles orbiting just outside the blob's rim — same
-   "highlight + tinted fade" glass look as the Home hero's bubble field,
-   scaled down to this one component. --- */
-.voice-wave__bubbles {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-}
-
-.voice-wave__bubble {
-  position: absolute;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  opacity: 0;
-  filter: blur(0.6px);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  box-shadow: inset 0 0 4px rgba(255, 255, 255, 0.12);
-  background:
-    radial-gradient(circle at 30% 26%, rgba(255, 255, 255, 0.6) 0%, transparent 40%),
-    radial-gradient(circle, color-mix(in srgb, var(--hero-emerald, var(--primary)) 55%, transparent) 0%, transparent 78%);
-}
-
-.voice-wave__bubble--magenta {
-  background:
-    radial-gradient(circle at 30% 26%, rgba(255, 255, 255, 0.6) 0%, transparent 40%),
-    radial-gradient(circle, color-mix(in srgb, var(--gold) 55%, transparent) 0%, transparent 78%);
-}
-
-.voice-wave__bubble--blue {
-  background:
-    radial-gradient(circle at 30% 26%, rgba(255, 255, 255, 0.6) 0%, transparent 40%),
-    radial-gradient(circle, color-mix(in srgb, var(--bright-green) 55%, transparent) 0%, transparent 78%);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .voice-wave__glow {
-    animation: wave-breathe 6s ease-in-out infinite;
-  }
-  .voice-wave__mote {
-    animation: wave-mote-drift var(--dur, 8s) ease-in-out infinite;
-    animation-delay: var(--delay, 0s);
-  }
-  .voice-wave__bubble {
-    animation: voicewave-bubble-drift var(--dur, 9s) ease-in-out infinite;
-    animation-delay: var(--delay, 0s);
-  }
-}
-
-@keyframes wave-breathe {
-  0%, 100% { opacity: 0.7; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.04); }
-}
-
-@keyframes wave-mote-drift {
-  0%, 100% { transform: translate(-50%, -50%); opacity: calc(var(--peak-opacity, 0.7) * 0.7); }
-  50% { transform: translate(calc(-50% + 3px), calc(-50% - 4px)); opacity: var(--peak-opacity, 0.85); }
-}
-
-@keyframes voicewave-bubble-drift {
-  0%, 100% { transform: translate(-50%, -50%) scale(0.85); opacity: calc(var(--peak-opacity, 0.3) * 0.5); }
-  50% { transform: translate(calc(-50% - 4px), calc(-50% - 6px)) scale(1.1); opacity: var(--peak-opacity, 0.3); }
-}
-
-/* the "waking up" moment: a quick contract-then-release the instant
-   listening starts, on the Core's own root rather than the blob (which
-   is already busy with its own continuous morphing) so the two motions
-   never compete for the same property */
-@media (prefers-reduced-motion: no-preference) {
-  .voice-wave[data-wave-state='listening'] {
-    animation: wave-activate-contract 0.42s ease-out;
-  }
-}
-
-@keyframes wave-activate-contract {
-  0% { transform: scale(1); }
-  35% { transform: scale(0.93); }
-  70% { transform: scale(1.04); }
-  100% { transform: scale(1); }
-}
-
-[data-wave-state='listening'] .voice-wave__glow {
-  animation-duration: 2.2s;
-  background: radial-gradient(circle, color-mix(in srgb, var(--bright-green) 26%, transparent) 0%, transparent 72%);
-}
-
-[data-wave-state='listening'] .voice-wave__mic-wrap {
-  box-shadow: inset 0 0 30px color-mix(in srgb, var(--bright-green) 45%, transparent);
-}
-
-[data-wave-state='listening'] .voice-wave__mic {
-  color: var(--bright-green);
-}
-
-/* real microphone volume driving the glow (`transform` scale) and the
-   blob (`d`), in via VoiceWave.jsx refs every animation frame: a CSS
-   `animation` touching either of those properties fights a live JS-set
-   value for as long as it runs, so both must be switched off for
-   exactly as long as `data-audio-live` is set. */
-[data-audio-live='true'] .voice-wave__glow {
-  animation: none;
-}
-
-[data-audio-live='true'] .voice-wave__blob {
-  animation: none;
-}
-
-/* a touch of extra teal bloom while genuinely audio-driven — the glow
-   already scales with average volume via JS, this just makes the color
-   itself feel a shade more "live" than the resting listening tint */
-[data-audio-live='true'] .voice-wave__glow {
-  background: radial-gradient(circle, color-mix(in srgb, var(--bright-green) 34%, transparent) 0%, transparent 74%);
-}
-
-[data-wave-state='processing'] .voice-wave__glow {
-  animation-duration: 1.6s;
-}
-
-[data-wave-state='answered'] .voice-wave__glow,
-[data-wave-state='listening'] .voice-wave__glow {
-  animation: wave-pulse-once 1.3s ease-out;
-}
-
-@keyframes wave-pulse-once {
-  0% { opacity: 1; transform: scale(1); }
-  55% { opacity: 1; transform: scale(1.25); }
-  100% { opacity: 0.7; transform: scale(1); }
-}
+/* .voice-wave* (the old ring/orbit/bubble "AI energy core") has been
+   removed entirely — VoiceWave.jsx is no longer imported anywhere since
+   VoiceCard switched to the compact MicButton + MiniWaveform pairing.
+   See MiniWaveform.jsx for the current, much smaller waveform. */
 
 
 /* ===================== Hero ===================== */
 .hero {
   padding: 1.75rem 1.5rem 1.75rem;
   /* fits within roughly one viewport together with the floating navbar
-     above it, so the first screen reads as a complete composition
-     rather than something that obviously needs scrolling */
-  min-height: clamp(560px, calc(100vh - 88px), 900px);
+     above it (now compensated via .page > main's padding-top rather than
+     flow, since the header is position: fixed), so the first screen
+     reads as a complete composition rather than something that obviously
+     needs scrolling */
+  min-height: clamp(560px, calc(100vh - 108px), 900px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -966,54 +823,130 @@ a {
   overflow: hidden;
   isolation: isolate;
   --core-x: 50%;
-  --core-y: 68%;
-  /* a fixed, deliberately restrained reference palette for the cosmic
-     scene and its lighting — kept constant across both themes (a brand
-     identity, not chrome UI), separate from the theme-aware --bg token
-     the base canvas below still uses. Deep space black, electric violet,
-     cyan and magenta — no ocean/gold. */
-  --hero-forest: #0c0824;
-  --hero-forest-deep: #050214;
-  --hero-forest-mid: #150f36;
-  --hero-emerald-deep: #5b21d6;
-  --hero-emerald: #8b5cf6;
-  --hero-emerald-bright: #22d3ee;
-  --hero-ivory: #f3eeff;
-  --hero-gold: #f83ecb;
-  --hero-sage: #6d5fa8;
-  --hero-glass: rgba(255, 255, 255, 0.06);
-  --hero-glass-strong: rgba(255, 255, 255, 0.1);
-  /* the one deliberate contrasting note in an otherwise violet/cyan
-     scene — a magenta nebula glow low on the horizon, not a literal
-     sunset, but filling the same "one warm accent" role */
-  --hero-sunset: #ff5fd1;
-  --hero-sunset-deep: #c721a0;
-  /* a symmetric cinematic vignette — brighter/cooler around the Voice
-     Core, quietly darkening toward every edge equally — reads as ONE
+  --core-y: 46%;
+  /* a fixed, deliberately restrained reference palette for the Home hero
+     specifically — kept constant across both themes (a brand identity,
+     not chrome UI), separate from the theme-aware --bg token the base
+     canvas below still uses. This is the ONE place in the app carrying
+     this identity: warm ivory, charcoal/near-black, and a family of gold
+     tones standing in for what used to be a violet/cyan/magenta scene —
+     deliberately no purple, no cyan, no pink. Everything below (the
+     vignette, BeachScene's blobs/mesh/particles/bubbles, the badge, the
+     CTA, the feature cards) already reads these custom properties rather
+     than hardcoded colour, so redefining the values here is enough to
+     recolour the whole hero without touching every individual rule —
+     the navbar, footer, pipeline section and the real /app voice
+     interface all still read the site's own global tokens and are
+     deliberately untouched (this is a Home-hero identity, not a global
+     retheme). */
+  --hero-forest: #17140d;
+  --hero-forest-deep: #0b0b0a;
+  --hero-forest-mid: #221c10;
+  --hero-emerald-deep: #8a6416;
+  --hero-emerald: #d9a928;
+  --hero-emerald-bright: #ffd966;
+  --hero-ivory: #f7f5ef;
+  --hero-gold: #f4c542;
+  --hero-sage: #a68a5a;
+  --hero-glass: rgba(247, 245, 239, 0.05);
+  --hero-glass-strong: rgba(247, 245, 239, 0.09);
+  /* a warm amber note, held in reserve rather than a second competing
+     hue — gold stays the one accent family throughout */
+  --hero-sunset: #ffb347;
+  --hero-sunset-deep: #b8781f;
+  /* shadows the site-wide --bg (a very deep violet-black) with a truly
+     neutral near-black locally, just for this section — the last trace
+     of the old palette removed from the hero's own base layer without
+     touching the token everywhere else on the site still relies on */
+  --bg: #0b0b0a;
+  /* a symmetric cinematic vignette — brighter/warmer around the centre,
+     quietly darkening toward every edge equally — reads as ONE
      continuous composition instead of a diagonal sweep that leaves one
      corner untouched and another deepened */
   background:
-    radial-gradient(ellipse 58% 46% at var(--core-x) var(--core-y), color-mix(in srgb, var(--hero-emerald) 14%, transparent) 0%, transparent 72%),
+    radial-gradient(ellipse 58% 46% at var(--core-x) var(--core-y), color-mix(in srgb, var(--hero-emerald) 10%, transparent) 0%, transparent 72%),
     radial-gradient(ellipse 130% 110% at 50% 42%, transparent 52%, color-mix(in srgb, var(--hero-forest-deep) 24%, transparent) 100%),
     var(--bg);
 
   --hero-sun-core: var(--hero-ivory);
   --hero-sun: var(--hero-gold);
-  --hero-sun-deep: #7c1f9e;
+  --hero-sun-deep: #8a6416;
 }
 
-:root[data-theme='light'] .hero {
-  /* the hero stays a fixed deep-space scene regardless of the site-wide
-     light/dark toggle — a brand identity moment, not chrome UI — so only
-     the vignette accent softens slightly for the lighter surroundings */
-  background:
-    radial-gradient(ellipse 58% 46% at var(--core-x) var(--core-y), color-mix(in srgb, var(--hero-emerald) 11%, transparent) 0%, transparent 72%),
-    radial-gradient(ellipse 130% 110% at 50% 42%, transparent 55%, color-mix(in srgb, var(--hero-sage) 18%, transparent) 100%),
-    var(--bg);
+/* on narrow screens the headline wraps to more lines and the feature
+   cards stack immediately under the CTA row, so the Core needs to sit
+   noticeably higher (as a fraction of the section) or it lands inside
+   the first feature card instead of the open space around the text */
+@media (max-width: 640px) {
+  .hero {
+    --core-y: 33%;
+  }
 }
 
+/* an extremely light film-grain texture — a tiled SVG turbulence noise,
+   almost invisible, that keeps the large dark areas from reading as a
+   flat digital fill. `mix-blend-mode: overlay` at low opacity is what
+   keeps it from ever looking like visible static. */
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ===================== Hero: the gold light effect =====================
+   Replaces the old 3D orb entirely — no circular graphic of any kind sits
+   in the hero any more. Just a single soft diagonal band of warm gold
+   light drifting slowly behind the headline, like a reflection passing
+   across glass. Kept behind the text (z-index 0) and very low-opacity so
+   the typography stays the unmistakably dominant element on the page. */
+.hero__gold-sweep {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: min(1400px, 160vw);
+  height: clamp(260px, 30vw, 420px);
+  transform: translate(-50%, -50%) rotate(-9deg);
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    transparent 30%,
+    color-mix(in srgb, var(--hero-gold) 16%, transparent) 47%,
+    color-mix(in srgb, var(--hero-emerald-bright) 22%, transparent) 50%,
+    color-mix(in srgb, var(--hero-gold) 16%, transparent) 53%,
+    transparent 70%
+  );
+  filter: blur(38px);
+  opacity: 0.55;
+  background-size: 240% 100%;
+  background-position: 0% 0%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero__gold-sweep { animation: hero-gold-sweep-drift 16s ease-in-out infinite; }
+}
+
+@keyframes hero-gold-sweep-drift {
+  0%, 100% { background-position: 0% 0%; opacity: 0.42; }
+  50% { background-position: 100% 0%; opacity: 0.6; }
+}
+
+[data-voice-state='listening'] .hero__gold-sweep,
+[data-voice-state='processing'] .hero__gold-sweep {
+  animation-duration: 6s;
+}
+
+/* one centred column — eyebrow, headline, sub, CTA, then the Voice Core
+   sitting quietly beneath it. The headline is the whole composition's
+   focus; nothing sits beside it competing for attention. */
 .hero__stack {
   position: relative;
+  z-index: 1;
   width: 100%;
   max-width: 640px;
   margin: 0 auto;
@@ -1035,14 +968,11 @@ a {
   flex-direction: column;
   align-items: center;
   min-width: 0;
+  width: 100%;
   /* barely-there — present enough that the text reads as part of the same
      3D space as the background, never enough to distract from reading it */
   transform: translate(calc(var(--mx, 0) * 1px), calc(var(--my, 0) * 1px));
   transition: transform 0.2s ease-out;
-}
-
-:root[data-theme='light'] .hero__stack {
-  --hero-heading: var(--primary-dark);
 }
 
 /* fade + slide up on load, staggered per element via --d; reduced-motion
@@ -1054,7 +984,7 @@ a {
 @media (prefers-reduced-motion: no-preference) {
   .hero__reveal {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(10px);
     animation: hero-reveal 0.7s ease-out forwards;
     animation-delay: var(--d, 0s);
   }
@@ -1071,12 +1001,14 @@ a {
    backdrop, thin luminous border, matching the glassmorphism used on the
    navbar/buttons/feature strip rather than sitting as bare text */
 .hero__eyebrow {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--gold) 70%, var(--hero-heading) 30%);
+  color: color-mix(in srgb, var(--hero-gold) 70%, var(--hero-heading) 30%);
   margin-bottom: 1rem;
   padding: 0.5rem 1.1rem;
   border-radius: 999px;
@@ -1087,6 +1019,28 @@ a {
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
+/* a small "live" status dot — the quiet signal that this is a running
+   system, not a static marketing badge */
+.hero__eyebrow-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--hero-emerald-bright);
+  box-shadow: 0 0 6px 1px color-mix(in srgb, var(--hero-emerald-bright) 70%, transparent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero__eyebrow-dot {
+    animation: eyebrow-dot-pulse 2.4s ease-in-out infinite;
+  }
+}
+
+@keyframes eyebrow-dot-pulse {
+  0%, 100% { opacity: 0.7; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
 .hero__headline {
   margin: 0 0 0.7rem;
   font-weight: 800;
@@ -1095,6 +1049,9 @@ a {
   line-height: 0.94;
   font-size: clamp(2.3rem, 5.4vw, 3.8rem);
   color: var(--hero-heading);
+  /* a very soft ambient glow, not a hard shadow — just enough that the
+     headline feels lit by the same scene as the orb behind it */
+  filter: drop-shadow(0 0 26px color-mix(in srgb, var(--hero-emerald) 22%, transparent));
   /* the multilingual demo swaps this text every few seconds — a floor
      sized for three lines of the loosest script keeps the CTA below it
      from visibly jumping on every swap */
@@ -1156,8 +1113,20 @@ a {
   display: block;
 }
 
+/* a genuine gradient fill rather than a flat tint — the single detail
+   that most separates "premium product" headline treatment from an
+   ordinary coloured heading. Two stops (light gold to rich gold), not
+   three — a sophisticated warm tone rather than a rainbow sweep — with
+   a barely-visible glow, not a strong neon one. Slightly smaller than
+   the line above it, per the type hierarchy. */
 .hero__headline-row--accent {
-  color: color-mix(in srgb, var(--gold) 55%, var(--hero-heading) 45%);
+  background: linear-gradient(100deg, var(--hero-emerald-bright) 0%, var(--hero-emerald) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: color-mix(in srgb, var(--hero-gold) 55%, var(--hero-heading) 45%);
+  filter: drop-shadow(0 0 14px color-mix(in srgb, var(--hero-gold) 18%, transparent));
+  font-size: 0.9em;
 }
 
 /* a handful of languages take a slow turn in the headline as a quiet
@@ -1179,10 +1148,15 @@ a {
 }
 
 .hero__sub {
+  position: relative;
+  z-index: 1;
+  font-weight: 400;
   font-size: clamp(0.95rem, 1.3vw, 1.08rem);
-  color: var(--text-muted);
+  letter-spacing: 0.01em;
+  color: color-mix(in srgb, var(--hero-ivory) 62%, var(--hero-sage) 38%);
   max-width: 46ch;
   margin: 0 auto 1.1rem;
+  text-shadow: 0 2px 16px rgba(2, 1, 10, 0.85), 0 1px 3px rgba(2, 1, 10, 0.9);
 }
 
 @media (min-width: 1024px) {
@@ -1209,34 +1183,37 @@ a {
   margin-bottom: 0;
 }
 
-@media (min-width: 1024px) {
-  .hero__cta {
-    justify-content: flex-start;
-  }
-}
-
 .hero__cta .hero__cta-primary {
   border-radius: 999px;
   gap: 0.6rem;
-  background: linear-gradient(135deg, var(--hero-gold), var(--primary) 65%, var(--hero-emerald-deep));
+  background: linear-gradient(115deg, var(--hero-gold), var(--hero-sunset) 40%, var(--hero-emerald-deep) 65%, var(--hero-gold));
+  background-size: 260% 100%;
   border: 1px solid color-mix(in srgb, var(--hero-emerald-bright) 40%, transparent);
+  color: var(--hero-forest-deep);
+  text-shadow: none;
 }
 
-/* a slow, quiet breathing glow at rest — the primary action should feel
-   alive without anyone touching it, not just on hover */
+/* a slow, quiet breathing glow at rest, plus the gradient itself drifting —
+   the primary action should feel alive without anyone touching it, not
+   just on hover */
 @media (prefers-reduced-motion: no-preference) {
   .hero__cta .hero__cta-primary {
-    animation: cta-breathe 4.5s ease-in-out infinite;
+    animation: cta-breathe 4.5s ease-in-out infinite, cta-gradient-drift 9s ease-in-out infinite;
   }
 }
 
 @keyframes cta-breathe {
   0%, 100% { box-shadow: var(--shadow); }
-  50% { box-shadow: var(--shadow), var(--glow-green); }
+  50% { box-shadow: var(--shadow), 0 0 0 1px color-mix(in srgb, var(--hero-gold) 35%, transparent), 0 10px 32px -6px color-mix(in srgb, var(--hero-gold) 55%, transparent); }
+}
+
+@keyframes cta-gradient-drift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
 .hero__cta .hero__cta-primary:hover:not(:disabled) {
-  box-shadow: var(--shadow), var(--glow-green);
+  box-shadow: var(--shadow), 0 0 0 1px color-mix(in srgb, var(--hero-gold) 45%, transparent), 0 12px 38px -6px color-mix(in srgb, var(--hero-gold) 65%, transparent);
   transform: translateY(-2px);
   animation-play-state: paused;
   filter: brightness(1.08);
@@ -1259,119 +1236,568 @@ a {
 
 .hero__cta .btn--ghost {
   border-radius: 14px;
-  background: color-mix(in srgb, var(--surface-warm) 45%, transparent);
-  border-color: color-mix(in srgb, var(--primary) 45%, var(--border-strong));
+  background: color-mix(in srgb, var(--hero-forest) 55%, transparent);
+  border-color: color-mix(in srgb, var(--hero-ivory) 35%, var(--hero-glass-strong));
+  color: var(--hero-ivory);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
 }
 
 .hero__cta .btn--ghost:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--bright-green) 16%, transparent);
-  border-color: var(--primary);
+  background: color-mix(in srgb, var(--hero-gold) 12%, transparent);
+  border-color: color-mix(in srgb, var(--hero-gold) 55%, transparent);
   color: var(--hero-heading);
-  box-shadow: 0 0 22px -4px color-mix(in srgb, var(--hero-emerald-bright) 55%, transparent);
+  box-shadow: 0 0 22px -4px color-mix(in srgb, var(--hero-gold) 45%, transparent);
   transform: translateY(-2px);
 }
 
 .hero__cta .btn--ghost:active:not(:disabled) {
-  background: color-mix(in srgb, var(--bright-green) 24%, transparent);
+  background: color-mix(in srgb, var(--hero-gold) 18%, transparent);
   transition-duration: 0.08s;
 }
 
-/* --- the 4-item highlight strip along the bottom of the hero — one
-   glass panel (not four separate cards) so it reads as a single
-   instrument-panel object, matching the navbar/badge/button glass
-   language rather than adding a new visual vocabulary. --- */
-.hero__features {
-  margin-top: clamp(1.5rem, 4vw, 2.75rem);
-  width: 100%;
-  max-width: 1180px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.25rem 1.5rem;
-  padding: 1.1rem 1.5rem;
-  border-radius: 24px;
-  background: color-mix(in srgb, var(--hero-glass-strong) 100%, transparent);
-  border: 1px solid var(--hero-glass-strong);
-  -webkit-backdrop-filter: blur(22px) saturate(1.3);
-  backdrop-filter: blur(22px) saturate(1.3);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+/* ===================== the Voice Wave Core =====================
+   The hero's signature visual: a small organic glowing core, a scatter
+   of tiny particles, an ambient halo, and a compact waveform beneath —
+   not a microphone icon in a circle, not a diamond, not a ring. Sits
+   quietly beneath the headline and CTA; the typography stays the
+   unmistakable focus. Everything here reacts to the same
+   data-voice-state BeachScene's ripples already key off. */
+.hero__wave-wrap {
+  position: relative;
+  z-index: 1;
+  margin-top: clamp(2.25rem, 5vw, 3.25rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
 }
 
-@media (min-width: 860px) {
-  .hero__features {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0.5rem 1.25rem;
-    padding: 1.25rem 2rem;
+/* a very soft, wide radial light sitting behind the entire
+   visualization — separate from (and much larger/softer than) the tight
+   halo directly behind the core. Gives the lower hero a touch of depth
+   without ever reading as a second glowing shape. */
+.hero__wave-depth {
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  left: 50%;
+  width: min(520px, 90vw);
+  height: 320px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse, color-mix(in srgb, var(--hero-gold) 10%, transparent) 0%, color-mix(in srgb, var(--hero-forest-deep) 30%, transparent) 55%, transparent 78%);
+  filter: blur(30px);
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+/* a dozen tiny ambient particles across the lower-mid hero — absolutely
+   positioned over the whole wrap so they never affect its flex layout;
+   each just a slow individual float/fade, a few with light horizontal
+   sway. Independent of the core's own particle scatter above and the
+   trail below. */
+.hero__wave-ambient {
+  position: absolute;
+  inset: -10% -6%;
+  pointer-events: none;
+}
+
+.hero__wave-ambient-particle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.hero__wave-ambient-particle--gold {
+  background: var(--hero-gold);
+}
+
+.hero__wave-ambient-particle--ivory {
+  background: var(--hero-ivory);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero__wave-ambient-particle {
+    animation: hero-wave-ambient-float calc(8s + var(--i, 0) * 0.9s) ease-in-out infinite;
+    animation-delay: calc(var(--i, 0) * -0.7s);
+  }
+  .hero__wave-ambient-particle--sway {
+    animation-name: hero-wave-ambient-float-sway;
   }
 }
 
-.hero__feature {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.7rem;
-  padding: 0.6rem;
-  margin: -0.6rem;
-  border-radius: 16px;
-  text-align: left;
-  transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+@keyframes hero-wave-ambient-float {
+  0%, 100% { transform: translateY(0); opacity: 0.18; }
+  50% { transform: translateY(-5px); opacity: 0.4; }
 }
 
-/* a slight lift + glow on hover — the "3D response" the feature strip
-   asks for, kept to a translate/shadow pair rather than a real per-pixel
-   tilt so it stays cheap and never feels gimmicky */
-.hero__feature:hover {
-  transform: translateY(-3px);
-  background: color-mix(in srgb, var(--hero-emerald) 8%, transparent);
-  box-shadow: 0 10px 24px -8px color-mix(in srgb, var(--hero-emerald) 35%, transparent);
+@keyframes hero-wave-ambient-float-sway {
+  0%, 100% { transform: translate(0, 0); opacity: 0.18; }
+  50% { transform: translate(3px, -5px); opacity: 0.4; }
 }
 
-.hero__feature-icon {
-  flex-shrink: 0;
-  width: 40px;
-  height: 40px;
+/* the core + halo + particles move together on cursor proximity
+   (--wx/--wy, written by Hero.jsx's own scoped pointermove listener) —
+   the waveform and status label underneath stay put, only this cluster
+   drifts toward the pointer. */
+.hero__wave-group {
+  position: relative;
+  width: 96px;
+  height: 76px;
   display: flex;
   align-items: center;
   justify-content: center;
+  translate: var(--wx, 0px) var(--wy, 0px);
+  transition: translate 0.3s ease-out;
+}
+
+/* an extremely soft atmospheric halo behind the core — heavily blurred
+   so it reads as ambient light the core is sitting in, not as a second
+   shape. This is where the "premium" of the composition mostly lives,
+   not in the core's own outline. */
+.hero__wave-glow {
+  position: absolute;
+  inset: -34px;
   border-radius: 50%;
-  color: var(--hero-emerald-bright);
-  background: radial-gradient(circle at 32% 28%, color-mix(in srgb, var(--hero-emerald) 45%, transparent), color-mix(in srgb, var(--hero-emerald-deep) 30%, transparent));
-  border: 1px solid color-mix(in srgb, var(--hero-emerald) 40%, transparent);
-  box-shadow: 0 0 16px -2px color-mix(in srgb, var(--hero-emerald) 55%, transparent);
-  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  background: radial-gradient(circle, color-mix(in srgb, var(--hero-gold) 24%, transparent) 0%, transparent 70%);
+  filter: blur(20px);
+  opacity: 0.7;
+  pointer-events: none;
 }
 
-.hero__feature:hover .hero__feature-icon {
-  transform: scale(1.12) rotate(-6deg);
-  box-shadow: 0 0 22px -1px color-mix(in srgb, var(--hero-emerald-bright) 65%, transparent);
+@media (prefers-reduced-motion: no-preference) {
+  .hero__wave-glow {
+    animation: hero-wave-glow-breathe 6s ease-in-out infinite;
+  }
 }
 
-.hero__feature-copy {
+@keyframes hero-wave-glow-breathe {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.06); }
+}
+
+[data-voice-state='listening'] .hero__wave-glow {
+  opacity: 0.9;
+  animation-duration: 2.2s;
+}
+
+[data-voice-state='processing'] .hero__wave-glow {
+  opacity: 0.85;
+  transform: scale(1.15);
+  animation-duration: 3s;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-voice-state='answered'] .hero__wave-glow {
+    animation: hero-wave-glow-pulse-once 1s ease-out;
+  }
+}
+
+@keyframes hero-wave-glow-pulse-once {
+  0% { opacity: 0.6; transform: scale(1); }
+  45% { opacity: 1; transform: scale(1.25); }
+  100% { opacity: 0.55; transform: scale(1); }
+}
+
+/* the core itself — a small organic blob (an irregular, animated
+   border-radius, the same technique already used on the real mic
+   button elsewhere in the app), never a circle outline or a rotated
+   square. "3D" is entirely gradient + layered box-shadow, never a
+   literal render. */
+.hero__wave-core {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  border-radius: 62% 38% 55% 45% / 48% 42% 58% 52%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(155deg, color-mix(in srgb, var(--hero-gold) 60%, transparent) 0%, color-mix(in srgb, var(--hero-emerald-deep) 65%, var(--hero-forest-deep)) 100%);
+  border: 1px solid color-mix(in srgb, var(--hero-ivory) 22%, transparent);
+  overflow: visible;
+  color: var(--hero-forest-deep);
+  box-shadow:
+    0 12px 26px -10px color-mix(in srgb, var(--hero-gold) 55%, transparent),
+    0 2px 8px -2px rgba(0, 0, 0, 0.5),
+    inset -6px -6px 12px rgba(0, 0, 0, 0.38),
+    inset 5px 5px 10px rgba(255, 255, 255, 0.2);
+  transition: box-shadow 0.5s ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero__wave-core {
+    animation: hero-wave-core-morph 9s ease-in-out infinite, hero-wave-core-breathe 6s ease-in-out infinite;
+  }
+}
+
+/* a slow organic wobble between a few irregular blob shapes — never a
+   perfect circle, never a sharp geometric outline */
+@keyframes hero-wave-core-morph {
+  0%, 100% { border-radius: 62% 38% 55% 45% / 48% 42% 58% 52%; }
+  33% { border-radius: 46% 54% 40% 60% / 58% 48% 52% 42%; }
+  66% { border-radius: 55% 45% 60% 40% / 42% 58% 40% 60%; }
+}
+
+@keyframes hero-wave-core-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.045); }
+}
+
+/* a small specular highlight — the "this is a lit, curved surface" cue
+   a real object would catch from one direction */
+.hero__wave-core-highlight {
+  position: absolute;
+  top: 16%;
+  left: 18%;
+  width: 32%;
+  height: 20%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(255, 255, 255, 0.7) 0%, transparent 75%);
+  filter: blur(1px);
+  pointer-events: none;
+}
+
+.hero__wave-core svg {
+  position: relative;
+  z-index: 1;
+}
+
+/* a soft blurred ellipse beneath the core — the one thing that most
+   sells "a small object sitting in space" rather than "a sticker
+   floating with nothing under it" */
+.hero__wave-core-shadow {
+  position: absolute;
+  bottom: -13px;
+  left: 50%;
+  width: 58%;
+  height: 9px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.5) 0%, transparent 75%);
+  pointer-events: none;
+}
+
+[data-voice-state='listening'] .hero__wave-core,
+[data-voice-state='processing'] .hero__wave-core {
+  box-shadow:
+    0 16px 34px -8px color-mix(in srgb, var(--hero-gold) 70%, transparent),
+    0 2px 8px -2px rgba(0, 0, 0, 0.5),
+    inset -6px -6px 12px rgba(0, 0, 0, 0.32),
+    inset 5px 5px 10px rgba(255, 255, 255, 0.26);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-voice-state='answered'] .hero__wave-core {
+    animation: hero-wave-core-pulse-once 1.1s ease-out;
+  }
+}
+
+@keyframes hero-wave-core-pulse-once {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.16); }
+  100% { transform: scale(1); }
+}
+
+/* a scatter of tiny particles around the core — fixed positions (see
+   WAVE_PARTICLES in Hero.jsx), each its own slow drift/fade so they
+   never read as a synchronised ring */
+.hero__wave-particle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--hero-gold);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero__wave-particle {
+    animation: hero-wave-particle-drift calc(6s + var(--i, 0) * 0.8s) ease-in-out infinite;
+    animation-delay: calc(var(--i, 0) * -0.6s);
+  }
+}
+
+@keyframes hero-wave-particle-drift {
+  0%, 100% { transform: translate(0, 0); opacity: 0.3; }
+  50% { transform: translate(-3px, -5px); opacity: 0.7; }
+}
+
+/* while processing, particles pulse tighter and faster instead of their
+   usual slow idle wander — a quiet "gathering energy" cue without
+   needing each particle's exact offset from the core */
+[data-voice-state='processing'] .hero__wave-particle {
+  animation-name: hero-wave-particle-gather;
+  animation-duration: 1.6s;
+}
+
+@keyframes hero-wave-particle-gather {
+  0%, 100% { transform: scale(1); opacity: 0.4; }
+  50% { transform: scale(0.55); opacity: 0.85; }
+}
+
+/* the compact waveform beneath the core — organic amplitude variation,
+   not a uniform equalizer */
+.hero__wave-bars {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2px;
+  height: 20px;
+  width: 100%;
+  max-width: 160px;
+}
+
+.hero__wave-bar {
+  flex: 1 1 0;
+  max-width: 3px;
+  height: var(--h, 40%);
+  border-radius: 1px;
+  background: linear-gradient(180deg, var(--hero-gold), color-mix(in srgb, var(--hero-emerald-bright) 70%, transparent));
+  opacity: 0.6;
+  transform-origin: bottom center;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero__wave-bar {
+    animation: hero-wave-bar-idle calc(2s + var(--i, 0) * 0.07s) ease-in-out infinite;
+    animation-delay: calc(var(--i, 0) * 0.06s);
+  }
+}
+
+@keyframes hero-wave-bar-idle {
+  0%, 100% { transform: scaleY(0.55); opacity: 0.42; }
+  50% { transform: scaleY(1); opacity: 0.75; }
+}
+
+[data-voice-state='listening'] .hero__wave-bar {
+  animation-name: hero-wave-bar-listening;
+  animation-duration: 0.7s;
+  opacity: 0.9;
+}
+
+@keyframes hero-wave-bar-listening {
+  0%, 100% { transform: scaleY(0.4); opacity: 0.6; }
+  50% { transform: scaleY(1.3); opacity: 1; }
+}
+
+/* processing: a smoother travelling wave rather than idle bobbing — the
+   tight per-bar delay is what makes the peak visibly move left to right */
+[data-voice-state='processing'] .hero__wave-bar {
+  animation-name: hero-wave-bar-travel;
+  animation-duration: 1.1s;
+  animation-timing-function: ease-in-out;
+  animation-delay: calc(var(--i, 0) * 0.045s);
+  opacity: 0.85;
+}
+
+@keyframes hero-wave-bar-travel {
+  0%, 100% { transform: scaleY(0.5); }
+  50% { transform: scaleY(1.15); }
+}
+
+/* answered: one expand-and-settle pass across the whole waveform */
+@media (prefers-reduced-motion: no-preference) {
+  [data-voice-state='answered'] .hero__wave-bars {
+    animation: hero-wave-bars-settle 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+
+@keyframes hero-wave-bars-settle {
+  0% { transform: scaleY(1); }
+  35% { transform: scaleY(1.5); }
+  100% { transform: scaleY(1); }
+}
+
+/* the tiny status line beneath the waveform */
+.hero__wave-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 0.9rem;
+  font-family: var(--font-display);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--hero-ivory) 55%, transparent);
+  transition: color 0.3s ease;
+}
+
+.hero__wave-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--hero-emerald-bright);
+  box-shadow: 0 0 6px 1px color-mix(in srgb, var(--hero-emerald-bright) 70%, transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+[data-voice-state='listening'] .hero__wave-status {
+  color: color-mix(in srgb, var(--hero-gold) 85%, var(--hero-ivory) 15%);
+}
+
+[data-voice-state='listening'] .hero__wave-dot {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-voice-state='listening'] .hero__wave-dot {
+    animation: hero-wave-dot-pulse 1.6s ease-in-out infinite;
+  }
+}
+
+@keyframes hero-wave-dot-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.3); }
+}
+
+[data-voice-state='answered'] .hero__wave-status {
+  color: color-mix(in srgb, var(--hero-gold) 85%, var(--hero-ivory) 15%);
+}
+
+/* listening/processing: the depth light behind the whole visualization
+   brightens slightly along with the tighter halo behind the core itself */
+[data-voice-state='listening'] .hero__wave-depth,
+[data-voice-state='processing'] .hero__wave-depth {
+  opacity: 1;
+}
+
+.hero__wave-depth {
+  transition: opacity 0.6s ease;
+}
+
+/* the audio intelligence trail — extremely subtle by design. Each
+   fragment starts at centre, drifts out to its resting --dist (a
+   percentage of the trail's own width) and fades, on a loop. */
+.hero__wave-trail {
+  position: relative;
+  width: min(320px, 82vw);
+  height: 8px;
+  margin-top: 0.15rem;
+}
+
+.hero__wave-trail-fragment {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hero__wave-trail-fragment--gold {
+  background: radial-gradient(circle, var(--hero-gold) 0%, transparent 75%);
+}
+
+.hero__wave-trail-fragment--ivory {
+  background: radial-gradient(circle, var(--hero-ivory) 0%, transparent 75%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero__wave-trail-fragment {
+    animation: hero-wave-trail-drift calc(4.5s + var(--i, 0) * 0.35s) ease-out infinite;
+    animation-delay: calc(var(--i, 0) * 0.3s);
+  }
+}
+
+@keyframes hero-wave-trail-drift {
+  0% { left: 50%; opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+  18% { opacity: 0.4; transform: translate(-50%, -50%) scale(1); }
+  70% { opacity: 0.22; }
+  100% { left: calc(50% + var(--side, 1) * var(--dist, 30) * 1%); opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+}
+
+[data-voice-state='listening'] .hero__wave-trail-fragment,
+[data-voice-state='processing'] .hero__wave-trail-fragment {
+  animation-duration: 2.2s;
+}
+
+/* ===================== the feature rail =====================
+   One clean horizontal line, not four separate cards — icon+title+
+   description groups divided by thin hairlines. The item under the
+   pointer gets a small gold glow and lifts a couple of px; nothing has
+   its own background, border, or heavy shadow. */
+.hero__rail {
+  position: relative;
+  z-index: 1;
+  margin-top: clamp(2.5rem, 5vw, 3.5rem);
+  width: 100%;
+  max-width: 980px;
+  display: flex;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.hero__rail-item {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 1.1rem 1.5rem;
+  flex: 1 1 0;
+  min-width: 170px;
+  text-align: left;
+  transition: transform 0.3s ease;
+}
+
+.hero__rail-item.is-hot {
+  transform: translateY(-2px);
+}
+
+.hero__rail-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 18%;
+  bottom: 18%;
+  width: 1px;
+  background: var(--border);
+}
+
+.hero__rail-icon {
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+  display: flex;
+  color: color-mix(in srgb, var(--hero-gold) 85%, var(--hero-ivory) 15%);
+  transition: filter 0.3s ease;
+}
+
+.hero__rail-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
   min-width: 0;
 }
 
-.hero__feature-title {
-  margin: 0 0 0.15rem;
-  font-family: var(--font-display);
+.hero__rail-label {
+  font-size: 0.85rem;
   font-weight: 700;
-  font-size: 0.92rem;
-  color: var(--hero-heading);
+  color: color-mix(in srgb, var(--hero-ivory) 90%, transparent);
+  transition: color 0.3s ease;
 }
 
-.hero__feature-body {
-  margin: 0;
-  font-size: 0.78rem;
-  line-height: 1.35;
-  color: color-mix(in srgb, var(--hero-heading) 62%, transparent);
+.hero__rail-body {
+  font-size: 0.74rem;
+  line-height: 1.4;
+  color: var(--text-faint);
+}
+
+.hero__rail-item.is-hot .hero__rail-icon {
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--hero-gold) 70%, transparent));
+}
+
+.hero__rail-item.is-hot .hero__rail-label {
+  color: var(--hero-ivory);
 }
 
 @media (max-width: 640px) {
-  .hero__features {
-    grid-template-columns: 1fr;
-    gap: 0;
+  .hero__rail-item {
+    flex: 1 1 45%;
+    padding: 1rem 0.6rem;
   }
-  .hero__feature {
-    padding: 0.5rem 0;
+  .hero__rail-item:nth-child(2n)::after {
+    display: none;
   }
 }
 
@@ -1394,337 +1820,207 @@ a {
   color: var(--text-muted);
 }
 
-.voice-journey__track {
+/* ===================== the numbered process steps =====================
+   Shared by the compact Home preview (StepsList compact) and the fuller
+   How It Works section on /app — replaces the old circular-node +
+   travelling-dot pipeline graphic entirely. A vertical timeline on
+   mobile, a clean horizontal progression on desktop; the connecting rule
+   and each step's number light up in gold as the visitor scrolls past
+   it, driven by an IntersectionObserver in StepsList.jsx, not by icons
+   or motifs standing in for each stage. */
+.steps-track {
   position: relative;
 }
 
-.voice-journey__line {
-  position: absolute;
-  top: -2px;
-  left: 0;
-  width: 100%;
-  height: 84px;
-  overflow: visible;
-  display: none;
-}
-
-.voice-journey__line-path {
-  fill: none;
-  stroke: color-mix(in srgb, var(--bright-green) 60%, var(--border-strong));
-  stroke-width: 2.25;
-  stroke-linecap: round;
-  stroke-dasharray: 100;
-  stroke-dashoffset: 100;
-  transition: stroke-dashoffset 1.8s ease;
-  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--bright-green) 45%, transparent));
-}
-
-.voice-journey.is-visible .voice-journey__line-path {
-  stroke-dashoffset: 0;
-}
-
-@media (min-width: 860px) {
-  .voice-journey__line {
-    display: block;
-  }
-}
-
-.voice-journey__traveler {
-  position: absolute;
-  top: 40px;
-  left: 0;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: var(--gold);
-  box-shadow: 0 0 10px 3px color-mix(in srgb, var(--gold) 70%, transparent);
-  opacity: 0;
-  display: none;
-}
-
-@media (min-width: 860px) {
-  .voice-journey__traveler {
-    display: block;
-  }
-}
-
-/* the signal makes one clean synced pass on scroll-in, then keeps a
-   slow, quiet loop going afterward so the pipeline reads as a living
-   system rather than a one-off scroll gimmick */
-@media (prefers-reduced-motion: no-preference) {
-  .voice-journey.is-visible .voice-journey__traveler {
-    animation:
-      journey-travel 1.8s ease forwards,
-      journey-travel-loop 4.6s ease-in-out 2.4s infinite;
-  }
-}
-
-/* left%/top values are keyed to match the node centers exactly (10/30/
-   50/70/90% of the track, see .voice-journey__stage) and the same
-   baseline/dip heights as the connecting SVG path, so the dot visibly
-   rides the line instead of drifting off it */
-@keyframes journey-travel {
-  0% { left: 10%; top: 42px; opacity: 0; }
-  6% { opacity: 1; }
-  20% { left: 20%; top: 14px; }
-  40% { left: 40%; top: 70px; }
-  50% { left: 50%; top: 42px; }
-  60% { left: 60%; top: 14px; }
-  80% { left: 80%; top: 70px; }
-  94% { opacity: 1; }
-  100% { left: 90%; top: 42px; opacity: 0; }
-}
-
-@keyframes journey-travel-loop {
-  0% { left: 10%; top: 42px; opacity: 0; }
-  4% { opacity: 0.9; }
-  16% { left: 20%; top: 14px; }
-  32% { left: 40%; top: 70px; }
-  40% { left: 50%; top: 42px; }
-  48% { left: 60%; top: 14px; }
-  64% { left: 80%; top: 70px; }
-  72% { opacity: 0.9; }
-  80%, 100% { left: 90%; top: 42px; opacity: 0; }
-}
-
-/* zero column-gap on the 5-up desktop row is deliberate: each column is
-   exactly 20% of the track width, so a node centered in column i sits at
-   a fixed (i + 0.5) * 20% — 10/30/50/70/90% — which the connecting SVG
-   path's baseline touchpoints and the traveling dot's keyframes are
-   hand-matched to. Adding a gap here would shift those centers and
-   break the alignment between the line and the nodes it's meant to
-   visibly pass through. */
-.voice-journey__stages {
+.steps {
   position: relative;
+  z-index: 1;
   list-style: none;
-  margin: 0;
+  margin: 2.5rem 0 0;
   padding: 0;
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  column-gap: 0;
-  row-gap: 0;
-}
-
-@media (max-width: 860px) {
-  .voice-journey__stages {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 1.5rem;
-    row-gap: 2.5rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .voice-journey__stages {
-    grid-template-columns: minmax(0, 1fr);
-    row-gap: 2.75rem;
-  }
-}
-
-.voice-journey__stage {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 1.85rem;
-  text-align: center;
-  opacity: 0;
-  transform: translateY(14px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-  transition-delay: calc(0.3s + var(--i, 0) * 0.15s);
+  gap: 2.25rem;
 }
 
-.voice-journey.is-visible .voice-journey__stage {
-  opacity: 1;
-  transform: translateY(0);
+@media (min-width: 900px) {
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 1.75rem;
+    margin-top: 3.25rem;
+  }
 }
 
-.voice-journey__node {
+/* the sliding gold marker — one element, not one per step, so it
+   genuinely travels between positions rather than appearing/
+   disappearing on a different node each time. Desktop only: the
+   mobile timeline's per-item rule colouring already carries the same
+   "progress" meaning without needing exact vertical measurement. */
+.steps-progress {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .steps-progress {
+    display: block;
+    position: absolute;
+    top: 3.25rem;
+    left: calc((var(--active, 0) + 0.5) * (100% / var(--total, 5)));
+    width: 6px;
+    height: 6px;
+    margin: -2.5px 0 0 -3px;
+    border-radius: 50%;
+    background: var(--primary);
+    box-shadow: 0 0 10px 2px color-mix(in srgb, var(--primary) 65%, transparent);
+    transition: left 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+    pointer-events: none;
+    z-index: 2;
+  }
+}
+
+/* two tiny particles drifting continuously along the full line — an
+   ambient "signal flowing through the pipeline" cue, independent of
+   scroll position. Desktop only, same reasoning as the marker above. */
+.steps-flow {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .steps-flow {
+    display: block;
+    position: absolute;
+    top: 3.25rem;
+    left: 0;
+    width: 3px;
+    height: 3px;
+    margin-top: -1.5px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--primary) 70%, transparent);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .steps-flow--1 { animation: steps-flow-travel 7s linear infinite; }
+    .steps-flow--2 { animation: steps-flow-travel 7s linear infinite 3.5s; }
+  }
+}
+
+@keyframes steps-flow-travel {
+  0% { left: 0%; opacity: 0; }
+  8% { opacity: 0.7; }
+  92% { opacity: 0.7; }
+  100% { left: 100%; opacity: 0; }
+}
+
+.steps__item {
   position: relative;
+  padding-left: 1.5rem;
+  opacity: 0.45;
+  transition: opacity 0.6s ease;
+}
+
+.steps__item.is-active,
+.steps__item.is-passed {
+  opacity: 1;
+}
+
+@media (min-width: 900px) {
+  .steps__item {
+    padding-left: 0;
+    padding-top: 1.6rem;
+  }
+}
+
+.steps__rule {
+  position: absolute;
+  left: 0;
+  top: 0.3em;
+  bottom: -2.25rem;
+  width: 1.5px;
+  background: var(--border-strong);
+  transition: background 0.6s ease, box-shadow 0.6s ease;
+}
+
+.steps__item:last-child .steps__rule {
+  bottom: 0;
+}
+
+.steps__item.is-active .steps__rule,
+.steps__item.is-passed .steps__rule {
+  background: var(--primary);
+  box-shadow: 0 0 12px -2px color-mix(in srgb, var(--primary) 55%, transparent);
+}
+
+@media (min-width: 900px) {
+  .steps__rule {
+    left: 0;
+    right: 1.75rem;
+    top: 0;
+    bottom: auto;
+    width: auto;
+    height: 1.5px;
+  }
+  .steps__item:last-child .steps__rule {
+    right: 0;
+  }
+}
+
+.steps__number {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+  color: var(--text-faint);
+  margin-bottom: 0.4rem;
+  transition: color 0.6s ease, text-shadow 0.6s ease;
+}
+
+.steps__item.is-active .steps__number {
+  color: var(--primary);
+  text-shadow: 0 0 22px color-mix(in srgb, var(--primary) 45%, transparent);
+}
+
+.steps__item.is-passed .steps__number {
+  color: var(--text-muted);
+}
+
+.steps__title {
+  margin: 0 0 0.4rem;
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: clamp(64px, 7vw, 84px);
-  height: clamp(64px, 7vw, 84px);
-  border-radius: 50%;
-  color: var(--bright-green);
-  background: radial-gradient(circle at 32% 28%, color-mix(in srgb, var(--surface-warm) 60%, transparent) 0%, var(--surface) 70%);
-  border: 1px solid var(--border-strong);
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
-}
-
-/* the node "activates" roughly when the traveling signal reaches it —
-   a brief gold flash settling into a confirmed green state, then a
-   very quiet ambient breathing glow keeps it feeling alive */
-@media (prefers-reduced-motion: no-preference) {
-  .voice-journey.is-visible .voice-journey__node {
-    animation-name: journey-node-activate, journey-node-breathe;
-    animation-duration: 0.7s, 4.6s;
-    animation-timing-function: ease, ease-in-out;
-    animation-delay: calc(0.2s + var(--i, 0) * 0.36s), calc(1.4s + var(--i, 0) * 0.36s);
-    animation-iteration-count: 1, infinite;
-    animation-fill-mode: both, none;
-  }
-}
-
-@keyframes journey-node-activate {
-  0% {
-    border-color: var(--border-strong);
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
-  }
-  45% {
-    border-color: var(--gold);
-    color: var(--gold);
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1), 0 0 0 10px color-mix(in srgb, var(--gold) 20%, transparent);
-  }
-  100% {
-    border-color: color-mix(in srgb, var(--bright-green) 45%, transparent);
-    color: var(--bright-green);
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
-  }
-}
-
-@keyframes journey-node-breathe {
-  0%, 100% {
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1), 0 0 0 0 transparent;
-  }
-  50% {
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1), 0 0 20px 2px color-mix(in srgb, var(--bright-green) 22%, transparent);
-  }
-}
-
-/* --- per-stage micro motifs — a tiny hand-built visual under each node
-   so the icon set alone tells the story (speak → understand → retrieve
-   → generate → answer) without a caption --- */
-.voice-journey__motif {
-  position: absolute;
-  bottom: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 3px;
-  height: 11px;
-  opacity: 0.85;
-}
-
-.voice-journey__motif-bar {
-  width: 3px;
-  border-radius: 2px;
-  background: color-mix(in srgb, var(--bright-green) 70%, var(--gold) 15%);
-  height: 40%;
-  opacity: 0.75;
-  transform-origin: bottom center;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .voice-journey__motif-bar {
-    animation: motif-eq 1.9s ease-in-out infinite;
-  }
-  .voice-journey__motif-bar:nth-child(1) { animation-delay: -0.4s; }
-  .voice-journey__motif-bar:nth-child(2) { animation-delay: -0.1s; }
-  .voice-journey__motif-bar:nth-child(3) { animation-delay: -0.7s; }
-}
-
-@keyframes motif-eq {
-  0%, 100% { transform: scaleY(0.5); opacity: 0.55; }
-  50% { transform: scaleY(1.5); opacity: 1; }
-}
-
-/* retrieve — two stacked "documents", the shorter one glowing gold as
-   the match that got pulled into context */
-[data-step='retrieve'] .voice-journey__motif {
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 3px;
-  height: auto;
-  bottom: -19px;
-}
-
-[data-step='retrieve'] .voice-journey__motif-bar {
-  width: 20px;
-  height: 3px;
-  border-radius: 1px;
-  background: var(--border-strong);
-  opacity: 1;
-  animation: none;
-  transform: none;
-}
-
-[data-step='retrieve'] .voice-journey__motif-bar:nth-child(2) {
-  width: 13px;
-  background: var(--gold);
-  box-shadow: 0 0 6px 1px color-mix(in srgb, var(--gold) 55%, transparent);
-}
-
-[data-step='retrieve'] .voice-journey__motif-bar:nth-child(3) {
-  width: 16px;
-}
-
-/* generate — a small glowing processing core instead of bars */
-[data-step='generate'] .voice-journey__motif {
-  width: 11px;
-  height: 11px;
-  border-radius: 50%;
-  bottom: -18px;
-  background: radial-gradient(circle, var(--gold) 0%, transparent 72%);
-}
-
-[data-step='generate'] .voice-journey__motif-bar {
-  display: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  [data-step='generate'] .voice-journey__motif {
-    animation: motif-core-pulse 2.3s ease-in-out infinite;
-  }
-}
-
-@keyframes motif-core-pulse {
-  0%, 100% { transform: translateX(-50%) scale(0.8); opacity: 0.55; }
-  50% { transform: translateX(-50%) scale(1.3); opacity: 1; }
-}
-
-/* answer — a small confirming checkmark instead of bars */
-[data-step='answer'] .voice-journey__motif {
-  bottom: -18px;
-  height: 13px;
-}
-
-[data-step='answer'] .voice-journey__motif-bar {
-  display: none;
-}
-
-[data-step='answer'] .voice-journey__motif::after {
-  content: '✓';
-  font-size: 0.72rem;
-  font-weight: 800;
-  line-height: 1;
-  color: var(--bright-green);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  [data-step='answer'] .voice-journey__motif::after {
-    display: inline-block;
-    animation: motif-pop 2.6s ease-in-out infinite;
-  }
-}
-
-@keyframes motif-pop {
-  0%, 70%, 100% { transform: scale(1); opacity: 0.85; }
-  80% { transform: scale(1.35); opacity: 1; }
-  90% { transform: scale(0.95); }
-}
-
-.voice-journey__label {
-  font-size: 0.78rem;
+  gap: 0.4rem;
+  font-size: 1.02rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--gold-dark);
+  color: var(--text);
 }
 
+.steps__icon {
+  display: flex;
+  color: var(--text-faint);
+  transition: color 0.6s ease;
+}
+
+.steps__item.is-active .steps__icon,
+.steps__item.is-passed .steps__icon {
+  color: var(--primary);
+}
+
+.steps__body {
+  margin: 0;
+  font-size: 0.87rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+  max-width: 34ch;
+}
+
+.steps--compact .steps__title {
+  font-size: 0.92rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
 
 .final-cta {
   position: relative;
@@ -1750,6 +2046,40 @@ a {
   transform: translate(-50%, -50%);
   background: radial-gradient(circle, color-mix(in srgb, var(--bright-green) 16%, transparent) 0%, color-mix(in srgb, var(--gold) 6%, transparent) 45%, transparent 70%);
   pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .final-cta::before {
+    animation: final-cta-glow-breathe 7s ease-in-out infinite;
+  }
+}
+
+@keyframes final-cta-glow-breathe {
+  0%, 100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+}
+
+/* a handful of slow floating particles behind the final activation
+   moment — the same seeded-drift pattern used elsewhere, scaled down to
+   this one section rather than a whole viewport. */
+.final-cta__particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.final-cta__particle {
+  position: absolute;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--gold) 55%, var(--bright-green) 45%);
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .final-cta__particle {
+    animation: atmo-particle-float var(--dur, 14s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+  }
 }
 
 /* a curved boundary handing off into the footer's fixed dark-green,
@@ -1889,156 +2219,36 @@ a {
   }
 }
 
-/* --- the flowing colour-mesh field: four blurred, screen-blended colour
-   pools drifting on very slow, independently-timed loops. Screen
-   blending is what actually sells "energy field" — where two pools
-   overlap they brighten into a lighter blended hue instead of muddying
-   into grey the way normal alpha blending would. This is the closest
-   plain CSS gets to a real shader mesh-gradient: no canvas, no WebGL,
-   just `transform`/`opacity` on a handful of elements. --- */
-.beach-scene__mesh {
+/* --- the one warm bloom this scene allows itself: a single soft radial
+   glow sitting behind the Voice Core. Everything the old colour-mesh
+   pools and organic blobs were trying to do (atmosphere, warmth) this
+   one element does instead, at a fraction of the visual noise. --- */
+.beach-scene__bloom {
   position: absolute;
-  inset: -10%;
-  mix-blend-mode: screen;
+  width: clamp(360px, 34vw, 560px);
+  height: clamp(360px, 34vw, 560px);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--hero-gold) 16%, transparent) 0%, color-mix(in srgb, var(--hero-emerald) 8%, transparent) 46%, transparent 74%);
+  filter: blur(70px);
+  opacity: 0.7;
   pointer-events: none;
 }
 
-.beach-scene__mesh-pool {
-  position: absolute;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  filter: blur(60px);
-  opacity: 0.4;
-}
-
-.beach-scene__mesh-pool--violet {
-  background: radial-gradient(circle, color-mix(in srgb, var(--hero-emerald) 70%, transparent) 0%, transparent 70%);
-}
-
-.beach-scene__mesh-pool--magenta {
-  background: radial-gradient(circle, color-mix(in srgb, var(--hero-gold) 65%, transparent) 0%, transparent 70%);
-}
-
-.beach-scene__mesh-pool--blue {
-  background: radial-gradient(circle, color-mix(in srgb, var(--hero-emerald-deep) 75%, transparent) 0%, transparent 70%);
-}
-
-.beach-scene__mesh-pool--cyan {
-  background: radial-gradient(circle, color-mix(in srgb, var(--hero-emerald-bright) 60%, transparent) 0%, transparent 70%);
-}
-
 @media (prefers-reduced-motion: no-preference) {
-  .beach-scene__mesh-pool {
-    animation: mesh-drift var(--dur, 44s) ease-in-out infinite;
-    animation-delay: var(--delay, 0s);
+  .beach-scene__bloom {
+    animation: beach-scene-bloom-breathe 10s ease-in-out infinite;
   }
 }
 
-/* a wide, lazy figure-of-eight — never a straight back-and-forth, which
-   would read as mechanical panning rather than fluid drift */
-@keyframes mesh-drift {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.34; }
-  25% { transform: translate(calc(-50% + 4vw), calc(-50% - 3vw)) scale(1.12); opacity: 0.44; }
-  50% { transform: translate(calc(-50% - 2vw), calc(-50% + 4vw)) scale(0.94); opacity: 0.4; }
-  75% { transform: translate(calc(-50% - 4vw), calc(-50% - 2vw)) scale(1.06); opacity: 0.46; }
+@keyframes beach-scene-bloom-breathe {
+  0%, 100% { opacity: 0.58; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.78; transform: translate(-50%, -50%) scale(1.06); }
 }
 
-.hero[data-voice-state='listening'] .beach-scene__mesh-pool {
-  opacity: 0.56;
-}
-
-@media (max-width: 640px) {
-  .beach-scene__mesh-pool {
-    filter: blur(36px);
-  }
-}
-
-/* --- the two soft organic blobs — the primary visual now. Each is a
-   large div with an animated organic `border-radius` (the same
-   blob-morph technique proven on the mic disc/button elsewhere) filled
-   with a radial gradient that's dark at its own centre, brightest
-   around ~75% of its radius, and fades to nothing at the true edge —
-   that "glow concentrated at the rim, not a flat glowing disc" is what
-   actually sells "soft 3D blob" rather than "coloured smudge". Anchored
-   to the lower corners, mostly off-canvas, so the middle of the hero —
-   where the headline lives — stays clean and dark. --- */
-.beach-scene__blob-wrap {
-  position: absolute;
-  overflow: visible;
-}
-
-.beach-scene__blob-wrap--a {
-  left: -18%;
-  bottom: -24%;
-  width: min(60vw, 800px);
-  height: min(64vw, 820px);
-}
-
-.beach-scene__blob-wrap--b {
-  right: -16%;
-  top: 0%;
-  width: min(54vw, 740px);
-  height: min(80vw, 940px);
-}
-
-.beach-scene__blob {
-  position: absolute;
-  inset: 0;
-  border-radius: 42% 58% 65% 35% / 45% 40% 60% 55%;
-  filter: blur(14px);
-  opacity: 0.7;
-}
-
-.beach-scene__blob--a {
-  background: radial-gradient(
-    circle at 44% 48%,
-    color-mix(in srgb, var(--hero-forest-mid) 60%, transparent) 0%,
-    color-mix(in srgb, var(--hero-emerald-deep) 30%, transparent) 40%,
-    color-mix(in srgb, var(--hero-gold) 62%, transparent) 76%,
-    color-mix(in srgb, var(--hero-gold) 15%, transparent) 92%,
-    transparent 100%
-  );
-}
-
-.beach-scene__blob--b {
-  background: radial-gradient(
-    circle at 56% 46%,
-    color-mix(in srgb, var(--hero-forest-mid) 60%, transparent) 0%,
-    color-mix(in srgb, var(--hero-emerald-deep) 35%, transparent) 42%,
-    color-mix(in srgb, var(--hero-emerald) 62%, transparent) 78%,
-    color-mix(in srgb, var(--hero-emerald-bright) 30%, transparent) 93%,
-    transparent 100%
-  );
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .beach-scene__blob--a {
-    animation: blob-morph-a 26s ease-in-out infinite;
-  }
-  .beach-scene__blob--b {
-    animation: blob-morph-b 32s ease-in-out infinite;
-  }
-}
-
-@keyframes blob-morph-a {
-  0%, 100% { border-radius: 42% 58% 65% 35% / 45% 40% 60% 55%; }
-  33% { border-radius: 58% 42% 38% 62% / 55% 62% 38% 45%; }
-  66% { border-radius: 48% 52% 55% 45% / 40% 55% 45% 60%; }
-}
-
-@keyframes blob-morph-b {
-  0%, 100% { border-radius: 55% 45% 40% 60% / 50% 45% 55% 50%; }
-  33% { border-radius: 40% 60% 58% 42% / 62% 50% 50% 38%; }
-  66% { border-radius: 50% 50% 48% 52% / 45% 58% 42% 55%; }
-}
-
-.hero[data-voice-state='listening'] .beach-scene__blob {
-  opacity: 0.88;
-}
-
-@media (max-width: 640px) {
-  .beach-scene__blob-wrap--a { width: 82vw; height: 78vw; bottom: -20%; left: -26%; }
-  .beach-scene__blob-wrap--b { width: 78vw; height: 90vw; right: -26%; top: 2%; }
+.hero[data-voice-state='listening'] .beach-scene__bloom,
+.hero[data-voice-state='processing'] .beach-scene__bloom {
+  animation-duration: 4s;
 }
 
 /* --- processing only: a curved data pulse orbiting the Core, centred on
@@ -2137,139 +2347,43 @@ a {
   100% { opacity: 0; transform: translateY(160px) scale(2.4) scaleY(0.35); }
 }
 
-.beach-scene__stars {
+/* --- the only remaining "particle" system: a thin scatter of tiny warm
+   dust motes, static positions, slow individual pulse, never drifting.
+   Deliberately sparse — this is dust in still air, not a starfield. --- */
+.beach-scene__dust {
   inset: 0;
 }
 
-/* --- a few brighter structured nodes sitting on top of the matrix —
-   static grid positions, slow individual pulse, never drifting --- */
-.beach-scene__particles {
-  inset: 0;
-}
-
-.beach-scene__particle {
+.beach-scene__dust-mote {
   position: absolute;
-  border-radius: 2px;
-  background: color-mix(in srgb, var(--hero-emerald) 85%, white 15%);
+  border-radius: 50%;
   opacity: 0;
 }
 
-.beach-scene__particle--gold {
-  background: color-mix(in srgb, var(--hero-gold) 85%, white 15%);
-  border-radius: 50%;
+.beach-scene__dust-mote--ivory {
+  background: var(--hero-ivory);
+}
+
+.beach-scene__dust-mote--gold {
+  background: var(--hero-gold);
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .beach-scene__particle {
-    animation: signal-node-pulse var(--dur, 8s) ease-in-out infinite;
+  .beach-scene__dust-mote {
+    animation: dust-mote-pulse var(--dur, 10s) ease-in-out infinite;
     animation-delay: var(--delay, 0s);
   }
 }
 
-@keyframes signal-node-pulse {
-  0%, 100% { opacity: calc(var(--peak-opacity, 0.5) * 0.35); transform: scale(0.85); }
-  50% { opacity: var(--peak-opacity, 0.5); transform: scale(1.15); }
-}
-
-/* --- translucent glass bubbles: a soft highlight near the top-left plus
-   a tinted, fading body reads as a lit glass sphere rather than a flat
-   dot; a whisper of blur stands in for refraction. Each rises the full
-   height of the hero and back down to transparent, swaying sideways by
-   its own --drift-x, so no two bubbles trace the same path. Biased to
-   the edges in the .jsx generator, never the centre text column. --- */
-.beach-scene__bubbles {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.beach-scene__bubble {
-  position: absolute;
-  border-radius: 50%;
-  opacity: 0;
-  filter: blur(1.4px);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.1);
-  background:
-    radial-gradient(circle at 30% 26%, rgba(255, 255, 255, 0.55) 0%, transparent 38%),
-    radial-gradient(circle, color-mix(in srgb, var(--hero-emerald) 55%, transparent) 0%, transparent 76%);
-  transition: filter 0.5s ease;
-}
-
-.beach-scene__bubble--magenta {
-  background:
-    radial-gradient(circle at 30% 26%, rgba(255, 255, 255, 0.55) 0%, transparent 38%),
-    radial-gradient(circle, color-mix(in srgb, var(--hero-gold) 55%, transparent) 0%, transparent 76%);
-}
-
-.beach-scene__bubble--blue {
-  background:
-    radial-gradient(circle at 30% 26%, rgba(255, 255, 255, 0.55) 0%, transparent 38%),
-    radial-gradient(circle, color-mix(in srgb, var(--hero-emerald-bright) 55%, transparent) 0%, transparent 76%);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .beach-scene__bubble {
-    animation: bubble-float var(--dur, 24s) ease-in-out infinite;
-    animation-delay: var(--delay, 0s);
-  }
-  /* `scale` is its own CSS property, independent of `transform` — so the
-     drift (transform) and the breathing (scale) can run as two separate
-     animations on the same element without the usual "one transform
-     animation always wins" conflict documented elsewhere in this file */
-  .beach-scene__bubble--breathe {
-    animation-name: bubble-float, bubble-breathe;
-    animation-duration: var(--dur, 24s), 5.5s;
-    animation-timing-function: ease-in-out, ease-in-out;
-    animation-iteration-count: infinite, infinite;
-    animation-delay: var(--delay, 0s), 0s;
-  }
-}
-
-@keyframes bubble-float {
-  0% { transform: translateY(10vh) translateX(0); opacity: 0; }
-  12% { opacity: var(--peak-opacity, 0.25); }
-  50% { transform: translateY(-42vh) translateX(var(--drift-x, 12px)); }
-  88% { opacity: var(--peak-opacity, 0.25); }
-  100% { transform: translateY(-92vh) translateX(calc(var(--drift-x, 12px) * -1)); opacity: 0; }
-}
-
-@keyframes bubble-breathe {
-  0%, 100% { scale: 1; }
-  50% { scale: 1.2; }
-}
-
-[data-voice-state='listening'] .beach-scene__bubble {
-  filter: blur(1.4px) brightness(1.4);
+@keyframes dust-mote-pulse {
+  0%, 100% { opacity: calc(var(--peak-opacity, 0.3) * 0.4); transform: scale(0.85); }
+  50% { opacity: var(--peak-opacity, 0.3); transform: scale(1.1); }
 }
 
 @media (max-width: 640px) {
-  .beach-scene__bubbles { opacity: 0.7; }
-}
-
-/* --- a full starfield, barely there, twinkling out of sync with each
-   other so it never reads as one synchronised blink --- */
-.beach-scene__star {
-  position: absolute;
-  border-radius: 50%;
-  background: var(--hero-ivory);
-  box-shadow: 0 0 4px 1px color-mix(in srgb, var(--hero-emerald-bright) 60%, transparent);
-  opacity: 0;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .beach-scene__star {
-    animation: light-flicker var(--dur, 5s) ease-in-out infinite;
-    animation-delay: var(--delay, 0s);
+  .beach-scene__dust-mote:nth-child(3n) {
+    display: none;
   }
-}
-
-@keyframes light-flicker {
-  0%, 100% { opacity: 0.15; }
-  45% { opacity: 0.15; }
-  55% { opacity: 0.7; }
-  75% { opacity: 0.35; }
 }
 
 /* --- a single wide radial wash across the whole hero, once, the instant
@@ -2370,21 +2484,17 @@ a {
 }
 
 /* the app workspace gets its own centered max-width, wider than the
-   sitewide .shell (1080px) but still with real gutters at 1280px+ so the
-   3-column layout has room without ever touching the browser edge */
+   sitewide .shell (1080px) but still with real gutters at 1280px+ */
 .ask-section .shell {
   max-width: 1280px;
   padding: 0 40px;
+  position: relative;
 }
 
 @media (max-width: 640px) {
   .ask-section .shell {
     padding: 0 1.25rem;
   }
-}
-
-:root[data-theme='light'] .ask-section {
-  background: linear-gradient(180deg, var(--bg-soft) 0%, var(--surface-warm) 55%, var(--bg) 100%);
 }
 
 .ask-section .shell {
@@ -2424,342 +2534,280 @@ a {
   .ask-atmo__particle { animation: atmo-particle-float var(--dur, 14s) ease-in-out infinite; animation-delay: var(--delay, 0s); }
 }
 
-/* ===================== Voice card ===================== */
-.voice-card {
-  position: relative;
-  background: var(--surface);
-  -webkit-backdrop-filter: blur(22px);
-  backdrop-filter: blur(22px);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 1.75rem clamp(1.25rem, 3vw, 2.25rem) 1.85rem;
-  box-shadow: var(--shadow-lg);
-  margin-top: 0.5rem;
+/* ===================== the /app workspace ===================== */
+/* A flat, structured dashboard area — no floating glass card, no giant
+   outer container, no decorative ambient dots/rings. The compact command
+   bar (mic + a small real waveform + status, text input as the fallback)
+   sits directly above the Response area, separated by a plain hairline,
+   the same way the rest of the site divides sections with a border
+   instead of a box. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
   overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
-.voice-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(420px 320px at 50% 62%, color-mix(in srgb, var(--bright-green) 10%, transparent), transparent 72%),
-    radial-gradient(600px 260px at 50% -10%, var(--bg-soft), transparent 70%);
-  opacity: 1;
-  transition: opacity 0.6s ease;
-  pointer-events: none;
-}
-
-.voice-card[data-listening='true']::before {
-  background:
-    radial-gradient(460px 380px at 50% 60%, color-mix(in srgb, var(--gold) 22%, transparent), transparent 72%),
-    radial-gradient(600px 260px at 50% -10%, var(--bg-soft), transparent 70%);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .voice-card[data-listening='true']::before {
-    animation: voice-glow-pulse 2.6s ease-in-out infinite;
-  }
-}
-
-@keyframes voice-glow-pulse {
-  0%, 100% { opacity: 0.85; }
-  50% { opacity: 1; }
-}
-
-.voice-card__ambient {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.voice-card__ambient-dot {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--gold);
-  opacity: 0;
-  transform: translate(-50%, -50%) scale(0.6);
-}
-
-.voice-card__ambient-dot--1 { margin-top: -140px; margin-left: -120px; }
-.voice-card__ambient-dot--2 { margin-top: -110px; margin-left: 130px; background: var(--bright-green); }
-.voice-card__ambient-dot--3 { margin-top: 40px; margin-left: -160px; background: var(--bright-green); }
-.voice-card__ambient-dot--4 { margin-top: 60px; margin-left: 150px; }
-
-.voice-card__ambient-lines {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 340px;
-  height: 340px;
-  margin: -170px 0 0 -170px;
-  border-radius: 50%;
-  border: 1px solid color-mix(in srgb, var(--gold) 40%, transparent);
-  opacity: 0;
-  transform: scale(0.85);
-}
-
-.voice-card[data-listening='true'] .voice-card__ambient-dot {
-  opacity: 0.7;
-}
-
-.voice-card[data-listening='true'] .voice-card__ambient-lines {
-  opacity: 0.5;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .voice-card[data-listening='true'] .voice-card__ambient-dot {
-    animation: ambient-dot-pulse 2.2s ease-in-out infinite;
-  }
-  .voice-card[data-listening='true'] .voice-card__ambient-dot--2 { animation-delay: 0.4s; }
-  .voice-card[data-listening='true'] .voice-card__ambient-dot--3 { animation-delay: 0.8s; }
-  .voice-card[data-listening='true'] .voice-card__ambient-dot--4 { animation-delay: 1.2s; }
-  .voice-card[data-listening='true'] .voice-card__ambient-lines {
-    animation: ambient-ring-expand 2.6s ease-out infinite;
-  }
-}
-
-@keyframes ambient-dot-pulse {
-  0%, 100% { opacity: 0.35; transform: translate(-50%, -50%) scale(0.6); }
-  50% { opacity: 0.85; transform: translate(-50%, -50%) scale(1.15); }
-}
-
-@keyframes ambient-ring-expand {
-  0% { opacity: 0.5; transform: scale(0.85); }
-  100% { opacity: 0; transform: scale(1.25); }
-}
-
-/* --- three-zone workspace: controls / voice interaction / answer — laid
-   out with named grid areas (not just column order) specifically so the
-   text-input row can be pinned under the center orb on desktop, folded in
-   under the two-column tablet tier, and the answer card takes its natural
-   place last on mobile, without three different DOM orderings of the same
-   markup. --- */
-.voice-card__stage-grid {
+.workspace {
   position: relative;
   z-index: 2;
-  display: grid;
-  /* 25 / 45 / 30 */
-  grid-template-columns: minmax(0, 5fr) minmax(0, 9fr) minmax(0, 6fr);
-  grid-template-areas: 'intro stage answer' '. textform .';
-  column-gap: clamp(1.75rem, 3.5vw, 3rem);
-  row-gap: 1.5rem;
-  align-items: center;
+  margin-top: 0.5rem;
 }
 
-.voice-card__panel--intro {
-  grid-area: intro;
+.workspace__bar {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.85rem;
-}
-
-.voice-card__panel--stage {
-  grid-area: stage;
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  text-align: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  padding: 0 0 1.1rem;
+  border-bottom: 1px solid var(--border);
 }
 
-.voice-card__panel--answer {
-  grid-area: answer;
-  width: 100%;
-  align-self: start;
+.workspace__voice {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
 }
 
-.voice-card__panel--textform {
-  grid-area: textform;
-  width: 100%;
-  max-width: 460px;
-}
-
-/* tablet: controls + orb side by side, the answer card becomes a compact
-   strip beneath rather than a tall third column competing for width */
-@media (max-width: 1180px) and (min-width: 761px) {
-  .voice-card__stage-grid {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    grid-template-areas: 'intro stage' 'textform textform' 'answer answer';
-  }
-
-  .answer-card {
-    max-height: min(420px, 55vh);
-  }
-}
-
-/* mobile: natural reading order top to bottom — ask, controls, mic, text
-   input, then the answer once there is one */
-@media (max-width: 760px) {
-  .voice-card__stage-grid {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: 'intro' 'stage' 'textform' 'answer';
-    justify-items: center;
-    text-align: center;
-    row-gap: 2rem;
-  }
-
-  .voice-card__panel--intro {
-    align-items: center;
-  }
-
-  .voice-card__lead {
-    max-width: 46ch;
-  }
-
-  .voice-card__controls {
-    align-items: center;
-  }
-}
-
-.voice-card__title {
-  font-size: clamp(1.6rem, 3vw, 2.1rem);
-  font-weight: 700;
-  text-transform: uppercase;
-  margin: 0;
-  letter-spacing: -0.01em;
-}
-
-.voice-card__lead {
-  margin: 0;
+.workspace__voice-status {
+  font-size: 0.85rem;
+  font-weight: 600;
   color: var(--text-muted);
-  font-size: 0.95rem;
-  max-width: 34ch;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 
-.voice-card__controls {
+.workspace__form {
   display: flex;
-  flex-direction: column;
-  gap: 1.1rem;
-  margin-top: 0.25rem;
-  position: relative;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1 1 260px;
+  min-width: 0;
 }
 
-.voice-card__field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
+.workspace__form input {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 40px;
+  padding: 0 0.9rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 0.88rem;
+  transition: border-color 0.2s ease;
 }
 
-.voice-card__field-label {
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+.workspace__form input::placeholder {
   color: var(--text-faint);
 }
 
-.voice-mode {
-  justify-content: center;
-}
-
-.toggle {
-  width: 46px;
-  height: 26px;
-  border-radius: 999px;
-  border: 1px solid var(--border-strong);
-  background: var(--surface-2);
-  padding: 2px;
-  display: flex;
-  align-items: center;
-  transition: background 0.2s ease, border-color 0.2s ease;
-}
-
-.toggle__thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: var(--text-faint);
-  transition: transform 0.2s ease, background 0.2s ease;
-}
-
-.toggle.is-on {
-  background: var(--primary);
+.workspace__form input:focus-visible {
+  outline: none;
   border-color: var(--primary);
 }
 
-.toggle.is-on .toggle__thumb {
-  transform: translateX(20px);
+.workspace__hint {
+  margin: 0.65rem 0 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+@media (max-width: 640px) {
+  .workspace__bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .workspace__voice {
+    justify-content: center;
+  }
+  .workspace__form {
+    flex-basis: auto;
+  }
+}
+
+/* ===================== the processing pipeline strip =====================
+   A compact, honest echo of the marketing "how it works" pipeline, wired
+   to the real query lifecycle (see ProcessingPipeline.jsx) — pending,
+   active (in flight), or complete. The API is one request/response, not
+   a streaming endpoint, so every stage lights up together rather than
+   claiming to know which sub-stage is "current". */
+.pipeline-strip {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 1rem 0 0;
+  padding: 0.6rem 0;
+}
+
+.pipeline-strip__stage {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex: 1 1 0;
+}
+
+.pipeline-strip__stage:not(:last-child)::after {
+  content: '';
+  flex: 1 1 0;
+  height: 1px;
+  background: var(--border);
+  margin-left: 0.4rem;
+  transition: background 0.3s ease;
+}
+
+.pipeline-strip__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  flex-shrink: 0;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.pipeline-strip__label {
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  white-space: nowrap;
+  transition: color 0.3s ease;
+}
+
+.pipeline-strip--active .pipeline-strip__dot {
+  background: var(--gold);
+  box-shadow: 0 0 6px 1px color-mix(in srgb, var(--gold) 60%, transparent);
+}
+
+.pipeline-strip--active .pipeline-strip__label {
+  color: var(--gold);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .pipeline-strip--active .pipeline-strip__dot {
+    animation: live-pulse 1.4s ease-in-out infinite;
+    animation-delay: calc(var(--i, 0) * 0.1s);
+  }
+}
+
+.pipeline-strip--complete .pipeline-strip__dot {
+  background: var(--ok);
+}
+
+.pipeline-strip--complete .pipeline-strip__label {
+  color: var(--text-muted);
+}
+
+.pipeline-strip--complete .pipeline-strip__stage:not(:last-child)::after {
+  background: color-mix(in srgb, var(--ok) 40%, var(--border));
+}
+
+@media (max-width: 640px) {
+  .pipeline-strip__label {
+    display: none;
+  }
+}
+
+/* ===================== the Response workspace ===================== */
+.workspace__response {
+  position: relative;
+  z-index: 1;
+  margin-top: 1.75rem;
+}
+
+.workspace__response-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.1rem;
+}
+
+.workspace__response-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.workspace__response-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.workspace__response-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-faint);
+}
+
+.workspace__response-status--processing {
+  color: var(--gold);
+}
+
+.workspace__response-status--processing .workspace__response-status-dot {
   background: var(--gold);
 }
 
-.voice-stage {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.25rem 1rem 0.5rem;
+@media (prefers-reduced-motion: no-preference) {
+  .workspace__response-status--processing .workspace__response-status-dot {
+    animation: live-pulse 1.2s ease-in-out infinite;
+  }
+}
+
+.workspace__response-status--complete {
+  color: var(--ok);
+}
+
+.workspace__response-status--complete .workspace__response-status-dot {
+  background: var(--ok);
+}
+
+.workspace__response-body {
   position: relative;
-}
-
-/* nudged upward relative to its panel — the text-input row now lives in
-   its own grid area below rather than stacked directly under this stage,
-   so the orb no longer needs to make room for it here */
-.voice-stage--focus {
-  padding-top: 0.1rem;
-  padding-bottom: 0.4rem;
-}
-
-/* the real, interactive mic button sits centered inside the decorative
-   Orb — the Orb supplies the ambient "listening field" ring/wave/glow
-   language, MicButton keeps its own tighter recording rings for direct
-   feedback, and the two layer rather than duplicate at very different
-   scales. */
-.voice-stage__orb-frame {
-  position: relative;
-  display: inline-flex;
-}
-
-.voice-stage__mic-wrap {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.voice-stage__status {
-  margin: 0.5rem 0 0;
-  font-family: var(--font-display);
-  font-size: 1.15rem;
-  font-weight: 600;
-}
-
-.voice-stage__timer {
-  margin: 0;
-  font-variant-numeric: tabular-nums;
-  font-size: 0.95rem;
-  color: var(--gold-dark);
-  font-weight: 700;
-}
-
-.voice-stage__hint {
-  margin: 0;
-  color: var(--text-muted);
-  font-size: 0.85rem;
-  text-align: center;
-  max-width: 40ch;
+  min-height: 180px;
 }
 
 .mic-stage {
   position: relative;
-  width: 168px;
-  height: 168px;
+  width: 130px;
+  height: 130px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
 }
 
+/* the compact command-bar variant — a small flat icon button, no rings,
+   no glow field, no blob shape. Sits inline next to MiniWaveform rather
+   than owning its own dedicated stage. */
+.mic-stage--compact {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
 /* soft always-on glow behind the mic — the "audio field" the mic sits in */
 .mic-idle-glow {
   position: absolute;
-  inset: -20px;
+  inset: -14px;
   border-radius: 50%;
   background: radial-gradient(circle, color-mix(in srgb, var(--bright-green) 20%, transparent), transparent 72%);
   filter: blur(6px);
@@ -2777,7 +2825,7 @@ a {
    the mic a sense of being "the center of an audio field" even at rest */
 .mic-idle-ring {
   position: absolute;
-  inset: 12px;
+  inset: 9px;
   border-radius: 50%;
   border: 1px solid color-mix(in srgb, var(--bright-green) 35%, transparent);
   opacity: 0;
@@ -2806,8 +2854,8 @@ a {
 }
 
 .mic-button {
-  width: 104px;
-  height: 104px;
+  width: 76px;
+  height: 76px;
   border-radius: 50% 47% 53% 48% / 52% 48% 52% 48%;
   border: none;
   background: linear-gradient(155deg, var(--primary), var(--primary-dark));
@@ -2815,11 +2863,49 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 10px 30px rgba(92, 42, 200, 0.35);
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--primary) 35%, transparent);
   transition: transform 0.2s ease, box-shadow 0.25s ease;
   position: relative;
   z-index: 2;
   cursor: pointer;
+  overflow: hidden;
+}
+
+.mic-button::after {
+  content: '';
+  position: absolute;
+  top: -60%;
+  left: 0;
+  width: 34%;
+  height: 220%;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    color-mix(in srgb, #fff 26%, transparent) 50%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mic-button::after {
+    animation: glass-shimmer-sweep 8s ease-in-out infinite;
+    animation-delay: 1s;
+  }
+}
+
+/* the compact variant — a plain small circle, not the organic blob
+   shape, and no shimmer sweep. A functional icon button, not a hero
+   object. */
+.mic-button--compact {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--primary) 30%, transparent);
+}
+
+.mic-button--compact::after {
+  display: none;
 }
 
 /* a liquid edge on the actual button too, out of phase with the disc
@@ -2837,10 +2923,17 @@ a {
   70% { border-radius: 48% 53% 49% 52% / 51% 47% 53% 49%; }
 }
 
+/* the compact circle never runs the organic blob-morph — a plain small
+   icon button stays a plain circle */
+.mic-button--compact {
+  animation: none !important;
+}
+
 .mic-stage:hover .mic-button:not(:disabled),
 .mic-button:hover:not(:disabled) {
   transform: scale(1.06);
-  box-shadow: 0 16px 40px rgba(92, 42, 200, 0.5);
+  box-shadow: 0 16px 40px color-mix(in srgb, var(--primary) 50%, transparent);
+  filter: brightness(1.12);
 }
 
 .mic-button:active:not(:disabled) {
@@ -2854,12 +2947,165 @@ a {
 
 .mic-button--recording {
   background: linear-gradient(155deg, var(--gold), var(--gold-dark));
-  box-shadow: 0 10px 30px rgba(248, 62, 203, 0.45);
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--gold) 45%, transparent);
   color: var(--primary-dark);
 }
 
 .mic-button--processing {
   background: linear-gradient(155deg, var(--primary-dark), var(--primary));
+}
+
+/* ===================== the compact command-bar waveform =====================
+   Real audio-reactive bars while listening — levels written straight to
+   each bar's transform/opacity by MiniWaveform.jsx, never through React
+   state. Plain CSS for idle/processing/answered. No rings, no orb — a
+   genuinely minimal "small dynamic waveform" next to the compact mic. */
+.mini-wave {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.mini-wave__bar {
+  width: 2.5px;
+  height: 55%;
+  border-radius: 1px;
+  background: color-mix(in srgb, var(--primary) 70%, transparent);
+  opacity: 0.4;
+  transform-origin: center;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mini-wave__bar {
+    animation: mini-wave-idle calc(1.8s + var(--i, 0) * 0.06s) ease-in-out infinite;
+    animation-delay: calc(var(--i, 0) * 0.05s);
+  }
+}
+
+@keyframes mini-wave-idle {
+  0%, 100% { transform: scaleY(0.5); opacity: 0.3; }
+  50% { transform: scaleY(0.85); opacity: 0.5; }
+}
+
+/* listening: JS writes transform/opacity straight to each bar from real
+   mic levels every frame — the CSS idle animation must stay off so it
+   never fights that per-frame write */
+[data-wave-state='listening'] .mini-wave__bar {
+  animation: none;
+  background: color-mix(in srgb, var(--gold) 85%, transparent);
+}
+
+/* processing: a smooth scanning wave, not idle bobbing */
+[data-wave-state='processing'] .mini-wave__bar {
+  background: color-mix(in srgb, var(--gold) 75%, transparent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-wave-state='processing'] .mini-wave__bar {
+    animation: mini-wave-scan 1s ease-in-out infinite;
+    animation-delay: calc(var(--i, 0) * 0.05s);
+  }
+}
+
+@keyframes mini-wave-scan {
+  0%, 100% { transform: scaleY(0.35); opacity: 0.35; }
+  50% { transform: scaleY(1); opacity: 0.9; }
+}
+
+/* answered: one settle pass back to the idle baseline, then idle resumes */
+@media (prefers-reduced-motion: no-preference) {
+  [data-wave-state='answered'] .mini-wave__bar {
+    animation: mini-wave-settle 0.6s ease-out;
+  }
+}
+
+@keyframes mini-wave-settle {
+  0% { transform: scaleY(1); opacity: 0.9; }
+  100% { transform: scaleY(0.55); opacity: 0.4; }
+}
+
+/* the mic glyph itself — a tiny energy pulse sweeps through it only while
+   actually recording ("wakes up"), calm and static at every other time */
+.mic-icon {
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  border-radius: 40%;
+}
+
+.mic-icon::after {
+  content: '';
+  position: absolute;
+  inset: -20% -40%;
+  background: linear-gradient(180deg, transparent 42%, rgba(255, 255, 255, 0.55) 50%, transparent 58%);
+  mix-blend-mode: overlay;
+  opacity: 0;
+  transform: translateY(-120%);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mic-button--recording .mic-icon::after {
+    opacity: 1;
+    animation: mic-pulse-sweep 1.7s ease-in-out infinite;
+  }
+}
+
+@keyframes mic-pulse-sweep {
+  0% { transform: translateY(-120%); }
+  100% { transform: translateY(120%); }
+}
+
+/* a soft expanding neon ring on click — one-shot, replayed by React
+   remounting it under a fresh key each time (see MicButton.jsx), so no
+   timers are needed to reset it between clicks */
+.mic-click-ripple {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1.5px solid color-mix(in srgb, var(--hero-ivory, #fff) 70%, var(--bright-green));
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mic-click-ripple {
+    animation: mic-click-ripple 0.65s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  }
+}
+
+@keyframes mic-click-ripple {
+  0% { transform: scale(0.4); opacity: 0.8; }
+  100% { transform: scale(2.6); opacity: 0; }
+}
+
+/* the same one-shot expanding-ring click feedback as the mic button,
+   sized for a pill-shaped CTA instead of a round one — see MicButton.jsx
+   for the key-remount trick that replays it with no timers needed. */
+.btn-click-ripple {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.8);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .btn-click-ripple {
+    animation: btn-click-ripple 0.6s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  }
+}
+
+@keyframes btn-click-ripple {
+  0% { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(14); opacity: 0; }
 }
 
 .mic-ring {
@@ -2889,32 +3135,40 @@ a {
   50% { transform: scale(1.04); }
 }
 
-/* processing — a smooth orbiting dot, distinct from the recording rings */
-.mic-orbit {
+/* processing — soft pulsing neon glow rings, not a rotating spinner. Three
+   concentric rings breathe outward on staggered, slow, eased delays so the
+   motion reads as "thinking" ambient light rather than mechanical progress. */
+.mic-processing-glow {
   position: absolute;
-  inset: -6px;
-  border-radius: 50%;
-  border: 2px dashed color-mix(in srgb, var(--bright-green) 45%, transparent);
+  inset: -10px;
+  pointer-events: none;
 }
 
-.mic-orbit__dot {
+.mic-processing-ring {
   position: absolute;
-  top: -4px;
-  left: 50%;
-  width: 8px;
-  height: 8px;
-  margin-left: -4px;
+  inset: 0;
   border-radius: 50%;
-  background: var(--bright-green);
-  box-shadow: 0 0 8px 2px color-mix(in srgb, var(--bright-green) 55%, transparent);
+  border: 1.5px solid transparent;
+  background: linear-gradient(var(--surface), var(--surface)) padding-box,
+    linear-gradient(135deg, var(--primary), var(--gold)) border-box;
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  filter: blur(0.4px);
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .mic-orbit { animation: mic-orbit-spin 2.4s linear infinite; }
+  .mic-processing-ring--1 { animation: mic-processing-pulse 2.6s ease-in-out infinite; }
+  .mic-processing-ring--2 { animation: mic-processing-pulse 2.6s ease-in-out infinite; animation-delay: 0.7s; }
+  .mic-processing-ring--3 { animation: mic-processing-pulse 2.6s ease-in-out infinite; animation-delay: 1.4s; }
 }
 
-@keyframes mic-orbit-spin {
-  to { transform: rotate(360deg); }
+@keyframes mic-processing-pulse {
+  0% { opacity: 0; transform: scale(0.92); }
+  35% { opacity: 0.65; }
+  100% { opacity: 0; transform: scale(1.22); }
 }
 
 .mic-waveform {
@@ -2947,176 +3201,58 @@ a {
   50% { height: 20px; }
 }
 
-.voice-card__divider {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin: 0 0 0.9rem;
-  color: var(--text-faint);
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.voice-card__divider::before,
-.voice-card__divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
-
-.text-form {
-  position: relative;
-}
-
-.text-form-row {
-  display: flex;
-  gap: 0.6rem;
-}
-
-@media (max-width: 420px) {
-  .text-form-row {
-    flex-direction: column;
-  }
-
-  .text-form-row .btn {
-    width: 100%;
-  }
-}
-
-.text-form-row input {
-  flex: 1;
-  padding: 1rem 1.15rem;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-strong);
-  background: var(--surface-2);
-  min-height: 52px;
-  font-size: 0.95rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.text-form-row input:focus-visible {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 14%, transparent);
-  outline: none;
-}
-
 .field-error {
   color: var(--danger);
   font-size: 0.85rem;
   margin: 0;
 }
 
-/* an overlay near the top of the workspace, not a block in normal flow —
-   a connectivity notice shouldn't shove the voice interface down the
-   page whenever it happens to be showing */
-.status-pill {
-  position: absolute;
-  top: 0.85rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 5;
-  max-width: calc(100% - 2.5rem);
+/* a compact glass toast pinned to the workspace's top-right corner, not a
+   block in normal flow — a connectivity notice shouldn't shove the voice
+   interface down the page, or dominate it, whenever it happens to be
+   showing. Narrow enough to wrap to two short lines rather than stretch
+   into a wide banner. */
+/* a single compact inline line, in normal document flow directly above
+   the workspace — never a floating card, never absolutely positioned
+   over the interaction area. Only rendered at all when there is a real
+   error to show. */
+.inline-notice {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: color-mix(in srgb, var(--warn-bg) 92%, var(--bg));
-  color: var(--text);
-  padding: 0.4rem 0.85rem 0.4rem 0.65rem;
-  border-radius: 999px;
-  font-size: 0.78rem;
-  border: 1px solid color-mix(in srgb, var(--warn) 30%, transparent);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-}
-
-@media (max-width: 640px) {
-  .status-pill {
-    white-space: normal;
-    text-align: left;
-  }
-}
-
-.status-pill__icon {
-  flex-shrink: 0;
-  width: 15px;
-  height: 15px;
-  color: var(--warn);
-}
-
-
-/* ===================== Answer card — the workspace's right column =====================
-   A fixed header (title + grounded badge) and a fixed footer (latency)
-   bookend a scrollable body, so a long answer scrolls in place instead of
-   growing the card (or the whole page) without limit. */
-.answer-card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  min-height: 260px;
-  max-height: min(520px, 64vh);
-  background: color-mix(in srgb, var(--surface-warm) 40%, var(--surface));
-  -webkit-backdrop-filter: blur(22px);
-  backdrop-filter: blur(22px);
+  margin: 0 0 0.85rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  background: var(--surface-2);
   border: 1px solid var(--border);
-  border-radius: 22px;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
-  overflow: hidden;
-}
-
-.answer-card::before {
-  content: '';
-  position: absolute;
-  top: -60px;
-  left: -60px;
-  width: 160px;
-  height: 160px;
-  border-radius: 50%;
-  background: radial-gradient(circle, color-mix(in srgb, var(--bright-green) 14%, transparent), transparent 72%);
-  opacity: 0;
-  transition: opacity 0.8s ease;
-  pointer-events: none;
-}
-
-.answer-card[data-status='success']::before {
-  opacity: 1;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .answer-card[data-status='success']::before {
-    animation: answer-glow-settle 0.45s ease-out;
+  .inline-notice {
+    animation: inline-notice-in 0.3s ease-out;
   }
 }
 
-@keyframes answer-glow-settle {
-  0% { opacity: 0; transform: scale(0.75); }
-  60% { opacity: 1; transform: scale(1.04); }
-  100% { opacity: 1; transform: scale(1); }
+@keyframes inline-notice-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.answer-card__head {
-  flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.6rem;
-  padding: 1.1rem 1.25rem 0.85rem;
-  border-bottom: 1px solid var(--border);
+.inline-notice--warn {
+  color: var(--warn);
+  border-color: color-mix(in srgb, var(--warn) 30%, var(--border));
 }
 
-.answer-card__title {
-  font-size: 0.82rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
-  margin: 0;
-  color: var(--text-faint);
+.inline-notice__icon {
+  flex-shrink: 0;
+  width: 13px;
+  height: 13px;
 }
 
-/* the one status readout this card keeps — grounded vs. fallback — the
+
+/* the one status readout this row keeps — grounded vs. fallback — the
    old separate "voice status" card's Idle/Mode/Language rows are gone */
 .answer-card__status-badge {
   display: inline-flex;
@@ -3128,10 +3264,14 @@ a {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--text-muted);
-  background: var(--surface-2);
-  border: 1px solid var(--border);
+  color: var(--warn);
+  background: var(--warn-bg);
+  border: 1px solid color-mix(in srgb, var(--warn) 35%, var(--border));
   white-space: nowrap;
+}
+
+.answer-card__status-badge svg {
+  flex-shrink: 0;
 }
 
 /* this badge and .answer-content below are both conditionally rendered
@@ -3148,75 +3288,13 @@ a {
   to { opacity: 1; transform: scale(1); }
 }
 
+/* grounded — a real "success" signal (muted green), distinct from the
+   warm-amber "insufficient context" state above, never the brand gold
+   itself so the two never get confused at a glance */
 .answer-card__status-badge.is-grounded {
-  color: var(--bright-green);
-  background: color-mix(in srgb, var(--bright-green) 14%, var(--surface-2));
-  border-color: color-mix(in srgb, var(--bright-green) 35%, var(--border));
-}
-
-.answer-card__status-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--text-faint);
-  flex: none;
-}
-
-.answer-card__status-badge.is-grounded .answer-card__status-dot {
-  background: var(--bright-green);
-}
-
-.answer-card__body {
-  flex: 1 1 auto;
-  overflow-y: auto;
-  min-height: 0;
-  padding: 1rem 1.25rem;
-}
-
-.answer-card__footer {
-  flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.7rem 1.25rem;
-  border-top: 1px solid var(--border);
-  background: color-mix(in srgb, var(--surface-2) 55%, transparent);
-}
-
-.answer-card__footer-label {
-  font-size: 0.62rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-faint);
-}
-
-.answer-card__footer-values {
-  display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-}
-
-.answer-card__footer-value {
-  font-size: 0.92rem;
-  font-weight: 700;
-  font-family: var(--font-display);
-  color: var(--bright-green);
-  font-variant-numeric: tabular-nums;
-}
-
-:root[data-theme='light'] .answer-card__footer-value {
-  color: var(--primary);
-}
-
-/* the target threshold is context for the number beside it, not a
-   second measurement — kept small and muted so it never competes with
-   the real, measured latency value */
-.answer-card__footer-target {
-  font-size: 0.68rem;
-  font-weight: 600;
-  color: var(--text-faint);
-  white-space: nowrap;
+  color: var(--ok);
+  background: var(--ok-bg);
+  border-color: color-mix(in srgb, var(--ok) 35%, var(--border));
 }
 
 .answer-card__meta {
@@ -3240,19 +3318,266 @@ a {
   border: 1px solid var(--border);
 }
 
-.empty-state {
+/* ===================== the session performance strip =====================
+   Five compact blocks — P50 / P70 / P100 / under-budget / live — in one
+   row where there's room, thin dividers instead of card borders. Every
+   number is computed from this session's own real query totals (see
+   SessionMetrics in LatencyPanel.jsx); with zero queries so far every
+   value is a plain em dash, never a placeholder number. */
+.metrics-strip {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 0 1.25rem;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.metrics-strip__block {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 84px;
+  padding: 0.7rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.metrics-strip__block:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 20%;
+  bottom: 20%;
+  width: 1px;
+  background: var(--border);
+}
+
+.metrics-strip__value {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.metrics-strip__unit {
+  margin-left: 0.15rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-faint);
+}
+
+.metrics-strip__label {
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.metrics-strip__block--live .metrics-strip__value {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.metrics-strip__live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ok);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .metrics-strip__live-dot {
+    animation: live-pulse 1.6s ease-in-out infinite;
+  }
+}
+
+@media (max-width: 640px) {
+  .metrics-strip__block {
+    flex: 1 1 45%;
+  }
+  .metrics-strip__block:nth-child(2n)::after {
+    display: none;
+  }
+}
+
+/* ===================== the current query's RAG/retrieval row =====================
+   A compact technical strip — response time, STT, retrieval, generation,
+   total, chunking strategy — thin dividers, no cards. Real numbers only:
+   this renders nothing at all when there's no result or the query was
+   refused (see LatencyPanel.jsx's default export). */
+.rag-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.5rem;
+  margin: 1.1rem 0 0;
+  padding: 0.85rem 0;
+  border-top: 1px solid var(--border);
+}
+
+.rag-row__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.rag-row__label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.rag-row__value {
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.rag-row__value--text {
+  text-transform: capitalize;
+  font-family: var(--font-body);
+}
+
+.rag-row__field--highlight .rag-row__value {
+  color: var(--gold);
+}
+
+.rag-row--skeleton {
+  gap: 1rem;
+}
+
+.rag-row__skeleton-block {
+  width: 64px;
+  height: 30px;
+  border-radius: 6px;
+  background: var(--bg-soft);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .rag-row__skeleton-block {
+    animation: shimmer 1.4s ease-in-out infinite;
+  }
+}
+
+/* ===================== retrieval evidence =====================
+   Real chunking-strategy scores as compact rows — not a fabricated
+   "sources" list (this app doesn't retrieve or return named source
+   documents), but the genuine per-strategy scoring the retrieval step
+   actually produces. Hover gets a small gold tint, never a card lift. */
+.evidence {
+  margin-top: 1.1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--border);
+}
+
+.evidence__title {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.evidence__row {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.75rem;
+  padding: 0.5rem 0.4rem;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .evidence__row {
+    animation: evidence-row-in 0.4s ease-out both;
+    animation-delay: calc(var(--i, 0) * 0.06s);
+  }
+}
+
+@keyframes evidence-row-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.evidence__row:hover {
+  background: color-mix(in srgb, var(--gold) 8%, transparent);
+}
+
+.evidence__index {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-faint);
+  width: 1.4em;
+  flex-shrink: 0;
+}
+
+.evidence__name {
+  flex: 1 1 0;
+  min-width: 0;
+  font-size: 0.85rem;
+  color: var(--text);
+  text-transform: capitalize;
+}
+
+.evidence__score {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.evidence__empty {
+  margin: 0;
+  padding: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--text-faint);
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 180px;
   color: var(--text-muted);
   font-size: 0.88rem;
+  text-align: center;
   margin: 0;
+  padding: 0.5rem;
+}
+
+.empty-state p {
+  margin: 0;
+  max-width: 32ch;
 }
 
 .empty-state__icon {
   flex-shrink: 0;
   color: var(--text-faint);
   opacity: 0.7;
+}
+
+.empty-state__title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.empty-state__hint {
+  font-size: 0.82rem;
+  color: var(--text-faint);
 }
 
 .answer-content {
@@ -3263,13 +3588,13 @@ a {
 
 @media (prefers-reduced-motion: no-preference) {
   .answer-content {
-    animation: answer-content-in 0.4s ease-out;
+    animation: answer-content-in 0.55s cubic-bezier(0.16, 1, 0.3, 1);
   }
 }
 
 @keyframes answer-content-in {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(10px) scale(0.985); filter: blur(3px); }
+  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
 }
 
 .answer-block p {
@@ -3296,17 +3621,20 @@ a {
 }
 
 .answer-block--grounded {
-  background: var(--bg-soft);
+  background: color-mix(in srgb, var(--primary) 8%, var(--bg-soft));
+  border: 1px solid color-mix(in srgb, var(--primary) 28%, var(--border));
   border-radius: var(--radius);
-  padding: 0.85rem 1rem;
-  border-left: 3px solid var(--primary);
+  padding: 0.95rem 1.1rem;
+  box-shadow: 0 4px 20px -8px color-mix(in srgb, var(--primary) 40%, transparent);
 }
 
 .answer-block--refused {
   background: var(--warn-bg);
   color: var(--warn);
+  border: 1px solid color-mix(in srgb, var(--warn) 32%, transparent);
   border-radius: var(--radius);
   padding: 1rem 1.25rem;
+  box-shadow: 0 4px 20px -8px color-mix(in srgb, var(--warn) 30%, transparent);
 }
 
 .answer-block--refused .answer-label {
@@ -3316,8 +3644,10 @@ a {
 .answer-block--fallback {
   background: var(--info-bg);
   color: var(--info);
+  border: 1px solid color-mix(in srgb, var(--info) 30%, transparent);
   border-radius: var(--radius);
   padding: 1rem 1.25rem;
+  box-shadow: 0 4px 20px -8px color-mix(in srgb, var(--info) 28%, transparent);
 }
 
 .answer-block--fallback .answer-label {
@@ -3351,6 +3681,15 @@ a {
   font-weight: 600;
   color: var(--text-muted);
   list-style: none;
+  border-radius: var(--radius-sm);
+  padding: 0.2rem 0.4rem;
+  margin: -0.2rem -0.4rem;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.answer-source summary:hover {
+  color: var(--text);
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
 }
 
 .answer-source summary::-webkit-details-marker {
@@ -3392,6 +3731,50 @@ a {
   gap: 0.6rem;
   padding-top: 0.5rem;
   border-top: 1px solid var(--border);
+}
+
+/* real TTS playback state — only ever visible while audio genuinely
+   plays or has genuinely just finished, never a decorative loop */
+.answer-voice-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--gold);
+}
+
+.answer-voice-status--done {
+  color: var(--ok);
+}
+
+.answer-voice-status__bars {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 12px;
+}
+
+.answer-voice-status__bars span {
+  width: 2.5px;
+  height: 100%;
+  border-radius: 1px;
+  background: var(--gold);
+  transform-origin: center;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .answer-voice-status__bars span {
+    animation: answer-voice-bar 0.9s ease-in-out infinite;
+  }
+  .answer-voice-status__bars span:nth-child(2) { animation-delay: 0.15s; }
+  .answer-voice-status__bars span:nth-child(3) { animation-delay: 0.3s; }
+}
+
+@keyframes answer-voice-bar {
+  0%, 100% { transform: scaleY(0.4); }
+  50% { transform: scaleY(1); }
 }
 
 /* ===================== Loading / error states ===================== */
@@ -3569,130 +3952,6 @@ a {
   font-size: 1rem;
 }
 
-/* --- How it works: an organic journey instead of a numbered card grid --- */
-.journey {
-  position: relative;
-  margin-top: 1rem;
-}
-
-.journey__line {
-  position: absolute;
-  top: 34px;
-  left: 0;
-  width: 100%;
-  height: 60px;
-  overflow: visible;
-  display: none;
-}
-
-.journey__line-path {
-  fill: none;
-  stroke: color-mix(in srgb, var(--bright-green) 45%, transparent);
-  stroke-width: 1.5;
-  stroke-dasharray: 2 10;
-  stroke-linecap: round;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .journey__line-path {
-    animation: signal-travel 12s linear infinite;
-  }
-}
-
-@media (min-width: 900px) {
-  .journey__line {
-    display: block;
-  }
-}
-
-.journey__steps {
-  position: relative;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 1.5rem;
-}
-
-@media (max-width: 900px) {
-  .journey__steps {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 560px) {
-  .journey__steps {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-.journey__step {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.65rem;
-  opacity: 0;
-  transform: translateY(18px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-  transition-delay: calc(var(--i, 0) * 0.08s);
-}
-
-.journey__number {
-  position: absolute;
-  top: -0.6rem;
-  right: 0;
-  font-family: var(--font-display);
-  font-size: 2.4rem;
-  font-weight: 800;
-  line-height: 1;
-  color: color-mix(in srgb, var(--text) 10%, transparent);
-  pointer-events: none;
-}
-
-.journey__step.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.journey__node {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  background: var(--surface);
-  border: 1px solid var(--border-strong);
-  color: var(--bright-green);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
-  box-shadow: var(--shadow-sm);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.journey__step.is-visible .journey__node {
-  border-color: color-mix(in srgb, var(--bright-green) 45%, transparent);
-  box-shadow: var(--glow-green);
-}
-
-.journey__label {
-  margin: 0;
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--gold-dark);
-}
-
-.journey__body {
-  margin: 0;
-  font-size: 0.88rem;
-  color: var(--text-muted);
-  max-width: 26ch;
-}
-
 /* --- About: statistics as the dominant visual, not a sidebar list --- */
 .about-copy {
   max-width: 52ch;
@@ -3728,10 +3987,6 @@ a {
   font-weight: 700;
   margin-left: 0.15em;
   color: var(--gold-dark);
-}
-
-:root[data-theme='light'] .about-stats strong {
-  color: var(--primary);
 }
 
 .about-stats span {

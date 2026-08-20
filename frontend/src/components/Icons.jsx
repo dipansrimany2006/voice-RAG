@@ -11,6 +11,55 @@ export function MicIcon(props) {
   )
 }
 
+let holoMicUid = 0
+
+// The premium "holographic" mic glyph used inside the voice orb — a
+// rounded capsule body with a glassy vertical highlight for a refraction
+// hint, a gradient-stroked stand arc, and a stem/base. Every instance
+// gets its own gradient id (a module counter, not React's useId — this
+// only ever needs to be unique per mounted instance, not stable across
+// SSR) so two icons on the same page never fight over one gradient def.
+export function HoloMic({ width = 30, height = 30, className = '', ...props }) {
+  const id = (holoMicUid += 1)
+  const gradId = `holo-mic-grad-${id}`
+  const glowId = `holo-mic-glow-${id}`
+  return (
+    <svg viewBox="0 0 32 32" width={width} height={height} className={className} {...props}>
+      <defs>
+        <linearGradient id={gradId} x1="10%" y1="0%" x2="90%" y2="100%">
+          <stop offset="0%" stopColor="var(--bright-green)" />
+          <stop offset="52%" stopColor="var(--primary)" />
+          <stop offset="100%" stopColor="var(--gold)" />
+        </linearGradient>
+        <filter id={glowId} x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="1.1" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+      {/* stand arc + stem + base, all one gradient-stroked glyph */}
+      <path
+        d="M8 15.5a8 8 0 0 0 16 0"
+        fill="none"
+        stroke={`url(#${gradId})`}
+        strokeWidth="2.1"
+        strokeLinecap="round"
+        filter={`url(#${glowId})`}
+      />
+      <path d="M16 23.5v3.6" stroke={`url(#${gradId})`} strokeWidth="2.1" strokeLinecap="round" />
+      <path d="M11.8 27.6h8.4" stroke={`url(#${gradId})`} strokeWidth="2.1" strokeLinecap="round" />
+      {/* the capsule body — rounded top/bottom ellipses so it reads as a
+          smooth organic capsule rather than a rounded-rect icon glyph */}
+      <rect x="11.2" y="5.4" width="9.6" height="15.4" rx="4.8" fill={`url(#${gradId})`} filter={`url(#${glowId})`} />
+      {/* glass refraction highlight down the capsule's left edge */}
+      <rect x="13" y="7.4" width="2.1" height="10.6" rx="1.05" fill="rgba(255,255,255,0.55)" opacity="0.8" />
+      <rect x="16.4" y="7.4" width="1" height="10.6" rx="0.5" fill="rgba(255,255,255,0.22)" />
+    </svg>
+  )
+}
+
 export function SendIcon(props) {
   return (
     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" {...props}>

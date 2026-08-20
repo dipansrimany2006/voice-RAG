@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { speak } from '../api'
 import { PlayIcon, PauseIcon, CopyIcon, CheckIcon, RefreshIcon, AlertIcon, WaveformIcon } from './Icons'
 import { friendlyError } from '../errorMessages'
-import { formatResponseTime } from './LatencyPanel'
+import LatencyPanel, { SessionMetrics } from './LatencyPanel'
 import { useLanguage } from '../i18n/LanguageContext'
 
 const STRATEGY_LABEL_KEY = {
@@ -11,7 +11,11 @@ const STRATEGY_LABEL_KEY = {
   metadata_aware: 'answer.strategyMetadataAware',
 }
 
-export default function AnswerPanel({ status, result, error, onRetry, onAskAgain, language, frontendLatencyMs }) {
+// The dominant workspace of the /app page — response, session
+// performance, and per-query retrieval diagnostics all live here as one
+// flat, structured area. No floating card, no glass panel: this section
+// sits directly in the page's own background.
+export default function AnswerPanel({ status, result, error, onRetry, onAskAgain, language, frontendLatencyMs, latencyHistory = [] }) {
   const { t } = useLanguage()
   const audioRef = useRef(null)
   // Audio is fetched on demand from POST /api/speak when the user clicks
@@ -23,6 +27,10 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
   const [isPlaying, setIsPlaying] = useState(false)
   const [autoplayBlocked, setAutoplayBlocked] = useState(false)
   const [copied, setCopied] = useState(false)
+  // Tracks whether the voice reply has finished at least once — separate
+  // from isPlaying so "Speaking…" and "Voice response complete" read as
+  // two distinct real moments rather than one boolean doing both jobs.
+  const [voiceDone, setVoiceDone] = useState(false)
 
   // A new answer arrived — forget any previously synthesized audio so the
   // Listen button re-fetches for the current answer instead of replaying
@@ -33,6 +41,7 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
     setListenError(null)
     setIsPlaying(false)
     setAutoplayBlocked(false)
+    setVoiceDone(false)
   }, [result?.answer_text])
 
   // Autoplay once the fetched audio is ready — this still counts as
@@ -93,28 +102,39 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
     }
   }
 
-  const showFooter = status === 'success' && result && !result.refused && frontendLatencyMs != null
+  // A coarse three-state read for the header's status dot — loading maps
+  // to "processing", a landed answer to "complete", everything else
+  // (idle, error) to "ready". The error state's own detail still shows
+  // in the body below; the dot is deliberately just a quick glance.
+  const dotState = status === 'loading' ? 'processing' : status === 'success' ? 'complete' : 'ready'
+  const dotLabel =
+    dotState === 'processing' ? t('pipeline.statusProcessing') : dotState === 'complete' ? t('pipeline.statusComplete') : t('pipeline.statusReady')
 
   return (
-    <section id="answer" className="answer-card" data-status={status} aria-labelledby="answer-heading">
-      <div className="answer-card__head">
-        <h2 id="answer-heading" className="answer-card__title">
-          {t('answer.title')}
+    <section id="answer" className="workspace__response" data-status={status} aria-labelledby="answer-heading">
+      <div className="workspace__response-head">
+        <h2 id="answer-heading" className="workspace__response-title">
+          {t('answer.workspaceTitle')}
         </h2>
-        {status === 'success' && result && !result.refused && (
-          <span className={`answer-card__status-badge${result.grounded ? ' is-grounded' : ''}`}>
-            <span className="answer-card__status-dot" aria-hidden="true" />
-            {result.grounded ? t('answer.groundedLabel') : t('answer.answerFallbackLabel')}
-          </span>
-        )}
+        <span className={`workspace__response-status workspace__response-status--${dotState}`}>
+          <span className="workspace__response-status-dot" aria-hidden="true" />
+          {dotLabel}
+        </span>
       </div>
 
-      <div className="answer-card__body">
+      {/* the session performance strip is a persistent fixture, not tied
+          to the current query — once at least one real query has
+          completed this session, it stays visible through every
+          subsequent idle/loading/success cycle */}
+      {latencyHistory.length > 0 && <SessionMetrics history={latencyHistory} />}
+
+      <div className="workspace__response-body">
         {status === 'idle' && (
-          <p className="empty-state">
+          <div className="empty-state">
             <WaveformIcon className="empty-state__icon" width={18} height={18} />
-            {t('answer.empty')}
-          </p>
+            <p className="empty-state__title">{t('answer.empty')}</p>
+            <p className="empty-state__hint">{t('answer.emptyHint')}</p>
+          </div>
         )}
 
         {status === 'loading' && (
@@ -146,6 +166,10 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
                 <span className="answer-card__meta-chip">
                   <WaveformIcon width={13} height={13} />
                   {language?.label || 'English'}
+                </span>
+                <span className={`answer-card__status-badge${result.grounded ? ' is-grounded' : ''}`}>
+                  {result.grounded ? <CheckIcon width={12} height={12} /> : <AlertIcon width={12} height={12} />}
+                  {result.grounded ? t('answer.groundedLabel') : t('answer.answerFallbackLabel')}
                 </span>
               </div>
             )}
@@ -179,27 +203,6 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
               </div>
             )}
 
-            {result.selected_strategy && (
-              <details className="answer-source">
-                <summary>{t('answer.sourceDetails')}</summary>
-                <span className="answer-label">{t('answer.chunkingStrategyUsed')}</span>
-                <p className="answer-strategy">
-                  <span className="badge badge--info">{strategyLabel(result.selected_strategy)}</span>
-                </p>
-                {result.strategy_scores && (
-                  <ul className="strategy-scores">
-                    {Object.entries(result.strategy_scores)
-                      .sort((a, b) => b[1] - a[1])
-                      .map(([name, score]) => (
-                        <li key={name}>
-                          {strategyLabel(name)}: {score.toFixed(3)}
-                        </li>
-                      ))}
-                  </ul>
-                )}
-              </details>
-            )}
-
             {audioSrc && (
               <audio
                 ref={audioRef}
@@ -207,7 +210,10 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
                 className="answer-audio-hidden"
                 onPlay={() => setIsPlaying(true)}
                 onPause={() => setIsPlaying(false)}
-                onEnded={() => setIsPlaying(false)}
+                onEnded={() => {
+                  setIsPlaying(false)
+                  setVoiceDone(true)
+                }}
               >
                 {t('answer.noAudioSupport')}
               </audio>
@@ -232,6 +238,24 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
               </button>
             </div>
 
+            {/* real TTS playback state — never a decorative loop, only
+                ever visible while audio is genuinely playing or has
+                genuinely just finished */}
+            {isPlaying && (
+              <p className="answer-voice-status" role="status">
+                <span className="answer-voice-status__bars" aria-hidden="true">
+                  <span /><span /><span />
+                </span>
+                {t('answer.speakingLabel')}
+              </p>
+            )}
+            {!isPlaying && voiceDone && (
+              <p className="answer-voice-status answer-voice-status--done" role="status">
+                <CheckIcon width={13} height={13} />
+                {t('answer.voiceCompleteLabel')}
+              </p>
+            )}
+
             {listenState === 'error' && (
               <p className="answer-reason" role="alert">
                 {listenError}
@@ -243,19 +267,33 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
                 {t('answer.autoplayBlocked')}
               </p>
             )}
+
+            {/* the current query's own real retrieval/generation
+                breakdown — renders nothing when refused, so a blocked
+                query never shows a technical row with no meaning */}
+            <LatencyPanel status={status} result={result} frontendLatencyMs={frontendLatencyMs} />
+
+            {!result.refused && (
+              <div className="evidence">
+                <span className="evidence__title">{t('answer.sourceDetails')}</span>
+                {result.strategy_scores ? (
+                  Object.entries(result.strategy_scores)
+                    .sort((a, b) => b[1] - a[1])
+                    .map(([name, score], i) => (
+                      <div className="evidence__row" key={name} style={{ '--i': i }}>
+                        <span className="evidence__index">{String(i + 1).padStart(2, '0')}</span>
+                        <span className="evidence__name">{strategyLabel(name)}</span>
+                        <span className="evidence__score">{score.toFixed(3)}</span>
+                      </div>
+                    ))
+                ) : (
+                  <p className="evidence__empty">{t('answer.noEvidence')}</p>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>
-
-      {showFooter && (
-        <div className="answer-card__footer">
-          <span className="answer-card__footer-label">{t('ask.panelLatency')}</span>
-          <span className="answer-card__footer-values">
-            <span className="answer-card__footer-value">{formatResponseTime(frontendLatencyMs)}</span>
-            <span className="answer-card__footer-target">{t('ask.latencyTarget')}</span>
-          </span>
-        </div>
-      )}
     </section>
   )
 }

@@ -1,39 +1,17 @@
-import { useEffect, useRef, useState } from 'react'
 import { EditorialAtmosphere } from './SectionAtmosphere'
-import { MicIcon, WaveformIcon, SearchIcon, ChipIcon, CheckIcon } from './Icons'
+import StepsList from './StepsList'
 import { useLanguage } from '../i18n/LanguageContext'
 
 const JOURNEY_STEPS = [
-  { key: 'speak', titleKey: 'howItWorks.step1Title', bodyKey: 'howItWorks.step1Body', Icon: MicIcon },
-  { key: 'understand', titleKey: 'howItWorks.step2Title', bodyKey: 'howItWorks.step2Body', Icon: WaveformIcon },
-  { key: 'retrieve', titleKey: 'howItWorks.step3Title', bodyKey: 'howItWorks.step3Body', Icon: SearchIcon },
-  { key: 'generate', titleKey: 'howItWorks.step4Title', bodyKey: 'howItWorks.step4Body', Icon: ChipIcon },
-  { key: 'answer', titleKey: 'howItWorks.step5Title', bodyKey: 'howItWorks.step5Body', Icon: CheckIcon },
+  { key: 'speak', titleKey: 'howItWorks.step1Title', bodyKey: 'howItWorks.step1Body' },
+  { key: 'understand', titleKey: 'howItWorks.step2Title', bodyKey: 'howItWorks.step2Body' },
+  { key: 'retrieve', titleKey: 'howItWorks.step3Title', bodyKey: 'howItWorks.step3Body' },
+  { key: 'generate', titleKey: 'howItWorks.step4Title', bodyKey: 'howItWorks.step4Body' },
+  { key: 'answer', titleKey: 'howItWorks.step5Title', bodyKey: 'howItWorks.step5Body' },
 ]
 
 export function HowItWorks() {
   const { t } = useLanguage()
-  const stepRefs = useRef([])
-  const [visible, setVisible] = useState(() => new Set())
-
-  useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setVisible(new Set(JOURNEY_STEPS.map((_, i) => i)))
-      return
-    }
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return
-          const idx = Number(entry.target.dataset.journeyIndex)
-          setVisible((prev) => (prev.has(idx) ? prev : new Set(prev).add(idx)))
-        })
-      },
-      { threshold: 0.15 },
-    )
-    stepRefs.current.forEach((el) => el && observer.observe(el))
-    return () => observer.disconnect()
-  }, [])
 
   return (
     <section id="how-it-works" className="info-section info-section--journey">
@@ -42,32 +20,7 @@ export function HowItWorks() {
         <span className="eyebrow">{t('howItWorks.eyebrow')}</span>
         <h2 className="info-section__title">{t('howItWorks.title')}</h2>
 
-        <div className="journey">
-          <svg className="journey__line" viewBox="0 0 1200 140" preserveAspectRatio="none" aria-hidden="true">
-            <path
-              className="journey__line-path"
-              d="M10,70 C160,20 260,120 400,70 S600,20 700,70 S900,120 1000,70 S1140,20 1190,70"
-            />
-          </svg>
-          <ol className="journey__steps">
-            {JOURNEY_STEPS.map((step, i) => (
-              <li
-                key={step.key}
-                ref={(el) => (stepRefs.current[i] = el)}
-                data-journey-index={i}
-                className={`journey__step${visible.has(i) ? ' is-visible' : ''}`}
-                style={{ '--i': i }}
-              >
-                <span className="journey__number" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-                <span className="journey__node">
-                  <step.Icon width={20} height={20} />
-                </span>
-                <h3 className="journey__label">{t(step.titleKey)}</h3>
-                <p className="journey__body">{t(step.bodyKey)}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
+        <StepsList steps={JOURNEY_STEPS} />
       </div>
     </section>
   )
