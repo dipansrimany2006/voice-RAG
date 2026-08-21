@@ -26,6 +26,8 @@ export default function VoiceCard({
   textInput,
   onTextInputChange,
   onTextSubmit,
+  sampleQueries = [],
+  onSampleQueryClick,
   ready,
   loading,
   resultReady,
@@ -69,6 +71,26 @@ export default function VoiceCard({
       </div>
 
       {micHintVisible && <p className="workspace__hint">{micStatusText}</p>}
+
+      {sampleQueries.length > 0 && (
+        <div className="workspace__samples" role="group" aria-label={t('ask.sampleQueriesLabel')}>
+          <span className="workspace__samples-label">{t('ask.sampleQueriesLabel')}</span>
+          <div className="workspace__samples-list">
+            {sampleQueries.map((sample, i) => (
+              <button
+                key={i}
+                type="button"
+                className="workspace__sample-chip"
+                disabled={loading}
+                onClick={() => onSampleQueryClick(sample.text)}
+                title={sample.language}
+              >
+                {sample.text}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       <ProcessingPipeline status={queryStatus} />
 

@@ -19,6 +19,11 @@ export async function fetchStrategies() {
   return handle(res)
 }
 
+export async function fetchSampleQueries() {
+  const res = await fetch(`${BASE}/sample-queries`)
+  return handle(res)
+}
+
 export async function queryText({ text }) {
   const res = await fetch(`${BASE}/query/text`, {
     method: 'POST',

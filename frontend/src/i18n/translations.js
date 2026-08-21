@@ -58,6 +58,7 @@ export const translations = {
       orType: 'or type your question',
       askButton: 'Ask',
       placeholderKnowledgeBase: 'Ask anything about your knowledge base…',
+      sampleQueriesLabel: 'Try a real question from the dataset',
       lead: 'Speak naturally or type — every answer is grounded in retrieved context, in your language.',
       guideCaption: 'Your Vaani guide',
       statusListening: 'Listening',

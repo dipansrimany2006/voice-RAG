@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react'
-import { useLanguage } from '../i18n/LanguageContext'
 
 function fmt(ms) {
   return ms == null ? '—' : `${ms.toFixed(0)}ms`
@@ -43,58 +42,6 @@ function useCountUp(target, duration = 600) {
 export function formatResponseTime(ms) {
   if (ms == null) return null
   return ms < 1000 ? `${Math.round(ms)} ms` : `${(ms / 1000).toFixed(2)} s`
-}
-
-// Nearest-rank percentile over an already-sorted array. With one sample,
-// every percentile is that sample — correct, not a bug.
-function percentile(sorted, p) {
-  if (sorted.length === 0) return null
-  const idx = Math.min(sorted.length - 1, Math.ceil((p / 100) * sorted.length) - 1)
-  return sorted[Math.max(0, idx)]
-}
-
-// The session performance strip — P50/P70/P100/budget/live, computed
-// entirely from this session's own real query totals (`history`, built
-// by VoiceApp.jsx from each real response's total_ms/retrieval_under_200ms
-// as it lands). Nothing here is invented: with zero queries so far, every
-// value is a plain em dash rather than a placeholder number.
-export function SessionMetrics({ history }) {
-  const { t } = useLanguage()
-  const sorted = history.map((h) => h.total).sort((a, b) => a - b)
-  const total = history.length
-  const underBudgetCount = history.filter((h) => h.underBudget).length
-
-  return (
-    <div className="metrics-strip" role="group" aria-label={t('pipeline.latencyTitle')}>
-      <MetricBlock label="P50" value={percentile(sorted, 50)} />
-      <MetricBlock label="P70" value={percentile(sorted, 70)} />
-      <MetricBlock label="P100" value={percentile(sorted, 100)} />
-      <div className="metrics-strip__block">
-        <span className="metrics-strip__value">{total > 0 ? `${underBudgetCount}/${total}` : '—'}</span>
-        <span className="metrics-strip__label">{t('pipeline.underBudgetLabel')}</span>
-      </div>
-      <div className="metrics-strip__block metrics-strip__block--live">
-        <span className="metrics-strip__live-dot" aria-hidden="true" />
-        <span className="metrics-strip__value">{total}</span>
-        <span className="metrics-strip__label">
-          {t('pipeline.liveLabel')} · {t('pipeline.queriesLabel')}
-        </span>
-      </div>
-    </div>
-  )
-}
-
-function MetricBlock({ label, value }) {
-  const animated = useCountUp(value)
-  return (
-    <div className="metrics-strip__block">
-      <span className="metrics-strip__value">
-        {animated == null ? '—' : animated.toFixed(1)}
-        {animated != null && <span className="metrics-strip__unit">ms</span>}
-      </span>
-      <span className="metrics-strip__label">{label}</span>
-    </div>
-  )
 }
 
 // Builds the six real pipeline stages for one request from the two actual

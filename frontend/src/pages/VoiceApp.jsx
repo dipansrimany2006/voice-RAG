@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { fetchStrategies, queryAudio, queryText } from '../api'
+import { fetchSampleQueries, fetchStrategies, queryAudio, queryText } from '../api'
 import { useRecorder } from '../useRecorder'
 import VoiceCard from '../components/VoiceCard'
 import AnswerPanel from '../components/AnswerPanel'
@@ -31,11 +31,10 @@ export default function VoiceApp() {
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
   const [frontendLatencyMs, setFrontendLatencyMs] = useState(null)
   const [voiceMode, setVoiceMode] = useState(true)
-  // Real per-query totals for this session only — the source for the
-  // session performance strip's P50/P70/P100/budget numbers. Never
-  // persisted, never synthetic: one entry per successful query, appended
-  // the moment its real total_ms/retrieval_under_200ms land.
-  const [latencyHistory, setLatencyHistory] = useState([])
+  // Real questions pulled from the indexed dataset — quick-test chips so a
+  // visitor can try the product without recording audio or knowing what to
+  // ask. Empty until the fetch resolves; no placeholder/fake queries shown.
+  const [sampleQueries, setSampleQueries] = useState([])
 
   const recorder = useRecorder()
 
@@ -47,6 +46,12 @@ export default function VoiceApp() {
       })
       .catch((err) => setStrategiesError(friendlyError(err.message, t)))
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    fetchSampleQueries()
+      .then((data) => setSampleQueries(data.queries))
+      .catch(() => setSampleQueries([])) // quick-test chips are a nicety — fail silently, the mic/text input still work
   }, [])
 
   useEffect(() => {
@@ -93,9 +98,6 @@ export default function VoiceApp() {
       setFrontendLatencyMs(performance.now() - startedAt)
       setResult(data)
       setStatus('success')
-      if (typeof data.total_ms === 'number') {
-        setLatencyHistory((h) => [...h, { total: data.total_ms, underBudget: Boolean(data.retrieval_under_200ms) }])
-      }
     } catch (err) {
       setErrorMessage(err.message)
       setStatus('error')
@@ -106,6 +108,11 @@ export default function VoiceApp() {
     e.preventDefault()
     if (!textInput.trim()) return
     const text = textInput.trim()
+    runQuery(() => queryText({ text, speak: voiceMode }))
+  }
+
+  function handleSampleQueryClick(text) {
+    setTextInput(text)
     runQuery(() => queryText({ text, speak: voiceMode }))
   }
 
@@ -168,6 +175,8 @@ export default function VoiceApp() {
             textInput={textInput}
             onTextInputChange={setTextInput}
             onTextSubmit={handleTextSubmit}
+            sampleQueries={sampleQueries}
+            onSampleQueryClick={handleSampleQueryClick}
             ready={ready}
             loading={status === 'loading'}
             resultReady={status === 'success'}
@@ -181,7 +190,6 @@ export default function VoiceApp() {
                 onAskAgain={handleAskAgain}
                 language={language}
                 frontendLatencyMs={frontendLatencyMs}
-                latencyHistory={latencyHistory}
               />
             }
           />

@@ -12,8 +12,19 @@ import asyncio
 import base64
 import json
 import logging
+import os
 import sys
 from pathlib import Path
+
+# Must be set before numpy/torch/faiss are imported anywhere (including
+# transitively below) to take effect. Same reasoning as
+# torch.set_num_threads(1) / faiss.omp_set_num_threads(1): this app's access
+# pattern is one query at a time, so BLAS's default multi-threaded pool only
+# adds thread-contention overhead when several queries run concurrently (e.g.
+# the live benchmark's 5-way concurrency) rather than any real speedup.
+os.environ.setdefault("OMP_NUM_THREADS", "1")
+os.environ.setdefault("MKL_NUM_THREADS", "1")
+os.environ.setdefault("OPENBLAS_NUM_THREADS", "1")
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 
@@ -37,7 +48,7 @@ from rag_pipeline.sparse_index import load_bm25  # noqa: E402
 from rag_pipeline.vectorstore import load_index  # noqa: E402
 
 BENCHMARK_LANGUAGES = list(LANGUAGE_FILES)
-BENCHMARK_CONCURRENCY = 5
+BENCHMARK_CONCURRENCY = 1
 BENCHMARK_STAGE_KEYS = ["input_guardrail", "embed_query", "vector_search", "retrieval_guardrail", "extract"]
 
 app = FastAPI(title="Voice RAG Pipeline")
@@ -103,6 +114,26 @@ class PolishRequest(BaseModel):
     query_text: str
 
 
+# Fixed English/Hindi quick-test pairs — pulled directly from the same
+# MSMARCO-XI Hindi validation shard (each row carries both the original
+# English query and its Hindi translation), rather than the live benchmark's
+# random per-language sampler, so the quick-test chips always show a
+# predictable, readable English + Hindi set instead of a fresh random draw
+# of the 14 indexed languages on every page load.
+FIXED_SAMPLE_QUERIES = [
+    ("which angle is an inscribed angle?", "English"),
+    ("explain how hormones are distributed throughout the body water soluble", "English"),
+    ("harry harlow effects", "English"),
+    ("elect power reactor definition", "English"),
+    ("how do canker sores heal", "English"),
+    ("कौन सा कोण एक अंकित कोण है?", "Hindi"),
+    ("हार्मोन कैसे पूरे शरीर में पानी में घुलनशील होते हैं, इसकी व्याख्या करें।", "Hindi"),
+    ("हैरी हार्लो प्रभाव", "Hindi"),
+    ("विद्युत रिएक्टर की परिभाषा चुनें।", "Hindi"),
+    ("कैंकर घाव कैसे ठीक हो सकते हैं", "Hindi"),
+]
+
+
 def _sample_queries_with_language(languages: list[str], n: int) -> list[tuple[str, str]]:
     """Real MSMARCO-XI queries paired with the language they came from — same
     source/dedup/round-robin approach as scripts/benchmark_latency.py's
@@ -121,6 +152,15 @@ def _sample_queries_with_language(languages: list[str], n: int) -> list[tuple[st
             if len(queries) >= n:
                 return queries[:n]
     return queries[:n]
+
+
+@app.get("/api/sample-queries")
+def sample_queries():
+    """Fixed English + Hindi quick-test chips, real questions pulled straight
+    from the MSMARCO-XI dataset (see FIXED_SAMPLE_QUERIES) — a predictable,
+    readable set so a visitor can try the product without recording audio or
+    knowing what to type."""
+    return {"queries": [{"text": q, "language": lang} for q, lang in FIXED_SAMPLE_QUERIES]}
 
 
 @app.get("/api/strategies")

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { polishAnswer, speak } from '../api'
 import { PlayIcon, PauseIcon, CopyIcon, CheckIcon, RefreshIcon, AlertIcon, WaveformIcon } from './Icons'
 import { friendlyError } from '../errorMessages'
-import LatencyPanel, { SessionMetrics } from './LatencyPanel'
+import LatencyPanel from './LatencyPanel'
 import { useLanguage } from '../i18n/LanguageContext'
 
 const STRATEGY_LABEL_KEY = {
@@ -15,7 +15,7 @@ const STRATEGY_LABEL_KEY = {
 // performance, and per-query retrieval diagnostics all live here as one
 // flat, structured area. No floating card, no glass panel: this section
 // sits directly in the page's own background.
-export default function AnswerPanel({ status, result, error, onRetry, onAskAgain, language, frontendLatencyMs, latencyHistory = [] }) {
+export default function AnswerPanel({ status, result, error, onRetry, onAskAgain, language, frontendLatencyMs }) {
   const { t } = useLanguage()
   const audioRef = useRef(null)
   // Audio is fetched on demand from POST /api/speak when the user clicks
@@ -189,12 +189,6 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
           </span>
         )}
       </div>
-
-      {/* the session performance strip is a persistent fixture, not tied
-          to the current query — once at least one real query has
-          completed this session, it stays visible through every
-          subsequent idle/loading/success cycle */}
-      {latencyHistory.length > 0 && <SessionMetrics history={latencyHistory} />}
 
       <div className="workspace__response-body">
         {status === 'idle' && (
