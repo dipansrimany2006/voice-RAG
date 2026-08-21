@@ -15,7 +15,7 @@ const STRATEGY_LABEL_KEY = {
 // performance, and per-query retrieval diagnostics all live here as one
 // flat, structured area. No floating card, no glass panel: this section
 // sits directly in the page's own background.
-export default function AnswerPanel({ status, result, error, onRetry, onAskAgain, language, frontendLatencyMs }) {
+export default function AnswerPanel({ status, result, error, onRetry, onAskAgain, language, frontendLatencyMs, onSpeakingChange }) {
   const { t } = useLanguage()
   const audioRef = useRef(null)
   // Audio is fetched on demand from POST /api/speak when the user clicks
@@ -97,6 +97,16 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
     setAudioSrc(null)
     setIsPlaying(false)
   }, [polishState])
+
+  // Mirrors the real isPlaying state upward — purely a side-channel
+  // notification (e.g. so the voice orb can react while the answer is
+  // being spoken) that never touches playback itself; it only observes
+  // the same state the audio element already drives via its own
+  // onPlay/onPause/onEnded handlers below.
+  useEffect(() => {
+    onSpeakingChange?.(isPlaying)
+    return () => onSpeakingChange?.(false)
+  }, [isPlaying, onSpeakingChange])
 
   // Autoplay once the fetched audio is ready — this still counts as
   // triggered by a user gesture (the Listen click that started the fetch),
@@ -180,25 +190,11 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
         <span className={`workspace__response-status workspace__response-status--${dotState}`}>
           <span className="workspace__response-status-dot" aria-hidden="true" />
           {dotLabel}
+          {isRefining && <span className="answer-card__refining"> · refining…</span>}
         </span>
-        {status === 'success' && result && !result.refused && (
-          <span className={`answer-card__status-badge${displayed.grounded ? ' is-grounded' : ''}`}>
-            <span className="answer-card__status-dot" aria-hidden="true" />
-            {displayed.grounded ? t('answer.groundedLabel') : t('answer.answerFallbackLabel')}
-            {isRefining && <span className="answer-card__refining"> · refining…</span>}
-          </span>
-        )}
       </div>
 
       <div className="workspace__response-body">
-        {status === 'idle' && (
-          <div className="empty-state">
-            <WaveformIcon className="empty-state__icon" width={18} height={18} />
-            <p className="empty-state__title">{t('answer.empty')}</p>
-            <p className="empty-state__hint">{t('answer.emptyHint')}</p>
-          </div>
-        )}
-
         {status === 'loading' && (
           <div className="answer-skeleton" aria-hidden="true">
             <div className="skeleton-line skeleton-line--short" />
@@ -228,10 +224,6 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
                 <span className="answer-card__meta-chip">
                   <WaveformIcon width={13} height={13} />
                   {language?.label || 'English'}
-                </span>
-                <span className={`answer-card__status-badge${result.grounded ? ' is-grounded' : ''}`}>
-                  {result.grounded ? <CheckIcon width={12} height={12} /> : <AlertIcon width={12} height={12} />}
-                  {result.grounded ? t('answer.groundedLabel') : t('answer.answerFallbackLabel')}
                 </span>
               </div>
             )}

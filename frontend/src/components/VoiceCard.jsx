@@ -1,7 +1,6 @@
-import MicButton from './MicButton'
-import MiniWaveform from './MiniWaveform'
+import { useState } from 'react'
 import ProcessingPipeline from './ProcessingPipeline'
-import { SendIcon } from './Icons'
+import { HoloMic, SendIcon } from './Icons'
 import { useLanguage } from '../i18n/LanguageContext'
 
 function formatTimer(seconds) {
@@ -10,18 +9,17 @@ function formatTimer(seconds) {
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
 }
 
-// The /app workspace — a compact command bar (mic + a small real
-// waveform + status, text input as the fallback) sitting directly above
-// the Response area, which does the actual visual work. No floating
-// glass panels, no dedicated "intro" copy block: just the controls
-// needed to ask a question, then the answer.
+// The /app workspace — one centered voice-assistant surface: a single
+// animated orb as the primary mic control (idle/listening/processing/
+// speaking all read from the same real state the old separate mic
+// button + waveform bar used), the text fallback below it, then the
+// Response area. No floating glass panels, no separate "intro" block.
 export default function VoiceCard({
   recording,
   micDisabled,
   micStatusText,
   micHintVisible,
   onMicClick,
-  micStream,
   elapsedSeconds,
   textInput,
   onTextInputChange,
@@ -32,45 +30,76 @@ export default function VoiceCard({
   loading,
   resultReady,
   hasError,
+  systemSpeaking,
   answerSlot,
 }) {
   const { t } = useLanguage()
+  // Purely decorative — a fresh key per click remounts the ripple span so
+  // its CSS animation replays every time, with no timers to clean up (it
+  // just sits at 0 opacity once the animation finishes). Never touches
+  // the real onClick below; it only rides alongside it.
+  const [rippleId, setRippleId] = useState(0)
 
-  const waveState = recording ? 'listening' : loading ? 'processing' : hasError ? 'error' : resultReady ? 'answered' : 'idle'
+  const orbState = recording
+    ? 'listening'
+    : systemSpeaking
+    ? 'speaking'
+    : loading
+    ? 'processing'
+    : hasError
+    ? 'error'
+    : 'idle'
+
   const queryStatus = loading ? 'loading' : resultReady ? 'success' : hasError ? 'error' : 'idle'
 
+  const statusText = recording
+    ? `${formatTimer(elapsedSeconds)} · ${t('ask.listening')}`
+    : systemSpeaking
+    ? t('answer.speakingLabel')
+    : loading
+    ? t('ask.processing')
+    : t('ask.tapToSpeak')
+
+  function handleOrbClick(e) {
+    setRippleId((id) => id + 1)
+    onMicClick(e)
+  }
+
   return (
-    <section id="ask" className="workspace" data-listening={recording} aria-labelledby="ask-heading">
+    <section id="ask" className="workspace workspace--voice" data-listening={recording} aria-labelledby="ask-heading">
       <h2 id="ask-heading" className="sr-only">
         {t('ask.title')}
       </h2>
 
-      <div className="workspace__bar">
-        <div className="workspace__voice">
-          <MicButton recording={recording} processing={loading} disabled={micDisabled} onClick={onMicClick} compact />
-          <MiniWaveform state={waveState} stream={micStream} />
-          <span className="workspace__voice-status" role="status" aria-live="polite">
-            {recording ? `${formatTimer(elapsedSeconds)} · ${t('ask.listening')}` : loading ? t('ask.processing') : t('ask.tapToSpeak')}
+      <div className="voice-stage">
+        <button
+          type="button"
+          className={`voice-orb voice-orb--${orbState}`}
+          aria-pressed={recording}
+          aria-label={recording ? t('a11y.stopRecording') : t('a11y.startRecording')}
+          disabled={micDisabled}
+          onClick={handleOrbClick}
+        >
+          <span className="voice-orb__glow" aria-hidden="true" />
+          <span className="voice-orb__core" aria-hidden="true">
+            <span className="voice-orb__blob voice-orb__blob--1" />
+            <span className="voice-orb__blob voice-orb__blob--2" />
+            <span className="voice-orb__blob voice-orb__blob--3" />
+            <span className="voice-orb__highlight" />
           </span>
-        </div>
+          <span className="voice-orb__icon" aria-hidden="true">
+            <HoloMic width={72} height={72} />
+          </span>
+          {rippleId > 0 && <span key={rippleId} className="voice-orb__ripple" aria-hidden="true" />}
+        </button>
 
-        <form className="workspace__form" onSubmit={onTextSubmit}>
-          <input
-            type="text"
-            id="text-input"
-            autoComplete="off"
-            placeholder={t('ask.placeholderKnowledgeBase')}
-            value={textInput}
-            onChange={(e) => onTextInputChange(e.target.value)}
-          />
-          <button type="submit" className="btn btn--primary btn--sm" disabled={!ready || loading}>
-            <SendIcon />
-            <span>{t('ask.askButton')}</span>
-          </button>
-        </form>
+        <p className="voice-stage__title">{t('ask.voiceOrText')}</p>
+        <p className="voice-stage__status" role="status" aria-live="polite">
+          {statusText}
+        </p>
+
+        {micHintVisible && <p className="workspace__hint">{micStatusText}</p>}
       </div>
-
-      {micHintVisible && <p className="workspace__hint">{micStatusText}</p>}
 
       {sampleQueries.length > 0 && (
         <div className="workspace__samples" role="group" aria-label={t('ask.sampleQueriesLabel')}>
@@ -91,6 +120,21 @@ export default function VoiceCard({
           </div>
         </div>
       )}
+
+      <form className="workspace__form workspace__form--centered" onSubmit={onTextSubmit}>
+        <input
+          type="text"
+          id="text-input"
+          autoComplete="off"
+          placeholder={t('ask.placeholderKnowledgeBase')}
+          value={textInput}
+          onChange={(e) => onTextInputChange(e.target.value)}
+        />
+        <button type="submit" className="btn btn--primary btn--sm" disabled={!ready || loading}>
+          <SendIcon />
+          <span>{t('ask.askButton')}</span>
+        </button>
+      </form>
 
       <ProcessingPipeline status={queryStatus} />
 

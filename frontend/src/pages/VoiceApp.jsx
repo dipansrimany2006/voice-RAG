@@ -35,6 +35,10 @@ export default function VoiceApp() {
   // visitor can try the product without recording audio or knowing what to
   // ask. Empty until the fetch resolves; no placeholder/fake queries shown.
   const [sampleQueries, setSampleQueries] = useState([])
+  // Mirrors AnswerPanel's real TTS playback state, lifted up so the voice
+  // orb (in VoiceCard) can react while the answer is actually being
+  // spoken — no new audio logic, just a read of the existing state.
+  const [systemSpeaking, setSystemSpeaking] = useState(false)
 
   const recorder = useRecorder()
 
@@ -169,8 +173,8 @@ export default function VoiceApp() {
             micStatusText={micStatusText}
             micHintVisible={micHintVisible}
             onMicClick={handleMicClick}
-            micStream={recorder.stream}
             elapsedSeconds={elapsedSeconds}
+            systemSpeaking={systemSpeaking}
             language={language}
             textInput={textInput}
             onTextInputChange={setTextInput}
@@ -190,6 +194,7 @@ export default function VoiceApp() {
                 onAskAgain={handleAskAgain}
                 language={language}
                 frontendLatencyMs={frontendLatencyMs}
+                onSpeakingChange={setSystemSpeaking}
               />
             }
           />
