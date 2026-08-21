@@ -37,9 +37,17 @@ def input_guardrail(query: str) -> GuardrailVerdict:
     return GuardrailVerdict(True)
 
 
-def retrieval_guardrail(top_score: float, min_score: float) -> GuardrailVerdict:
-    if top_score < min_score:
-        return GuardrailVerdict(False, f"low retrieval confidence ({top_score:.2f} < {min_score:.2f}) — likely off-topic")
+def retrieval_guardrail(dense_score: float, sparse_score: float, min_score: float) -> GuardrailVerdict:
+    """Two independent signals, since neither alone is reliable: dense cosine
+    similarity is known to score spuriously high on short/out-of-domain text
+    (verified empirically — pure gibberish scored 0.81, in the same range as
+    genuine matches), while BM25 requires real token overlap and correctly
+    scores exact-zero for gibberish, but can't judge semantic relevance the
+    way dense search can. Requiring both catches what either alone misses."""
+    if sparse_score <= 0:
+        return GuardrailVerdict(False, f"no keyword overlap with any indexed content (bm25={sparse_score:.2f}) — likely gibberish or unrelated")
+    if dense_score < min_score:
+        return GuardrailVerdict(False, f"low retrieval confidence ({dense_score:.2f} < {min_score:.2f}) — likely off-topic")
     return GuardrailVerdict(True)
 
 

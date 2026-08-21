@@ -22,6 +22,8 @@ import pyarrow.parquet as pq
 from huggingface_hub import hf_hub_download
 from langchain_core.documents import Document
 
+from .retry import retry
+
 REPO_ID = "ai4bharat/MSMARCO-XI"
 
 # display name -> validation/ parquet filename prefix
@@ -43,7 +45,13 @@ LANGUAGE_FILES = {
 }
 
 
+@retry(attempts=3, exceptions=(Exception,), backoff_s=5.0)
 def _shard_path(language: str) -> Path:
+    # A stalled connection (not an error, just no bytes arriving) can hang
+    # indefinitely without this — HF_HUB_DOWNLOAD_TIMEOUT (set at the
+    # process level, see Dockerfile) bounds each individual request so a
+    # stall surfaces as a timeout error here instead, which this retry
+    # wrapper then reattempts rather than hanging forever.
     prefix = LANGUAGE_FILES[language]
     return Path(hf_hub_download(REPO_ID, f"validation/{prefix}val.parquet", repo_type="dataset"))
 
@@ -117,5 +125,6 @@ def load_multilingual_passages(
     languages = languages or list(LANGUAGE_FILES)
     docs: list[Document] = []
     for language in languages:
+        print(f"  loading {language}...", flush=True)
         docs.extend(load_passages(language=language, limit=limit_per_language, use_translated=use_translated))
     return docs

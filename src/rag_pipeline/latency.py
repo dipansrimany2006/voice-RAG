@@ -37,6 +37,14 @@ def percentile(values: list, pct: float) -> float:
     return ordered[idx]
 
 
+def percentiles(values: list, pcts=(50, 70, 90, 99, 100)) -> dict:
+    """Same nearest-rank percentile as `percentile()`, computed for several
+    percentiles at once — used by the live benchmark dashboard's stage x
+    percentile table, which needs P90/P99 in addition to the P50/P70/P100
+    `summarize()` already reports for the CLI benchmark."""
+    return {f"p{p}": percentile(values, p) for p in pcts}
+
+
 def summarize(traces: list) -> dict:
     """Aggregate a list of LatencyTrace into P50/P70/P100 for total and retrieval-only latency."""
     totals = [t.total_ms for t in traces]

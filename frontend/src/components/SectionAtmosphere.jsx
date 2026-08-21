@@ -62,6 +62,7 @@ export function AskAtmosphere() {
   return (
     <div className="ask-atmo" aria-hidden="true">
       <span className="ask-atmo__glow" />
+      <span className="ask-atmo__glow ask-atmo__glow--focus" />
       {particles.map((p) => (
         <Particle key={p.id} p={p} className="ask-atmo__particle" />
       ))}

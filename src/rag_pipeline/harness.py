@@ -107,7 +107,9 @@ class RagHarness:
 
     def _node_retrieval_guardrail(self, state: PipelineState) -> PipelineState:
         with state["trace"].timed("retrieval_guardrail"):
-            verdict = guardrails.retrieval_guardrail(state["retrieval"].top_score, self.settings.min_retrieval_score)
+            verdict = guardrails.retrieval_guardrail(
+                state["retrieval"].dense_top_score, state["retrieval"].sparse_top_score, self.settings.min_retrieval_score
+            )
         state["retrieval_confident"] = verdict.allowed
         if not verdict.allowed:
             state["fallback_reason"] = verdict.reason
@@ -225,7 +227,8 @@ class RagHarness:
             state["answer"] = None  # no confident chunk to extract from — caller applies the generic fallback text
             return state
 
-        state["answer"] = extractive_answer(query, state["retrieval"].chunks)
+        with state["trace"].timed("extract"):
+            state["answer"] = extractive_answer(query, state["retrieval"].chunks)
         state["grounded"] = True
         return state
 

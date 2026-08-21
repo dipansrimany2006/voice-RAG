@@ -25,9 +25,11 @@ RRF_K = 60  # standard RRF damping constant
 @dataclass
 class RetrievalResult:
     chunks: list[Document]
-    scores: list[float]
+    scores: list[float]  # RRF-fused scores — encode rank only, not relevance magnitude
     strategy: str = ""
     strategy_scores: dict = None  # top score per strategy that was tried, for transparency
+    dense_top_score: float = 0.0  # top raw dense cosine similarity — the actual relevance signal
+    sparse_top_score: float = 0.0  # top raw BM25 score — 0 means zero keyword overlap with anything indexed
 
     @property
     def top_score(self) -> float:
@@ -86,7 +88,14 @@ def _search(index: StrategyIndex, query: str, query_vector: list[float], k: int)
     fused = _fuse_rrf(dense, sparse)[:k]
     chunks = [doc for doc, _ in fused]
     scores = [score for _, score in fused]
-    return RetrievalResult(chunks=chunks, scores=scores)
+    # RRF only encodes rank position, so a top-ranked irrelevant match scores
+    # nearly identically to a top-ranked relevant one (verified empirically:
+    # gibberish and a genuine match both landed ~0.032-0.033, the RRF ceiling
+    # for a rank-0-in-both-retrievers result) — it can't carry a guardrail
+    # decision. Dense cosine similarity still can, so it's tracked separately.
+    dense_top_score = dense[0][1] if dense else 0.0
+    sparse_top_score = sparse[0][1] if sparse else 0.0
+    return RetrievalResult(chunks=chunks, scores=scores, dense_top_score=dense_top_score, sparse_top_score=sparse_top_score)
 
 
 def retrieve(
@@ -125,8 +134,12 @@ def retrieve_best_strategy(
     with trace.timed("vector_search"):
         for name, index in indexes.items():
             result = _search(index, query, query_vector, k)
-            strategy_scores[name] = result.top_score
-            if best is None or result.top_score > best.top_score:
+            # Selecting the "best" strategy by RRF score would be comparing
+            # numbers that don't distinguish relevance (see _search) — dense
+            # cosine similarity is the signal that actually varies meaningfully
+            # between strategies for the same query.
+            strategy_scores[name] = result.dense_top_score
+            if best is None or result.dense_top_score > best.dense_top_score:
                 best = result
                 best.strategy = name
 

@@ -16,22 +16,6 @@ const STRATEGY_LABEL_KEY = {
 // flat, structured area. No floating card, no glass panel: this section
 // sits directly in the page's own background.
 export default function AnswerPanel({ status, result, error, onRetry, onAskAgain, language, frontendLatencyMs, latencyHistory = [] }) {
-// Per-stage latency breakdown, in pipeline order. Stages with no translated
-// label (finer-grained than the existing pipeline.* keys) use a plain
-// English technical name, same precedent as the "refining…" indicator.
-const STAGE_LABELS = [
-  ['stt', (t) => t('pipeline.latencySTT')],
-  ['input_guardrail', () => 'Input guardrail'],
-  ['embed_query', () => 'Embed query'],
-  ['vector_search', () => 'Vector search'],
-  ['retrieval_guardrail', () => 'Retrieval guardrail'],
-  ['tts', () => 'TTS'],
-  ['generate', (t) => t('pipeline.latencyGeneration')],
-  ['fallback_generate', () => 'Fallback generation'],
-  ['grounding_guardrail', () => 'Grounding check'],
-]
-
-export default function AnswerPanel({ status, result, error, onRetry, onAskAgain, language, frontendLatencyMs }) {
   const { t } = useLanguage()
   const audioRef = useRef(null)
   // Audio is fetched on demand from POST /api/speak when the user clicks
@@ -52,6 +36,11 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
   // initial response never waits on it.
   const [polishState, setPolishState] = useState('idle') // idle | loading | ready | error
   const [polished, setPolished] = useState(null)
+  // Real, frontend-measured round-trip time for the polish request —
+  // performance.now() around the actual fetch, not a guess or a stage
+  // sum, so it includes real network time too.
+  const [polishLatencyMs, setPolishLatencyMs] = useState(null)
+  const [polishErrorMessage, setPolishErrorMessage] = useState(null)
 
   // A new query came in — forget any previously synthesized audio/polish so
   // the Listen button and the extractive->polished swap start fresh instead
@@ -63,9 +52,10 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
     setIsPlaying(false)
     setAutoplayBlocked(false)
     setVoiceDone(false)
-  }, [result?.answer_text])
     setPolishState('idle')
     setPolished(null)
+    setPolishLatencyMs(null)
+    setPolishErrorMessage(null)
   }, [result?.query_text])
 
   // Auto-fire the LLM polish request in the background as soon as the fast
@@ -76,15 +66,23 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
     if (status !== 'success' || !result || result.refused || result.answer_source !== 'extractive') return
     let cancelled = false
     setPolishState('loading')
+    const polishStartedAt = performance.now()
     polishAnswer({ text: result.query_text })
       .then((data) => {
         if (!cancelled) {
           setPolished(data)
+          setPolishLatencyMs(performance.now() - polishStartedAt)
           setPolishState('ready')
         }
       })
-      .catch(() => {
-        if (!cancelled) setPolishState('error')
+      .catch((err) => {
+        if (!cancelled) {
+          // Real elapsed time up to the failure — not invented, just
+          // measured against a shorter window than the success case.
+          setPolishLatencyMs(performance.now() - polishStartedAt)
+          setPolishErrorMessage(err.message)
+          setPolishState('error')
+        }
       })
     return () => {
       cancelled = true
@@ -294,49 +292,6 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
               </details>
             )}
 
-            {result.trace_ms && (
-              <details className="answer-source">
-                <summary>{t('pipeline.latencyTitle')}</summary>
-
-                <span className="answer-label">{t('answer.answerLabel')} (instant, {result.answer_source || 'extractive'})</span>
-                <ul className="strategy-scores">
-                  {STAGE_LABELS.filter(([key]) => result.trace_ms[key] != null).map(([key, label]) => (
-                    <li key={key}>
-                      {label(t)}: {formatResponseTime(result.trace_ms[key])}
-                    </li>
-                  ))}
-                  <li>
-                    <strong>
-                      {t('pipeline.latencyTotal')}: {formatResponseTime(result.total_ms)}
-                    </strong>
-                  </li>
-                </ul>
-                <p className="answer-strategy">
-                  <span className={`badge ${result.retrieval_under_200ms ? 'badge--ok' : 'badge--warn'}`}>
-                    {result.retrieval_under_200ms ? t('pipeline.retrievalUnder') : t('pipeline.retrievalOver')}
-                  </span>
-                </p>
-
-                {polishState === 'ready' && polished?.trace_ms && (
-                  <>
-                    <span className="answer-label">{t('pipeline.stageLlm')} (polished)</span>
-                    <ul className="strategy-scores">
-                      {STAGE_LABELS.filter(([key]) => polished.trace_ms[key] != null).map(([key, label]) => (
-                        <li key={key}>
-                          {label(t)}: {formatResponseTime(polished.trace_ms[key])}
-                        </li>
-                      ))}
-                      <li>
-                        <strong>
-                          {t('pipeline.latencyTotal')}: {formatResponseTime(polished.total_ms)}
-                        </strong>
-                      </li>
-                    </ul>
-                  </>
-                )}
-              </details>
-            )}
-
             {audioSrc && (
               <audio
                 ref={audioRef}
@@ -405,7 +360,15 @@ export default function AnswerPanel({ status, result, error, onRetry, onAskAgain
             {/* the current query's own real retrieval/generation
                 breakdown — renders nothing when refused, so a blocked
                 query never shows a technical row with no meaning */}
-            <LatencyPanel status={status} result={result} frontendLatencyMs={frontendLatencyMs} />
+            <LatencyPanel
+              status={status}
+              result={result}
+              frontendLatencyMs={frontendLatencyMs}
+              polished={polished}
+              polishState={polishState}
+              polishLatencyMs={polishLatencyMs}
+              polishErrorMessage={polishErrorMessage}
+            />
 
             {!result.refused && (
               <div className="evidence">

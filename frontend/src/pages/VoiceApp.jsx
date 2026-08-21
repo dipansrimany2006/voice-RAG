@@ -3,6 +3,7 @@ import { fetchStrategies, queryAudio, queryText } from '../api'
 import { useRecorder } from '../useRecorder'
 import VoiceCard from '../components/VoiceCard'
 import AnswerPanel from '../components/AnswerPanel'
+import BenchmarkPanel from '../components/BenchmarkPanel'
 import { HowItWorks, About } from '../components/InfoSections'
 import SupportedLanguages from '../components/SupportedLanguages'
 import { AlertIcon } from '../components/Icons'
@@ -184,6 +185,12 @@ export default function VoiceApp() {
               />
             }
           />
+        </div>
+      </section>
+
+      <section className="benchmark-section">
+        <div className="shell">
+          <BenchmarkPanel />
         </div>
       </section>
 

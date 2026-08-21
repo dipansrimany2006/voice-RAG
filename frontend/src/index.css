@@ -331,7 +331,18 @@ a {
   box-shadow:
     0 10px 32px rgba(0, 0, 0, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  transition: background 0.3s ease, box-shadow 0.3s ease, backdrop-filter 0.3s ease;
+  transition: background 0.3s ease, box-shadow 0.3s ease, backdrop-filter 0.3s ease,
+    transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease;
+}
+
+/* scroll-direction visibility: down hides it (slide up + fade), up (or
+   being back at the very top) brings it back — same floating pill, just
+   translated further along its own vertical axis, so centering (translateX)
+   stays intact. */
+.site-header.is-hidden {
+  transform: translate(-50%, -130%);
+  opacity: 0;
+  pointer-events: none;
 }
 
 @media (max-width: 640px) {
@@ -405,54 +416,21 @@ a {
   margin-right: auto;
 }
 
-.brand__mark {
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(140deg, var(--bright-green), var(--primary) 55%, var(--gold));
-  color: #fff;
+/* the custom hand-scripted "Vaani" wordmark — real image, transparent
+   background already baked in, so it's placed directly with no circle,
+   card, or background layer behind it. Sized by height so it always fits
+   the fixed-height floating navbar pill without needing to touch the
+   navbar itself; width follows the image's own aspect ratio. */
+.brand__logo {
+  height: 120px;
+  width: auto;
+  display: block;
   flex-shrink: 0;
-  box-shadow: 0 4px 14px -2px color-mix(in srgb, var(--primary) 65%, transparent);
-  transition: transform 0.22s ease, box-shadow 0.22s ease;
-}
-
-.brand:hover .brand__mark {
-  transform: scale(1.03);
-  box-shadow: 0 4px 20px -1px color-mix(in srgb, var(--primary) 80%, transparent);
-}
-
-/* a slow, quiet breathing glow — the logo should feel alive without ever
-   drawing the eye away from the nav around it */
-@media (prefers-reduced-motion: no-preference) {
-  .brand__mark {
-    animation: brand-mark-breathe 5s ease-in-out infinite;
-  }
-}
-
-@keyframes brand-mark-breathe {
-  0%, 100% { box-shadow: 0 4px 14px -2px color-mix(in srgb, var(--primary) 65%, transparent); }
-  50% { box-shadow: 0 4px 20px 0 color-mix(in srgb, var(--bright-green) 55%, transparent); }
-}
-
-.brand__text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.1;
-}
-
-.brand__name {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.4rem;
-  letter-spacing: -0.01em;
 }
 
 @media (max-width: 640px) {
-  .brand__name {
-    font-size: 1.2rem;
+  .brand__logo {
+    height: 28px;
   }
 }
 
@@ -679,7 +657,7 @@ a {
 
 .btn--primary:hover:not(:disabled) {
   background: var(--primary-dark);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow), var(--glow-gold);
   transform: translateY(-1px);
 }
 
@@ -2470,12 +2448,16 @@ a {
   position: relative;
   isolation: isolate;
   overflow: hidden;
+  /* Deep near-black straight under the floating navbar — no solid gold
+     stop here. The separation from the navbar reads through the navbar's
+     own floating shadow/blur, not a hard-edged colored band across the
+     page. Gold only reappears later as the very soft .ask-atmo glow. */
   background: linear-gradient(
     180deg,
-    var(--primary-dark) 0%,
-    var(--sea-muted) 10%,
-    var(--bg-soft) 26%,
-    var(--surface-warm) 58%,
+    var(--bg) 0%,
+    var(--sea-muted) 14%,
+    var(--bg-soft) 32%,
+    var(--surface-warm) 62%,
     var(--bg) 100%
   );
   padding: 1.75rem 0 2.5rem;
@@ -2517,7 +2499,18 @@ a {
   height: 560px;
   transform: translate(-50%, -50%);
   background: radial-gradient(ellipse, color-mix(in srgb, var(--bright-green) 12%, transparent), transparent 70%);
-  filter: blur(10px);
+  filter: blur(36px);
+}
+
+/* a second, tighter glow seated directly behind the voice/input cluster
+   rather than the whole section — this is the "soft radial light around
+   the interaction area" layer, low-contrast and gold-toned. */
+.ask-atmo__glow--focus {
+  top: 62%;
+  width: min(620px, 90vw);
+  height: 340px;
+  background: radial-gradient(ellipse, color-mix(in srgb, var(--gold) 16%, transparent), transparent 72%);
+  filter: blur(44px);
 }
 
 .ask-atmo__particle {
@@ -2531,6 +2524,7 @@ a {
 
 @media (prefers-reduced-motion: no-preference) {
   .ask-atmo__glow { animation: atmo-drift-a 30s ease-in-out infinite; }
+  .ask-atmo__glow--focus { animation: atmo-drift-b 40s ease-in-out infinite; }
   .ask-atmo__particle { animation: atmo-particle-float var(--dur, 14s) ease-in-out infinite; animation-delay: var(--delay, 0s); }
 }
 
@@ -2564,8 +2558,12 @@ a {
   align-items: center;
   gap: 1.25rem;
   flex-wrap: wrap;
-  padding: 0 0 1.1rem;
-  border-bottom: 1px solid var(--border);
+  padding: 1rem 1.25rem 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
 
 .workspace__voice {
@@ -3476,65 +3474,375 @@ a {
   }
 }
 
-/* ===================== the current query's RAG/retrieval row =====================
-   A compact technical strip — response time, STT, retrieval, generation,
-   total, chunking strategy — thin dividers, no cards. Real numbers only:
-   this renders nothing at all when there's no result or the query was
-   refused (see LatencyPanel.jsx's default export). */
-.rag-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 1.5rem;
+/* ===================== pipeline telemetry & latency =====================
+   One row per REAL backend/frontend-measured pipeline stage for the
+   current query (see LatencyPanel.jsx's buildStages — every value here
+   traces back to a server LatencyTrace field or a real performance.now()
+   delta, never a placeholder). Compact technical panel, no cards, thin
+   row dividers, state read primarily through a small status dot + text
+   rather than color-only so it stays legible for colorblind users. */
+.telemetry-panel {
   margin: 1.1rem 0 0;
-  padding: 0.85rem 0;
+  padding: 0.9rem 0 0.3rem;
   border-top: 1px solid var(--border);
 }
 
-.rag-row__field {
+.telemetry-panel__head {
   display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
 }
 
-.rag-row__label {
-  font-size: 0.62rem;
+.telemetry-panel__title {
+  font-size: 0.66rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  letter-spacing: 0.08em;
   color: var(--text-faint);
 }
 
-.rag-row__value {
+.telemetry-panel__rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.telemetry-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px dashed var(--border);
+  font-size: 0.8rem;
+}
+
+.telemetry-row:last-child {
+  border-bottom: none;
+}
+
+.telemetry-row__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  flex: none;
+}
+
+.telemetry-row__dot--completed { background: var(--ok); }
+.telemetry-row__dot--error { background: var(--danger); }
+.telemetry-row__dot--blocked { background: var(--warn); }
+.telemetry-row__dot--processing { background: var(--gold); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .telemetry-row__dot--processing {
+    animation: telemetry-pulse 1.1s ease-in-out infinite;
+  }
+}
+
+@keyframes telemetry-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 color-mix(in srgb, var(--gold) 55%, transparent); }
+  50% { opacity: 0.6; box-shadow: 0 0 0 4px transparent; }
+}
+
+.telemetry-row__label {
   font-family: var(--font-display);
-  font-size: 0.88rem;
+  font-size: 0.68rem;
   font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: var(--text-muted);
+}
+
+.telemetry-row__value {
+  font-family: var(--font-display);
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
+  color: var(--text);
+  text-align: right;
 }
 
-.rag-row__value--text {
-  text-transform: capitalize;
-  font-family: var(--font-body);
+.telemetry-row--na .telemetry-row__value {
+  color: var(--text-faint);
 }
 
-.rag-row__field--highlight .rag-row__value {
+.telemetry-row--highlight .telemetry-row__value {
   color: var(--gold);
 }
 
-.rag-row--skeleton {
-  gap: 1rem;
+.telemetry-row__state {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-align: right;
+  min-width: 4.5em;
+  color: var(--text-faint);
 }
 
-.rag-row__skeleton-block {
-  width: 64px;
-  height: 30px;
-  border-radius: 6px;
+.telemetry-row__state--completed { color: var(--ok); }
+.telemetry-row__state--error { color: var(--danger); }
+.telemetry-row__state--blocked { color: var(--warn); }
+.telemetry-row__state--processing { color: var(--gold); }
+
+.telemetry-row__note {
+  grid-column: 1 / -1;
+  font-size: 0.72rem;
+  color: var(--text-faint);
+  font-style: italic;
+}
+
+.telemetry-panel--skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.telemetry-panel__title-skeleton {
+  width: 180px;
+  height: 12px;
+  border-radius: 4px;
   background: var(--bg-soft);
 }
 
+.telemetry-row--skeleton {
+  height: 26px;
+  border-radius: 6px;
+  background: var(--bg-soft);
+  border-bottom: none;
+}
+
+/* ===================== live benchmark dashboard =====================
+   "RUN 100 LIVE" streams real per-query results from GET /api/benchmark/run
+   (Server-Sent Events) and renders them here — every number in this panel
+   traces back to that stream. Same dark/gold/monospace-numerals language
+   as .telemetry-panel above, extended for a percentile table + card row. */
+.benchmark-section {
+  padding: 2.5rem 0;
+}
+
+.benchmark-panel {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 1.5rem;
+}
+
+.benchmark-panel__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.benchmark-panel__title {
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+}
+
+.benchmark-panel__subtitle {
+  margin: 0.25rem 0 0;
+  font-size: 0.8rem;
+  color: var(--text-faint);
+  max-width: 46ch;
+}
+
+.benchmark-panel__status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.benchmark-panel__status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text-faint);
+}
+
+.benchmark-panel__status-dot--running { background: var(--gold); }
+.benchmark-panel__status-dot--done { background: var(--ok); }
+.benchmark-panel__status-dot--failed { background: var(--danger); }
+
 @media (prefers-reduced-motion: no-preference) {
-  .rag-row__skeleton-block {
+  .benchmark-panel__status-dot--running {
+    animation: telemetry-pulse 1.1s ease-in-out infinite;
+  }
+}
+
+.benchmark-panel__status-count {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-faint);
+  font-weight: 500;
+}
+
+.benchmark-panel__run-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.benchmark-panel__spinner {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--primary-contrast) 35%, transparent);
+  border-top-color: var(--primary-contrast);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .benchmark-panel__spinner {
+    animation: benchmark-spin 0.8s linear infinite;
+  }
+}
+
+@keyframes benchmark-spin {
+  to { transform: rotate(360deg); }
+}
+
+.benchmark-panel__error {
+  margin-top: 1rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--danger) 40%, var(--border));
+  background: var(--danger-bg);
+  border-radius: var(--radius-sm);
+}
+
+.benchmark-panel__error-title {
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--danger);
+  font-size: 0.8rem;
+}
+
+.benchmark-panel__error-reason,
+.benchmark-panel__error-partial {
+  margin: 0.3rem 0 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.benchmark-panel__cards {
+  margin-top: 1.25rem;
+}
+
+.benchmark-panel__budget-bar {
+  position: relative;
+  margin-top: 1rem;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--bg-soft);
+  overflow: hidden;
+}
+
+.benchmark-panel__budget-fill {
+  height: 100%;
+  background: var(--ok);
+  border-radius: inherit;
+  transition: width 0.4s ease;
+}
+
+.benchmark-panel__budget-fill--over {
+  background: var(--warn);
+}
+
+.benchmark-panel__budget-label {
+  display: block;
+  margin-top: 0.4rem;
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-faint);
+}
+
+.benchmark-panel__table-wrap {
+  margin-top: 1.25rem;
+  overflow-x: auto;
+}
+
+.benchmark-panel__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.benchmark-panel__table th {
+  text-align: right;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+  padding: 0.3rem 0.6rem;
+}
+
+.benchmark-panel__table th:first-child,
+.benchmark-panel__table td:first-child {
+  text-align: left;
+  color: var(--text-muted);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.benchmark-panel__table td {
+  text-align: right;
+  padding: 0.35rem 0.6rem;
+  border-top: 1px dashed var(--border);
+  color: var(--text);
+}
+
+.benchmark-panel__table-total td {
+  color: var(--gold);
+  font-weight: 700;
+  border-top: 1px solid var(--border-strong);
+}
+
+.benchmark-panel__details {
+  margin-top: 1.25rem;
+}
+
+.benchmark-panel__query-list {
+  max-height: 360px;
+  overflow-y: auto;
+  margin-top: 0.5rem;
+}
+
+.benchmark-panel__query-row {
+  display: grid;
+  grid-template-columns: auto 2.6em minmax(0, 2fr) 4.5em minmax(0, 1.6fr);
+  gap: 0.6rem;
+}
+
+.benchmark-panel__query-index {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-faint);
+}
+
+.benchmark-panel__query-text,
+.benchmark-panel__query-lang {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-muted);
+}
+
+.benchmark-panel__query-lang {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-faint);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .telemetry-panel__title-skeleton,
+  .telemetry-row--skeleton {
     animation: shimmer 1.4s ease-in-out infinite;
   }
 }

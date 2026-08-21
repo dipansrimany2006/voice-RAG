@@ -15,9 +15,21 @@ Usage:
 """
 
 import argparse
+import socket
 import sys
 import time
 from pathlib import Path
+
+# Hard safety net below HF Hub's own retry/timeout machinery: a stale or
+# broken keep-alive connection reused across many sequential downloads (14
+# language shards in one process) can hang a blocking socket call
+# indefinitely without ever raising — observed in practice as the whole
+# build stalling with zero CPU right after the embedding model loads, not
+# reproducible when each shard is fetched in its own fresh process. This
+# patches the default timeout for every blocking socket op in the process
+# (DNS, connect, recv included), so a stall raises socket.timeout instead
+# of hanging forever, which our @retry wrapper on the download then catches.
+socket.setdefaulttimeout(30)
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 

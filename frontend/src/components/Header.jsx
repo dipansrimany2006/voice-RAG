@@ -21,12 +21,26 @@ export default function Header({ language, onLanguageChange, activeSection }) {
   const [langOpen, setLangOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [hidden, setHidden] = useState(false)
   const langRef = useRef(null)
   const navRef = useRef(null)
+  const lastScrollY = useRef(0)
 
   useEffect(() => {
     function handleScroll() {
-      setScrolled(window.scrollY > 8)
+      const y = window.scrollY
+      setScrolled(y > 8)
+      // Always visible at the very top; otherwise follow scroll direction —
+      // hide on the way down, reappear on the way up. A small threshold
+      // (4px) keeps trackpad/scroll-jitter from flickering the state.
+      if (y <= 8) {
+        setHidden(false)
+      } else if (y > lastScrollY.current + 4) {
+        setHidden(true)
+      } else if (y < lastScrollY.current - 4) {
+        setHidden(false)
+      }
+      lastScrollY.current = y
     }
     handleScroll()
     window.addEventListener('scroll', handleScroll, { passive: true })
@@ -55,7 +69,7 @@ export default function Header({ language, onLanguageChange, activeSection }) {
   }
 
   return (
-    <header className={`site-header${scrolled ? ' is-scrolled' : ''}`}>
+    <header className={`site-header${scrolled ? ' is-scrolled' : ''}${hidden ? ' is-hidden' : ''}`}>
       <span className="site-header__shimmer" aria-hidden="true" />
       <div className="site-header__inner">
         <a
@@ -66,15 +80,7 @@ export default function Header({ language, onLanguageChange, activeSection }) {
             navigate('/')
           }}
         >
-          <span className="brand__mark" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.2">
-              <rect x="9" y="2" width="6" height="12" rx="3" />
-              <path d="M5 11a7 7 0 0 0 14 0" strokeLinecap="round" />
-            </svg>
-          </span>
-          <span className="brand__text">
-            <span className="brand__name">Vaani</span>
-          </span>
+          <img src="/logo.png" alt="Vaani" className="brand__logo" />
         </a>
 
         <nav className="site-nav" aria-label={t('a11y.primaryNav')} ref={navRef}>
