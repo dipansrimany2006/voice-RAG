@@ -56,4 +56,8 @@ RUN python3 -c "from sentence_transformers import SentenceTransformer; SentenceT
 
 EXPOSE 7860
 
+# Shell form so ${PORT} is resolved at container start, not build time —
+# Render (and most PaaS hosts) inject PORT and expect the app to bind to
+# it, while HF Spaces / local runs have no PORT set and fall back to 7860.
+CMD uvicorn server.main:app --host 0.0.0.0 --port ${PORT:-7860}
 CMD ["uvicorn", "server.main:app", "--host", "0.0.0.0", "--port", "7860"]
