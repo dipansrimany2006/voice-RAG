@@ -15,14 +15,14 @@ leaving the user with a bare refusal for a coverage gap.
 
 from typing import Optional, TypedDict
 
-from langchain_community.vectorstores import FAISS
 from langchain_core.embeddings import Embeddings
 from langchain_groq import ChatGroq
 
 from . import guardrails
 from .config import Settings
+from .extractive import extractive_answer
 from .latency import LatencyTrace
-from .retrieval import RetrievalResult, retrieve_best_strategy
+from .retrieval import RetrievalResult, StrategyIndex, retrieve_best_strategy
 from .retry import retry
 
 NOT_GROUNDED_SENTINEL = "NOT_GROUNDED"
@@ -63,6 +63,7 @@ class PipelineState(TypedDict):
     retrieval_confident: bool
     retrieval: Optional[RetrievalResult]
     answer: Optional[str]
+    answer_source: Optional[str]  # "extractive" (no LLM) or "llm"
 
 
 def _format_context(chunks) -> str:
@@ -70,9 +71,9 @@ def _format_context(chunks) -> str:
 
 
 class RagHarness:
-    def __init__(self, settings: Settings, stores: dict[str, FAISS], embeddings: Embeddings):
+    def __init__(self, settings: Settings, indexes: dict[str, StrategyIndex], embeddings: Embeddings):
         self.settings = settings
-        self.stores = stores  # {strategy_name: FAISS index}, one per built chunking strategy
+        self.indexes = indexes  # {strategy_name: StrategyIndex}, one per built chunking strategy
         self.embeddings = embeddings
         self.llm = ChatGroq(api_key=settings.groq_api_key, model=settings.groq_model, temperature=0)
         self.graph = self._build_graph()
@@ -100,13 +101,15 @@ class RagHarness:
         return state
 
     def _node_retrieve(self, state: PipelineState) -> PipelineState:
-        result = retrieve_best_strategy(state["query"], self.stores, self.embeddings, state["trace"], k=4)
+        result = retrieve_best_strategy(state["query"], self.indexes, self.embeddings, state["trace"], k=4)
         state["retrieval"] = result
         return state
 
     def _node_retrieval_guardrail(self, state: PipelineState) -> PipelineState:
         with state["trace"].timed("retrieval_guardrail"):
-            verdict = guardrails.retrieval_guardrail(state["retrieval"].top_score, self.settings.min_retrieval_score)
+            verdict = guardrails.retrieval_guardrail(
+                state["retrieval"].dense_top_score, state["retrieval"].sparse_top_score, self.settings.min_retrieval_score
+            )
         state["retrieval_confident"] = verdict.allowed
         if not verdict.allowed:
             state["fallback_reason"] = verdict.reason
@@ -118,9 +121,11 @@ class RagHarness:
         with state["trace"].timed("fallback_generate"):
             state["answer"] = self._general_knowledge_answer(state["query"])
         state["grounded"] = False
+        state["answer_source"] = "llm"
         return state
 
     def _node_generate(self, state: PipelineState) -> PipelineState:
+        state["answer_source"] = "llm"
         context = _format_context(state["retrieval"].chunks)
         prompt = ANSWER_PROMPT.format(context=context, question=state["query"])
 
@@ -189,8 +194,8 @@ class RagHarness:
         graph.add_edge("generate_general", END)
         return graph.compile()
 
-    def run(self, query: str, trace: Optional[LatencyTrace] = None) -> PipelineState:
-        state: PipelineState = {
+    def _initial_state(self, query: str, trace: Optional[LatencyTrace]) -> PipelineState:
+        return {
             "query": query,
             "trace": trace if trace is not None else LatencyTrace(),
             "refused": False,
@@ -200,5 +205,38 @@ class RagHarness:
             "retrieval_confident": True,
             "retrieval": None,
             "answer": None,
+            "answer_source": None,
         }
+
+    def run_fast(self, query: str, trace: Optional[LatencyTrace] = None) -> PipelineState:
+        """Extractive path: no LLM call. input_guardrail -> retrieve (hybrid
+        dense+sparse) -> retrieval_guardrail -> pull the answer straight out
+        of the top chunk. Stays inside the retrieval-latency budget since the
+        only added cost is cheap in-process sentence scoring."""
+        state = self._initial_state(query, trace)
+        state = self._node_input_guardrail(state)
+        if state["refused"]:
+            return state
+
+        state = self._node_retrieve(state)
+        state = self._node_retrieval_guardrail(state)
+        state["answer_source"] = "extractive"
+
+        if not state["retrieval_confident"]:
+            state["grounded"] = False
+            state["answer"] = None  # no confident chunk to extract from — caller applies the generic fallback text
+            return state
+
+        with state["trace"].timed("extract"):
+            state["answer"] = extractive_answer(query, state["retrieval"].chunks)
+        state["grounded"] = True
+        return state
+
+    def polish(self, query: str, trace: Optional[LatencyTrace] = None) -> PipelineState:
+        """LLM path: the original full graph (retrieve -> generate ->
+        grounding guardrail, with general-knowledge fallback). Re-runs
+        retrieval rather than reusing a cached result, mirroring how
+        VoiceIO.synthesize already re-derives from raw text with no
+        server-side session state to keep things stateless."""
+        state = self._initial_state(query, trace)
         return self.graph.invoke(state)

@@ -1,6 +1,16 @@
+---
+title: Voice RAG
+emoji: 🎙️
+colorFrom: yellow
+colorTo: red
+sdk: docker
+app_port: 7860
+pinned: false
+---
+
 # Voice-Enabled RAG Pipeline
 
-Voice in → ElevenLabs STT → guardrail → chunked/embedded retrieval (FAISS) → Groq LLM → guardrail → ElevenLabs TTS → voice out, orchestrated as a LangGraph state machine.
+Voice in → ElevenLabs STT → guardrail → chunked/embedded hybrid retrieval (FAISS dense + BM25 sparse, fused via RRF) → an instant extractive answer (no LLM) → ElevenLabs TTS → voice out. A Groq LLM-polished answer is generated separately, off the response-latency critical path, mirroring the on-demand TTS pattern. Orchestrated as a LangGraph state machine.
 
 Built for the HH Goa 2026 Task 2 spec, on the [ai4bharat/MSMARCO-XI](https://huggingface.co/datasets/ai4bharat/MSMARCO-XI) dataset — **all 14 languages** (Assamese, Bengali, Gujarati, Hindi, Kannada, Malayalam, Marathi, Nepali, Odia, Punjabi, Sanskrit, Tamil, Telugu, Urdu) indexed into one multilingual corpus per chunking strategy.
 
@@ -16,9 +26,10 @@ We use the `validation` split rather than `train`: train shards are ~3.7GB each 
 |---|---|
 | STT / TTS | ElevenLabs (Scribe / Flash) |
 | Chunking | LangChain splitters — 3 strategies (see below) |
-| Embeddings | Local `intfloat/multilingual-e5-base` (sentence-transformers) — no network call in the retrieval hot path |
-| Vector DB | FAISS, local/in-memory — avoids a network round-trip |
-| Generation | Groq (`llama-3.3-70b-versatile`) |
+| Embeddings | Local `intfloat/multilingual-e5-small` (sentence-transformers) — no network call in the retrieval hot path |
+| Vector DB | FAISS (dense) + BM25 via `bm25s` (sparse), fused with Reciprocal Rank Fusion — local/in-memory, no network round-trip |
+| Fast answer | Extractive — best-matching sentence(s) pulled straight from the top chunk, no LLM call |
+| Generation | Groq (`llama-3.3-70b-versatile`), fetched separately via `/api/query/polish` |
 | Harness | LangGraph — structured state, conditional routing, retries, error recovery |
 
 ## Chunking strategies
@@ -139,6 +150,24 @@ scripts/
   run_query.py          single query, text or audio
   benchmark_latency.py  P50/P70/P100 over a multilingual query batch
 ```
+
+## Deploy to Hugging Face Spaces (free)
+
+The `Dockerfile` at the repo root builds a single self-contained image: it compiles the React frontend, installs the backend, and bakes a 14-language index (`--limit-per-language 200`, ~15-20 min build) directly into the image so there's no slow first-request cold start and no need to commit the ~1.4GB index to git. HF Spaces' free CPU tier (16GB RAM) is used here specifically because this stack (torch + sentence-transformers + FAISS) needs more than the 512MB most free PaaS tiers give you.
+
+1. Create a new Space at [huggingface.co/new-space](https://huggingface.co/new-space) — **SDK: Docker**, any hardware tier (`cpu-basic` is free).
+2. Add this repo as a second git remote and push:
+   ```bash
+   git remote add space https://huggingface.co/spaces/<your-username>/<space-name>
+   git push space main
+   ```
+3. In the Space's **Settings → Repository secrets**, add:
+   - `GROQ_API_KEY` (required)
+   - `ELEVENLABS_API_KEY` (required — STT)
+   - `SARVAM_API_KEY` (optional — enables Odia/Punjabi TTS; without it those two fall back to edge-tts's closest-script voice)
+4. The Space rebuilds automatically on push and gives you a public URL once the build finishes — that's your live link.
+
+To index more than 200 queries/language for a richer demo corpus, edit the `RUN python scripts/build_index.py ...` line in the `Dockerfile` and push again — expect build time to scale roughly linearly with `--limit-per-language`.
 
 ## Known constraints worth calling out
 

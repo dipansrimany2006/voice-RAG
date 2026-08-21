@@ -19,6 +19,11 @@ export async function fetchStrategies() {
   return handle(res)
 }
 
+export async function fetchSampleQueries() {
+  const res = await fetch(`${BASE}/sample-queries`)
+  return handle(res)
+}
+
 export async function queryText({ text }) {
   const res = await fetch(`${BASE}/query/text`, {
     method: 'POST',
@@ -32,6 +37,15 @@ export async function queryAudio({ blob }) {
   const form = new FormData()
   form.append('file', blob, 'question.webm')
   const res = await fetch(`${BASE}/query/audio`, { method: 'POST', body: form })
+  return handle(res)
+}
+
+export async function polishAnswer({ text }) {
+  const res = await fetch(`${BASE}/query/polish`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query_text: text }),
+  })
   return handle(res)
 }
 

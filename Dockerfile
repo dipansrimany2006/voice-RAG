@@ -60,3 +60,4 @@ EXPOSE 7860
 # Render (and most PaaS hosts) inject PORT and expect the app to bind to
 # it, while HF Spaces / local runs have no PORT set and fall back to 7860.
 CMD uvicorn server.main:app --host 0.0.0.0 --port ${PORT:-7860}
+CMD ["uvicorn", "server.main:app", "--host", "0.0.0.0", "--port", "7860"]

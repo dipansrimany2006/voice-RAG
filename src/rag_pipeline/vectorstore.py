@@ -2,9 +2,18 @@
 
 import os
 
+import faiss
 from langchain_community.vectorstores import FAISS
 from langchain_core.documents import Document
 from langchain_core.embeddings import Embeddings
+
+# Same reasoning as torch.set_num_threads(1) in embeddings.py: FAISS's default
+# OpenMP intraop pool is uncapped, so concurrent searches (e.g. the live
+# benchmark's 5-way concurrency) oversubscribe CPU cores and stall on thread
+# contention instead of running in parallel — observed as vector_search p90
+# jumping from ~26ms to ~270ms under concurrent load. One query at a time per
+# call, single-threaded, sidesteps that entirely.
+faiss.omp_set_num_threads(1)
 
 
 def build_index(chunks: list[Document], embeddings: Embeddings, strategy_name: str, index_dir: str) -> FAISS:

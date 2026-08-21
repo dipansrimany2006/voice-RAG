@@ -15,9 +15,21 @@ Usage:
 """
 
 import argparse
+import socket
 import sys
 import time
 from pathlib import Path
+
+# Hard safety net below HF Hub's own retry/timeout machinery: a stale or
+# broken keep-alive connection reused across many sequential downloads (14
+# language shards in one process) can hang a blocking socket call
+# indefinitely without ever raising — observed in practice as the whole
+# build stalling with zero CPU right after the embedding model loads, not
+# reproducible when each shard is fetched in its own fresh process. This
+# patches the default timeout for every blocking socket op in the process
+# (DNS, connect, recv included), so a stall raises socket.timeout instead
+# of hanging forever, which our @retry wrapper on the download then catches.
+socket.setdefaulttimeout(30)
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
@@ -25,13 +37,14 @@ from rag_pipeline.chunking import STRATEGIES  # noqa: E402
 from rag_pipeline.config import load_settings  # noqa: E402
 from rag_pipeline.data_loader import LANGUAGE_FILES, load_multilingual_passages  # noqa: E402
 from rag_pipeline.embeddings import build_embeddings  # noqa: E402
+from rag_pipeline.sparse_index import build_bm25  # noqa: E402
 from rag_pipeline.vectorstore import build_index  # noqa: E402
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--languages", nargs="+", default=list(LANGUAGE_FILES), help="default: all 14 languages")
-    parser.add_argument("--limit-per-language", type=int, default=200, help="source queries randomly sampled per language")
+    parser.add_argument("--limit-per-language", type=int, default=800, help="source queries randomly sampled per language")
     parser.add_argument("--strategies", nargs="+", default=list(STRATEGIES.keys()))
     args = parser.parse_args()
 
@@ -51,7 +64,11 @@ def main():
 
         t0 = time.perf_counter()
         build_index(chunks, embeddings, name, settings.index_dir)
-        print(f"[{name}] indexed to {settings.index_dir}/{name} in {time.perf_counter() - t0:.1f}s")
+        print(f"[{name}] FAISS indexed to {settings.index_dir}/{name} in {time.perf_counter() - t0:.1f}s")
+
+        t0 = time.perf_counter()
+        build_bm25(chunks, name, settings.index_dir)
+        print(f"[{name}] BM25 indexed to {settings.index_dir}/{name}/bm25 in {time.perf_counter() - t0:.1f}s")
 
     print("\nDone. Compare strategies with scripts/benchmark_latency.py --strategy <name>.")
 

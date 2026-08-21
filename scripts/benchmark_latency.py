@@ -24,6 +24,8 @@ from rag_pipeline.data_loader import LANGUAGE_FILES, load_passages  # noqa: E402
 from rag_pipeline.embeddings import build_embeddings  # noqa: E402
 from rag_pipeline.harness import RagHarness  # noqa: E402
 from rag_pipeline.latency import summarize  # noqa: E402
+from rag_pipeline.retrieval import StrategyIndex  # noqa: E402
+from rag_pipeline.sparse_index import load_bm25  # noqa: E402
 from rag_pipeline.vectorstore import load_index  # noqa: E402
 
 
@@ -57,8 +59,12 @@ def main():
     built = [s for s in args.strategies if (Path(settings.index_dir) / s).exists()]
     if not built:
         raise SystemExit(f"no built indexes among {args.strategies} — run scripts/build_index.py first")
-    stores = {name: load_index(embeddings, name, settings.index_dir) for name in built}
-    harness = RagHarness(settings, stores, embeddings)
+    indexes = {}
+    for name in built:
+        faiss_store = load_index(embeddings, name, settings.index_dir)
+        bm25_index, bm25_chunks = load_bm25(name, settings.index_dir)
+        indexes[name] = StrategyIndex(faiss=faiss_store, bm25=bm25_index, bm25_chunks=bm25_chunks)
+    harness = RagHarness(settings, indexes, embeddings)
 
     queries = sample_queries(args.languages, args.n)
     print(f"Running {len(queries)} queries, auto-selecting among strategies={built}...")
@@ -66,7 +72,7 @@ def main():
     traces = []
     strategy_counts: dict[str, int] = {}
     for i, q in enumerate(queries, 1):
-        state = harness.run(q)
+        state = harness.run_fast(q)
         traces.append(state["trace"])
         chosen = state["retrieval"].strategy if state["retrieval"] else None
         if chosen:

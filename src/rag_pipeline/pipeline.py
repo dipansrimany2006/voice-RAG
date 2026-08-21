@@ -1,19 +1,21 @@
-"""End-to-end voice pipeline: audio in -> STT -> harness (retrieve+guardrails+generate) -> TTS -> audio out.
+"""End-to-end voice pipeline: audio in -> STT -> harness fast path
+(retrieve+guardrails+extractive answer, no LLM) -> TTS -> audio out.
 
 STT and TTS timing share the same LatencyTrace as the harness's internal
 stages, so the reported breakdown (and total) covers the whole request, not
-just the retrieval/generation portion.
+just the retrieval portion. The LLM-polished answer is generated separately
+via polish_text(), off this critical path.
 """
 
 import logging
 from dataclasses import dataclass
 
-from langchain_community.vectorstores import FAISS
 from langchain_core.embeddings import Embeddings
 
 from .config import Settings
 from .harness import GENERIC_REFUSAL_MESSAGE, RagHarness
 from .latency import LatencyTrace
+from .retrieval import StrategyIndex
 from .voice import VoiceIO
 
 logger = logging.getLogger(__name__)
@@ -33,13 +35,14 @@ class PipelineOutput:
     total_ms: float
     selected_strategy: str | None
     strategy_scores: dict | None
+    answer_source: str | None  # "extractive" (no LLM) or "llm"
 
 
 class VoicePipeline:
-    def __init__(self, settings: Settings, stores: dict[str, FAISS], embeddings: Embeddings):
+    def __init__(self, settings: Settings, indexes: dict[str, StrategyIndex], embeddings: Embeddings):
         self.settings = settings
         self.voice = VoiceIO(settings)
-        self.harness = RagHarness(settings, stores, embeddings)
+        self.harness = RagHarness(settings, indexes, embeddings)
 
     def run_audio(self, audio_bytes: bytes, speak_response: bool = True) -> PipelineOutput:
         trace = LatencyTrace()
@@ -61,18 +64,44 @@ class VoicePipeline:
                 total_ms=trace.total_ms,
                 selected_strategy=None,
                 strategy_scores=None,
+                answer_source=None,
             )
         return self._run_from_text(query_text, trace, speak_response=speak_response)
 
     def run_text(self, query_text: str, speak_response: bool = True) -> PipelineOutput:
         return self._run_from_text(query_text, LatencyTrace(), speak_response=speak_response)
 
+    def polish_text(self, query_text: str) -> PipelineOutput:
+        """LLM-refined answer for a query already answered via the fast
+        extractive path — called separately (like VoiceIO.synthesize is
+        called on demand for TTS) so the initial response never waits on
+        the LLM."""
+        trace = LatencyTrace()
+        state = self.harness.polish(query_text, trace=trace)
+        answer_text = state["answer"] or GENERIC_REFUSAL_MESSAGE
+        retrieval = state["retrieval"]
+        return PipelineOutput(
+            query_text=query_text,
+            answer_text=answer_text,
+            refused=state["refused"],
+            refusal_reason=state["refusal_reason"],
+            grounded=state["grounded"],
+            fallback_reason=state["fallback_reason"],
+            audio=None,
+            trace=dict(trace.stages),
+            retrieval_ms=trace.retrieval_ms,
+            total_ms=trace.total_ms,
+            selected_strategy=retrieval.strategy if retrieval else None,
+            strategy_scores=retrieval.strategy_scores if retrieval else None,
+            answer_source=state["answer_source"],
+        )
+
     def _run_from_text(self, query_text: str, trace: LatencyTrace, speak_response: bool) -> PipelineOutput:
-        state = self.harness.run(query_text, trace=trace)
-        # state["answer"] is already user-facing text in every case the
-        # harness can produce (grounded, general-knowledge fallback, or the
-        # model's own in-language refusal) EXCEPT input-guardrail hard
-        # blocks, which never reach generation — those alone need the
+        state = self.harness.run_fast(query_text, trace=trace)
+        # state["answer"] is already user-facing text in every case the fast
+        # path can produce (extractive snippet or the model's own in-language
+        # refusal) EXCEPT input-guardrail hard blocks and low-confidence
+        # retrieval (no chunk worth extracting from) — those need the
         # generic fallback applied here.
         answer_text = state["answer"] or GENERIC_REFUSAL_MESSAGE
 
@@ -99,4 +128,5 @@ class VoicePipeline:
             total_ms=trace.total_ms,
             selected_strategy=retrieval.strategy if retrieval else None,
             strategy_scores=retrieval.strategy_scores if retrieval else None,
+            answer_source=state["answer_source"],
         )

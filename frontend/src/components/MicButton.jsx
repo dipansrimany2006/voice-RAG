@@ -1,21 +1,76 @@
-export default function MicButton({ recording, disabled, onClick }) {
+import { useState } from 'react'
+import { HoloMic } from './Icons'
+import { useLanguage } from '../i18n/LanguageContext'
+
+export default function MicButton({ recording, processing, disabled, onClick, compact = false }) {
+  const { t } = useLanguage()
+  const isProcessing = processing && !recording
+  // Purely decorative — a fresh key per click remounts the ripple span so
+  // its CSS animation replays every time, with no timers to clean up (it
+  // just sits at 0 opacity once the animation finishes). Never touches
+  // the real onClick below; it only rides alongside it.
+  const [rippleId, setRippleId] = useState(0)
+
+  function handleClick(e) {
+    setRippleId((id) => id + 1)
+    onClick(e)
+  }
+
   return (
-    <button
-      type="button"
-      className={`mic-button${recording ? ' mic-button--recording' : ''}`}
-      aria-pressed={recording}
-      aria-label={recording ? 'Stop recording' : 'Start recording your question'}
-      disabled={disabled}
-      onClick={onClick}
+    <div
+      className={`mic-stage${compact ? ' mic-stage--compact' : ''}${recording ? ' is-recording' : ''}${isProcessing ? ' is-processing' : ''}`}
     >
-      <span className="mic-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2">
-          <rect x="9" y="2" width="6" height="12" rx="3" />
-          <path d="M5 11a7 7 0 0 0 14 0" strokeLinecap="round" />
-          <path d="M12 18v4" strokeLinecap="round" />
-          <path d="M8 22h8" strokeLinecap="round" />
-        </svg>
-      </span>
-    </button>
+      {/* the decorative rings/glow (idle breathing rings, recording pulse
+          rings, processing rings) exist for the full-size button; the
+          compact bar-context button skips all of them — just the button,
+          the icon, and the click ripple, no rings of any kind. The
+          adjacent MiniWaveform carries "voice activity" instead. */}
+      {!compact && (
+        <>
+          <span className="mic-idle-glow" aria-hidden="true" />
+          <span className="mic-idle-ring mic-idle-ring--1" aria-hidden="true" />
+          <span className="mic-idle-ring mic-idle-ring--2" aria-hidden="true" />
+
+          {recording && (
+            <>
+              <span className="mic-ring mic-ring--1" aria-hidden="true" />
+              <span className="mic-ring mic-ring--2" aria-hidden="true" />
+              <span className="mic-ring mic-ring--3" aria-hidden="true" />
+            </>
+          )}
+
+          {isProcessing && (
+            <span className="mic-processing-glow" aria-hidden="true">
+              <span className="mic-processing-ring mic-processing-ring--1" />
+              <span className="mic-processing-ring mic-processing-ring--2" />
+              <span className="mic-processing-ring mic-processing-ring--3" />
+            </span>
+          )}
+        </>
+      )}
+
+      <button
+        type="button"
+        className={`mic-button${compact ? ' mic-button--compact' : ''}${recording ? ' mic-button--recording' : ''}${isProcessing ? ' mic-button--processing' : ''}`}
+        aria-pressed={recording}
+        aria-busy={isProcessing}
+        aria-label={recording ? t('a11y.stopRecording') : t('a11y.startRecording')}
+        disabled={disabled}
+        onClick={handleClick}
+      >
+        <span className="mic-icon" aria-hidden="true">
+          <HoloMic width={compact ? 17 : 26} height={compact ? 17 : 26} />
+        </span>
+        {rippleId > 0 && <span key={rippleId} className="mic-click-ripple" aria-hidden="true" />}
+      </button>
+
+      {!compact && recording && (
+        <div className="mic-waveform" aria-hidden="true">
+          {Array.from({ length: 9 }).map((_, i) => (
+            <span key={i} className="mic-waveform__bar" style={{ '--i': i }} />
+          ))}
+        </div>
+      )}
+    </div>
   )
 }
