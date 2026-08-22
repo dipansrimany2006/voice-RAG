@@ -23,7 +23,7 @@ export const translations = {
     },
     hero: {
       badge: 'Voice AI • RAG • India',
-      titleLine1: 'Ask Goa.',
+      titleLine1: 'Ask Vaani.',
       titleLine2: 'In your language.',
       subLine1: 'Voice in. Knowledge retrieved. Answers grounded.',
       subLine2: 'Built for builders. Backed by RAG.',

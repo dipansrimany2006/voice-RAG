@@ -264,6 +264,98 @@ a {
   }
 }
 
+/* ===================== interactive dot-grid backdrop =====================
+   A site-wide grid-line + dot pattern with a soft gold spotlight that
+   follows the cursor, revealing brighter warm-gold dots underneath it —
+   built from scratch (two tiled background-images + a masked overlay),
+   in the spirit of Aceternity UI's "background grid with dots and
+   animations" component but with the accent recolored from its signature
+   blue to this site's own gold/amber identity. Sits behind BackgroundDecor
+   (same fixed/z-index:-1/pointer-events:none convention) so its ambient
+   glows still layer on top. */
+.bg-grid-dots {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
+  pointer-events: none;
+  --grid-spot-x: -400px;
+  --grid-spot-y: -400px;
+  /* fades the whole grid out toward the very top and bottom of the page,
+     same reasoning as .bg-decor's own fade — keeps it from reading as a
+     hard-edged pattern sliced off under the navbar or above the footer */
+  mask-image: linear-gradient(to bottom, transparent 0, black 120px, black calc(100% - 160px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, black 120px, black calc(100% - 160px), transparent 100%);
+}
+
+/* Used inside a section (e.g. Hero.jsx's `.hero`) instead of the
+   page-level fixed instance — `position: fixed` here would never scroll
+   away with its parent, so it'd stay glued to the viewport and visibly
+   bleed into whatever section is scrolled underneath it afterward (a
+   real bug this fixed it). `position: absolute` scrolls and gets clipped
+   by the parent's own `overflow: hidden` normally instead. The top/bottom
+   page-scroll fade doesn't apply to a single section's own box, so it's
+   dropped here too. */
+.bg-grid-dots--contained {
+  position: absolute;
+  z-index: 0;
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+
+.bg-grid-dots__base {
+  position: absolute;
+  inset: 0;
+  opacity: 0.85;
+  background-image:
+    linear-gradient(to right, rgba(247, 245, 239, 0.09) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(247, 245, 239, 0.09) 1px, transparent 1px),
+    radial-gradient(circle, rgba(247, 245, 239, 0.22) 1.6px, transparent 2px);
+  background-size: 44px 44px, 44px 44px, 44px 44px;
+  background-position: -1px -1px, -1px -1px, 21px 21px;
+}
+
+/* the same base pattern again, but painted in gold and revealed only
+   within a soft circle around the cursor via a radial mask — the
+   "spotlight" the whole component is named for. Masking (not just an
+   opacity/color overlay) is what keeps the reveal a true soft-edged
+   circle instead of a hard-edged rectangle. Full-strength colour and a
+   noticeably larger dot than the base layer, so the reveal reads
+   unmistakably as "these specific dots just lit up gold" rather than a
+   generic glow bloom. */
+.bg-grid-dots__spotlight {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, var(--gold) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--gold) 1px, transparent 1px),
+    radial-gradient(circle, var(--gold) 2.4px, transparent 3px);
+  background-size: 44px 44px, 44px 44px, 44px 44px;
+  background-position: -1px -1px, -1px -1px, 21px 21px;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--gold) 70%, transparent));
+  mask-image: radial-gradient(circle 260px at var(--grid-spot-x) var(--grid-spot-y), black, transparent 70%);
+  -webkit-mask-image: radial-gradient(circle 260px at var(--grid-spot-x) var(--grid-spot-y), black, transparent 70%);
+  transition: mask-position 0.05s linear;
+}
+
+@media (max-width: 640px) {
+  .bg-grid-dots {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-grid-dots__spotlight {
+    /* the JS pointer-tracking effect is skipped entirely under reduced
+       motion (see BackgroundGridDots.jsx), so the spotlight would
+       otherwise sit frozen in its off-screen parked position — fixing it
+       gently at the viewport centre instead reads as a deliberate,
+       static design choice rather than a bug */
+    mask-image: radial-gradient(circle 260px at 50% 30%, black, transparent 72%);
+    -webkit-mask-image: radial-gradient(circle 260px at 50% 30%, black, transparent 72%);
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .bg-decor__particle {
     animation: atmo-particle-float var(--dur, 16s) ease-in-out infinite;
@@ -1782,7 +1874,6 @@ a {
 /* ===================== Home page: voice journey pipeline ===================== */
 .voice-journey {
   padding: clamp(3.5rem, 8vw, 5.5rem) 1.5rem clamp(4rem, 9vw, 6rem);
-  background: var(--bg-soft);
 }
 
 .voice-journey__title {

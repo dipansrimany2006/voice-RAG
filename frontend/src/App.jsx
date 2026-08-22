@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import BackgroundDecor from './components/BackgroundDecor'
+import BackgroundGridDots from './components/BackgroundGridDots'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import Home from './pages/Home'
@@ -42,6 +43,7 @@ export default function App() {
 
   return (
     <div className="page">
+      <BackgroundGridDots />
       <BackgroundDecor />
 
       <Header language={language} onLanguageChange={setLanguage} activeSection={activeSection} />
