@@ -3,9 +3,6 @@ __pycache__/
 *.pyc
 .venv/
 venv/
-data/index/
 data/raw/
-*.faiss
-*.pkl
 .DS_Store
 benchmark_results/

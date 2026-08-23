@@ -15,7 +15,6 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
-    curl \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
@@ -29,12 +28,12 @@ COPY --from=frontend-builder /app/frontend/dist/ frontend/dist/
 # Dense vectors live in Cloudflare Vectorize now (see vectorstore.py), not
 # local files — only the BM25 sparse index (built LOCALLY via
 # `python scripts/build_index.py`, since it's cheap and has no network
-# dependency) still needs to ship with the image. It's stored in the same
-# public Cloudflare R2 bucket as before, just far smaller now that it's not
-# carrying FAISS vectors alongside it.
-RUN curl -fsSL "https://pub-80ad0c77d4bb4f58887079c4166236f8.r2.dev/bm25-index.tar" -o bm25-index.tar && \
-    tar -xf bm25-index.tar && \
-    rm bm25-index.tar
+# dependency) still needs to ship with the image. It's small enough now
+# (~67MB total, well under GitHub's 100MB/file limit) to commit directly via
+# Git LFS instead of fetching from external storage at build time — see
+# .gitattributes. Render's own git checkout (which happens before this
+# Dockerfile even runs) resolves the LFS pointers, so this is a plain COPY.
+COPY data/index/ data/index/
 
 ENV PYTHONPATH=/app/src \
     INDEX_DIR=/app/data/index
