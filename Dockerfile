@@ -32,16 +32,25 @@ COPY server/ server/
 COPY scripts/ scripts/
 COPY --from=frontend-builder /app/frontend/dist/ frontend/dist/
 
-# The index is built LOCALLY (outside Docker) and copied in as static
+# The index is built LOCALLY (outside Docker) and fetched in as static
 # files, not built during the image build. Building it inside Docker (14
 # sequential HF Hub downloads, then chunking/embedding/indexing) was
 # repeatedly hanging indefinitely under Docker Desktop's virtualized
 # networking — every local, non-Docker run of the same script completed
-# reliably. Copying a pre-built index sidesteps that networking layer
-# entirely: this step is just a fast local file copy, no network calls,
-# not the fragile part. Run `python scripts/build_index.py` locally
-# whenever you want to refresh data/index/ before rebuilding the image.
-COPY data/index/ data/index/
+# reliably. Fetching a pre-built index sidesteps that networking layer
+# entirely. It's also too large (1.3GB, individual files over GitHub's
+# 100MB limit) to commit to the repo, so it's stored in a public
+# Cloudflare R2 bucket instead, split into <300MB parts (R2/wrangler's
+# per-object upload cap) and reassembled here. Run
+# `python scripts/build_index.py` locally, then re-split and re-upload
+# to R2, whenever you want to refresh the index.
+RUN for i in 000 001 002 003 004 005; do \
+        curl -fsSL "https://pub-80ad0c77d4bb4f58887079c4166236f8.r2.dev/index.tar.part${i}" -o "index.tar.part${i}"; \
+    done && \
+    cat index.tar.part* > index.tar && \
+    rm index.tar.part* && \
+    tar -xf index.tar && \
+    rm index.tar
 
 ENV PYTHONPATH=/app/src \
     HF_HOME=/app/.cache/huggingface \
