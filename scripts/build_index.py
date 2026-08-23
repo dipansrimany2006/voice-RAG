@@ -63,8 +63,8 @@ def main():
         print(f"[{name}] {len(chunks)} chunks in {time.perf_counter() - t0:.1f}s")
 
         t0 = time.perf_counter()
-        build_index(chunks, embeddings, name, settings.index_dir)
-        print(f"[{name}] FAISS indexed to {settings.index_dir}/{name} in {time.perf_counter() - t0:.1f}s")
+        build_index(chunks, embeddings, name, settings)
+        print(f"[{name}] embedded + upserted to Vectorize in {time.perf_counter() - t0:.1f}s")
 
         t0 = time.perf_counter()
         build_bm25(chunks, name, settings.index_dir)

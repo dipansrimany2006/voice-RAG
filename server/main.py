@@ -67,7 +67,10 @@ _pipeline: VoicePipeline | None = None
 def get_pipeline() -> VoicePipeline:
     global _pipeline
     if _pipeline is None:
-        built = {s: Path(settings.index_dir) / s for s in STRATEGIES if (Path(settings.index_dir) / s).exists()}
+        # BM25 still lives on local disk (see sparse_index.py); its presence
+        # marks a strategy as built, since the Vectorize side has no local
+        # files to check.
+        built = {s for s in STRATEGIES if (Path(settings.index_dir) / s / "bm25").exists()}
         if not built:
             raise HTTPException(
                 503,
@@ -75,9 +78,9 @@ def get_pipeline() -> VoicePipeline:
             )
         indexes = {}
         for name in built:
-            faiss_store = load_index(embeddings, name, settings.index_dir)
+            dense_store = load_index(embeddings, name, settings)
             bm25_index, bm25_chunks = load_bm25(name, settings.index_dir)
-            indexes[name] = StrategyIndex(faiss=faiss_store, bm25=bm25_index, bm25_chunks=bm25_chunks)
+            indexes[name] = StrategyIndex(dense=dense_store, bm25=bm25_index, bm25_chunks=bm25_chunks)
         _pipeline = VoicePipeline(settings, indexes, embeddings)
     return _pipeline
 
@@ -165,7 +168,7 @@ def sample_queries():
 
 @app.get("/api/strategies")
 def list_strategies():
-    available = [s for s in STRATEGIES if (Path(settings.index_dir) / s).exists()]
+    available = [s for s in STRATEGIES if (Path(settings.index_dir) / s / "bm25").exists()]
     return {"strategies": available, "all_strategies": list(STRATEGIES)}
 
 

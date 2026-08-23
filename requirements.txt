@@ -1,11 +1,8 @@
 langchain==0.3.*
 langchain-text-splitters==0.3.*
 langchain-experimental==0.3.*
-langchain-community==0.3.*
 langchain-groq==0.2.*
 langgraph==0.2.*
-sentence-transformers==3.*
-faiss-cpu>=1.9
 bm25s>=0.3
 elevenlabs==1.*
 edge-tts>=7.0

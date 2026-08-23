@@ -23,6 +23,9 @@ class Settings:
     embedding_model: str
     index_dir: str
     min_retrieval_score: float
+    cloudflare_account_id: str
+    cloudflare_api_token: str
+    vectorize_index_prefix: str
 
 
 def load_settings() -> Settings:
@@ -35,7 +38,12 @@ def load_settings() -> Settings:
         # native voice for. Without it, those two languages fall back to
         # edge-tts's closest-script voice instead.
         sarvam_api_key=os.environ.get("SARVAM_API_KEY") or None,
-        embedding_model=os.environ.get("EMBEDDING_MODEL", "intfloat/multilingual-e5-small"),
+        # Cloudflare Workers AI, not local — a local torch/sentence-transformers
+        # model doesn't fit the deploy target's memory budget. See embeddings.py.
+        embedding_model=os.environ.get("EMBEDDING_MODEL", "@cf/baai/bge-m3"),
         index_dir=os.environ.get("INDEX_DIR", "data/index"),
         min_retrieval_score=float(os.environ.get("MIN_RETRIEVAL_SCORE", "0.55")),
+        cloudflare_account_id=_require("CLOUDFLARE_ACCOUNT_ID"),
+        cloudflare_api_token=_require("CLOUDFLARE_API_TOKEN"),
+        vectorize_index_prefix=os.environ.get("VECTORIZE_INDEX_PREFIX", "voice-rag"),
     )

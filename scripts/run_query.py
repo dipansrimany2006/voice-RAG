@@ -21,6 +21,8 @@ from rag_pipeline.chunking import STRATEGIES  # noqa: E402
 from rag_pipeline.config import load_settings  # noqa: E402
 from rag_pipeline.embeddings import build_embeddings  # noqa: E402
 from rag_pipeline.pipeline import VoicePipeline  # noqa: E402
+from rag_pipeline.retrieval import StrategyIndex  # noqa: E402
+from rag_pipeline.sparse_index import load_bm25  # noqa: E402
 from rag_pipeline.vectorstore import load_index  # noqa: E402
 
 
@@ -35,11 +37,15 @@ def main():
 
     settings = load_settings()
     embeddings = build_embeddings(settings)
-    built = [s for s in args.strategies if (Path(settings.index_dir) / s).exists()]
+    built = [s for s in args.strategies if (Path(settings.index_dir) / s / "bm25").exists()]
     if not built:
         raise SystemExit(f"no built indexes among {args.strategies} — run scripts/build_index.py first")
-    stores = {name: load_index(embeddings, name, settings.index_dir) for name in built}
-    pipeline = VoicePipeline(settings, stores, embeddings)
+    indexes = {}
+    for name in built:
+        dense_store = load_index(embeddings, name, settings)
+        bm25_index, bm25_chunks = load_bm25(name, settings.index_dir)
+        indexes[name] = StrategyIndex(dense=dense_store, bm25=bm25_index, bm25_chunks=bm25_chunks)
+    pipeline = VoicePipeline(settings, indexes, embeddings)
 
     speak = bool(args.speak)
     if args.text:

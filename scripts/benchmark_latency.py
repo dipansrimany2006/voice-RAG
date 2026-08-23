@@ -56,14 +56,14 @@ def main():
 
     settings = load_settings()
     embeddings = build_embeddings(settings)
-    built = [s for s in args.strategies if (Path(settings.index_dir) / s).exists()]
+    built = [s for s in args.strategies if (Path(settings.index_dir) / s / "bm25").exists()]
     if not built:
         raise SystemExit(f"no built indexes among {args.strategies} — run scripts/build_index.py first")
     indexes = {}
     for name in built:
-        faiss_store = load_index(embeddings, name, settings.index_dir)
+        dense_store = load_index(embeddings, name, settings)
         bm25_index, bm25_chunks = load_bm25(name, settings.index_dir)
-        indexes[name] = StrategyIndex(faiss=faiss_store, bm25=bm25_index, bm25_chunks=bm25_chunks)
+        indexes[name] = StrategyIndex(dense=dense_store, bm25=bm25_index, bm25_chunks=bm25_chunks)
     harness = RagHarness(settings, indexes, embeddings)
 
     queries = sample_queries(args.languages, args.n)
