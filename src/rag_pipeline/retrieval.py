@@ -1,24 +1,23 @@
-"""Query-time retrieval, called directly against the Vectorize store (bypassing
+"""Query-time retrieval, called directly against the FAISS store (bypassing
 LangChain's retriever/chain wrapper) so framework overhead doesn't eat into
-the retrieval budget — only real embedding + search work is measured.
+the 200ms budget — only real embedding + search work is measured.
 
-Retrieval is hybrid: Vectorize dense search is fused with a BM25 sparse search
+Retrieval is hybrid: FAISS dense search is fused with a BM25 sparse search
 over the same chunk set via Reciprocal Rank Fusion (RRF). Dense embeddings
 miss exact keyword/proper-noun/number matches that BM25 catches, and BM25
 misses paraphrases/synonyms that dense catches — fusing both covers more
 questions than either alone.
 """
 
-from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 
 import bm25s
+from langchain_community.vectorstores import FAISS
 from langchain_core.documents import Document
 from langchain_core.embeddings import Embeddings
 
 from .latency import LatencyTrace
 from .tokenize import tokenize
-from .vectorstore import VectorizeStore
 
 RRF_K = 60  # standard RRF damping constant
 
@@ -42,18 +41,17 @@ class StrategyIndex:
     """Everything needed to search one chunking strategy: its Vectorize store
     plus the parallel BM25 index + chunk list built over the exact same chunks."""
 
-    dense: VectorizeStore
+    dense: FAISS
     bm25: bm25s.BM25
     bm25_chunks: list[Document]
 
 
-def _search_dense(store: VectorizeStore, query_vector: list[float], k: int) -> list[tuple[Document, float]]:
-    # Vectorize (cosine metric) already returns a 0-1-ish similarity where
-    # 1.0 = identical, so no distance->similarity conversion is needed here —
-    # unlike FAISS's raw L2 distance this used to convert from. NOTE: this
-    # means MIN_RETRIEVAL_SCORE (tuned against the old FAISS-derived scale)
-    # needs re-tuning against real query traffic on the new scale.
-    return store.similarity_search_with_score_by_vector(query_vector, k=k)
+def _search_dense(store: FAISS, query_vector: list[float], k: int) -> list[tuple[Document, float]]:
+    results = store.similarity_search_with_score_by_vector(query_vector, k=k)
+    # FAISS returns L2 distance as numpy.float32 by default; convert to a
+    # plain-float 0-1 similarity so guardrail thresholds read the same
+    # regardless of index metric, and so it's JSON-serializable downstream.
+    return [(doc, 1 / (1 + float(score))) for doc, score in results]
 
 
 def _search_sparse(bm25: bm25s.BM25, bm25_chunks: list[Document], query: str, k: int) -> list[tuple[Document, float]]:
@@ -125,29 +123,25 @@ def retrieve_best_strategy(
     query rather than fixed at index-build time, since a strategy that's
     the best fit for one question won't necessarily be the best fit for
     another. The query is embedded once and reused across every strategy's
-    search. Each strategy's dense search is now a Vectorize network call
-    (see vectorstore.py), so the N searches run concurrently via a thread
-    pool — sequential would multiply, not just add, the round-trip cost.
+    search, so trying N strategies costs one embedding call plus N cheap
+    in-memory hybrid searches, not N full retrievals.
     """
     with trace.timed("embed_query"):
         query_vector = embeddings.embed_query(query)
 
+    best: RetrievalResult | None = None
     strategy_scores: dict[str, float] = {}
     with trace.timed("vector_search"):
-        with ThreadPoolExecutor(max_workers=len(indexes)) as pool:
-            futures = {name: pool.submit(_search, index, query, query_vector, k) for name, index in indexes.items()}
-            results = {name: future.result() for name, future in futures.items()}
-
-    best: RetrievalResult | None = None
-    for name, result in results.items():
-        # Selecting the "best" strategy by RRF score would be comparing
-        # numbers that don't distinguish relevance (see _search) — dense
-        # cosine similarity is the signal that actually varies meaningfully
-        # between strategies for the same query.
-        strategy_scores[name] = result.dense_top_score
-        if best is None or result.dense_top_score > best.dense_top_score:
-            best = result
-            best.strategy = name
+        for name, index in indexes.items():
+            result = _search(index, query, query_vector, k)
+            # Selecting the "best" strategy by RRF score would be comparing
+            # numbers that don't distinguish relevance (see _search) — dense
+            # cosine similarity is the signal that actually varies meaningfully
+            # between strategies for the same query.
+            strategy_scores[name] = result.dense_top_score
+            if best is None or result.dense_top_score > best.dense_top_score:
+                best = result
+                best.strategy = name
 
     best.strategy_scores = strategy_scores
     return best

@@ -1,9 +1,13 @@
 langchain==0.3.*
 langchain-text-splitters==0.3.*
 langchain-experimental==0.3.*
+langchain-community==0.3.*
 langchain-groq==0.2.*
 langgraph==0.2.*
 bm25s>=0.3
+faiss-cpu>=1.9
+onnxruntime>=1.19
+tokenizers>=0.20
 elevenlabs==1.*
 edge-tts>=7.0
 httpx

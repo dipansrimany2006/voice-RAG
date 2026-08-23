@@ -25,15 +25,17 @@ COPY server/ server/
 COPY scripts/ scripts/
 COPY --from=frontend-builder /app/frontend/dist/ frontend/dist/
 
-# Dense vectors live in Cloudflare Vectorize now (see vectorstore.py), not
-# local files — only the BM25 sparse index (built LOCALLY via
-# `python scripts/build_index.py`, since it's cheap and has no network
-# dependency) still needs to ship with the image. It's small enough now
-# (~67MB total, well under GitHub's 100MB/file limit) to commit directly via
-# Git LFS instead of fetching from external storage at build time — see
-# .gitattributes. Render's own git checkout (which happens before this
-# Dockerfile even runs) resolves the LFS pointers, so this is a plain COPY.
+# FAISS + BM25 index (built LOCALLY via `python scripts/build_index.py`) and
+# the ONNX embedding model both ship baked into the image — no network
+# dependency at build OR query time, which is the whole point after
+# Cloudflare Workers AI/Vectorize proved too slow for the retrieval budget
+# (see embeddings.py, vectorstore.py). Both are small enough (~180MB
+# combined, largest single file 113MB) to commit directly via Git LFS
+# instead of fetching from external storage — see .gitattributes. Render's
+# own git checkout (which happens before this Dockerfile even runs) resolves
+# the LFS pointers, so these are plain COPYs.
 COPY data/index/ data/index/
+COPY models/ models/
 
 ENV PYTHONPATH=/app/src \
     INDEX_DIR=/app/data/index

@@ -67,9 +67,6 @@ _pipeline: VoicePipeline | None = None
 def get_pipeline() -> VoicePipeline:
     global _pipeline
     if _pipeline is None:
-        # BM25 still lives on local disk (see sparse_index.py); its presence
-        # marks a strategy as built, since the Vectorize side has no local
-        # files to check.
         built = {s for s in STRATEGIES if (Path(settings.index_dir) / s / "bm25").exists()}
         if not built:
             raise HTTPException(

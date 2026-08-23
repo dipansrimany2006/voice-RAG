@@ -1,3 +1,4 @@
 data/index/**/*.faiss filter=lfs diff=lfs merge=lfs -text
 data/index/**/*.pkl filter=lfs diff=lfs merge=lfs -text
 data/index/**/*.npy filter=lfs diff=lfs merge=lfs -text
+models/**/*.onnx filter=lfs diff=lfs merge=lfs -text
